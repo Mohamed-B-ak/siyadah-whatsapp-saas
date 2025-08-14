@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Pricing Plans</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23pattern)"/></svg>');
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .nav-back {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-back a {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .nav-back a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Pricing Toggle */
+        .pricing-toggle {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .toggle-container {
+            display: inline-flex;
+            background: white;
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .toggle-option {
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .toggle-option.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .discount-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+
+        /* Pricing Cards */
+        .pricing-section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: "الأكثر شعبية";
+            position: absolute;
+            top: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .pricing-card.popular:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+
+        .plan-header {
+            margin-bottom: 30px;
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .plan-description {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .plan-price {
+            margin: 30px 0;
+        }
+
+        .price-amount {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #667eea;
+            line-height: 1;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .price-period {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin: 30px 0;
+            text-align: right;
+        }
+
+        .plan-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            color: #28a745;
+            width: 20px;
+            font-size: 1rem;
+        }
+
+        .feature-unavailable .feature-icon {
+            color: #dc3545;
+        }
+
+        .feature-unavailable {
+            opacity: 0.5;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px 0;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Features Comparison */
+        .comparison-section {
+            padding: 80px 20px;
+            background: white;
+            margin: 60px 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .comparison-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .comparison-title h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .comparison-table {
+            overflow-x: auto;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comparison-table .feature-name {
+            text-align: right;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .check-icon {
+            color: #28a745;
+            font-size: 1.2rem;
+        }
+
+        .cross-icon {
+            color: #dc3545;
+            font-size: 1.2rem;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .faq-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .faq-title h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Money Back Guarantee */
+        .guarantee-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 60px 0;
+            border-radius: 20px;
+        }
+
+        .guarantee-section h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .guarantee-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.popular { transform: none; }
+            .pricing-card.popular:hover { transform: translateY(-10px); }
+            .faq-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="nav-back">
+        <a href="/">
+            <i class="fas fa-arrow-right"></i>
+            العودة للرئيسية
+        </a>
+    </div>
+
+    <!-- Header -->
+    <section class="header">
+        <div class="header-content fade-in">
+            <h1>أسعار شفافة ومرنة</h1>
+            <p>اختر الخطة المناسبة لاحتياجات عملك مع ضمان استرداد المال خلال 30 يوم</p>
+            
+            <div class="pricing-toggle">
+                <div class="toggle-container">
+                    <div class="toggle-option active" data-period="monthly">
+                        شهري
+                    </div>
+                    <div class="toggle-option" data-period="yearly">
+                        سنوي
+                        <span class="discount-badge">وفر 20%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="pricing-section">
+        <div class="pricing-grid">
+            <!-- Basic Plan -->
+            <div class="pricing-card fade-in">
+                <div class="plan-header">
+                    <h3 class="plan-name">الأساسية</h3>
+                    <p class="plan-description">مثالية للشركات الناشئة والفرق الصغيرة</p>
+                </div>
+                
+                <div class="plan-price">
+                    <span class="price-amount" data-monthly="29" data-yearly="23">$29</span>
+                    <span class="price-currency">/شهرياً</span>
+                    <div class="price-period">
+                        <span class="original-price yearly-price" style="display: none;">$348/سنة</span>
+                        <span class="yearly-price" style="display: none;">يدفع سنوياً</span>
+                    </div>
+                </div>
+
+                <ul class="plan-features">
+                    <li><i class="fas fa-check feature-icon"></i> حتى 5 مستخدمين</li>
+                    <li><i class="fas fa-check feature-icon"></i> 10 جلسات WhatsApp</li>
+                    <li><i class="fas fa-check feature-icon"></i> 1,000 رسالة شهرياً</li>
+                    <li><i class="fas fa-check feature-icon"></i> API أساسي</li>
+                    <li><i class="fas fa-check feature-icon"></i> دعم فني عبر البريد</li>
+                    <li><i class="fas fa-check feature-icon"></i> تحليلات أساسية</li>
+                    <li class="feature-unavailable"><i class="fas fa-times feature-icon"></i> Webhook متقدم</li>
+                    <li class="feature-unavailable"><i class="fas fa-times feature-icon"></i> تقارير مخصصة</li>
+                </ul>
+
+                <a href="/signup.html?plan=basic" class="cta-button btn-secondary">ابدأ التجربة</a>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="pricing-card popular fade-in">
+                <div class="plan-header">
+                    <h3 class="plan-name">المتقدمة</h3>
+                    <p class="plan-description">الأفضل للشركات المتوسطة والمتنامية</p>
+                </div>
+                
+                <div class="plan-price">
+                    <span class="price-amount" data-monthly="79" data-yearly="63">$79</span>
+                    <span class="price-currency">/شهرياً</span>
+                    <div class="price-period">
+                        <span class="original-price yearly-price" style="display: none;">$948/سنة</span>
+                        <span class="yearly-price" style="display: none;">يدفع سنوياً</span>
+                    </div>
+                </div>
+
+                <ul class="plan-features">
+                    <li><i class="fas fa-check feature-icon"></i> حتى 20 مستخدم</li>
+                    <li><i class="fas fa-check feature-icon"></i> 50 جلسة WhatsApp</li>
+                    <li><i class="fas fa-check feature-icon"></i> 10,000 رسالة شهرياً</li>
+                    <li><i class="fas fa-check feature-icon"></i> API متقدم</li>
+                    <li><i class="fas fa-check feature-icon"></i> دعم أولوية</li>
+                    <li><i class="fas fa-check feature-icon"></i> تحليلات مفصلة</li>
+                    <li><i class="fas fa-check feature-icon"></i> Webhook متقدم</li>
+                    <li><i class="fas fa-check feature-icon"></i> تقارير مخصصة</li>
+                </ul>
+
+                <a href="/signup.html?plan=premium" class="cta-button btn-primary">ابدأ التجربة</a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="pricing-card fade-in">
+                <div class="plan-header">
+                    <h3 class="plan-name">المؤسسات</h3>
+                    <p class="plan-description">حلول مخصصة للشركات الكبيرة</p>
+                </div>
+                
+                <div class="plan-price">
+                    <span class="price-amount" data-monthly="199" data-yearly="159">$199</span>
+                    <span class="price-currency">/شهرياً</span>
+                    <div class="price-period">
+                        <span class="original-price yearly-price" style="display: none;">$2,388/سنة</span>
+                        <span class="yearly-price" style="display: none;">يدفع سنوياً</span>
+                    </div>
+                </div>
+
+                <ul class="plan-features">
+                    <li><i class="fas fa-check feature-icon"></i> مستخدمين غير محدود</li>
+                    <li><i class="fas fa-check feature-icon"></i> جلسات غير محدودة</li>
+                    <li><i class="fas fa-check feature-icon"></i> رسائل غير محدودة</li>
+                    <li><i class="fas fa-check feature-icon"></i> API كامل + SDKs</li>
+                    <li><i class="fas fa-check feature-icon"></i> دعم مخصص 24/7</li>
+                    <li><i class="fas fa-check feature-icon"></i> نسخ احتياطي متقدم</li>
+                    <li><i class="fas fa-check feature-icon"></i> تكامل مخصص</li>
+                    <li><i class="fas fa-check feature-icon"></i> SLA مضمون</li>
+                </ul>
+
+                <a href="/signup.html?plan=enterprise" class="cta-button btn-secondary">ابدأ التجربة</a>
+            </div>
+        </div>
+
+        <!-- Money Back Guarantee -->
+        <div class="guarantee-section fade-in">
+            <h3><i class="fas fa-shield-alt"></i> ضمان استرداد المال لمدة 30 يوم</h3>
+            <p>جرب منصتنا بدون مخاطر. إذا لم تكن راضياً تماماً، سنسترد أموالك كاملة خلال 30 يوم</p>
+        </div>
+    </section>
+
+    <!-- Features Comparison -->
+    <section class="comparison-section fade-in">
+        <div class="comparison-title">
+            <h2>مقارنة شاملة للخطط</h2>
+            <p>اطلع على جميع المميزات والحدود لكل خطة</p>
+        </div>
+        
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="feature-name">الميزة</th>
+                        <th>الأساسية</th>
+                        <th>المتقدمة</th>
+                        <th>المؤسسات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="feature-name">عدد المستخدمين</td>
+                        <td>5 مستخدمين</td>
+                        <td>20 مستخدم</td>
+                        <td>غير محدود</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">جلسات WhatsApp</td>
+                        <td>10 جلسات</td>
+                        <td>50 جلسة</td>
+                        <td>غير محدود</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">الرسائل الشهرية</td>
+                        <td>1,000</td>
+                        <td>10,000</td>
+                        <td>غير محدود</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">API Access</td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">WebSocket Events</td>
+                        <td><i class="fas fa-times cross-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">تحليلات متقدمة</td>
+                        <td><i class="fas fa-times cross-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                        <td><i class="fas fa-check check-icon"></i></td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">نسخ احتياطي</td>
+                        <td><i class="fas fa-times cross-icon"></i></td>
+                        <td>يومي</td>
+                        <td>كل ساعة</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">الدعم الفني</td>
+                        <td>البريد الإلكتروني</td>
+                        <td>أولوية</td>
+                        <td>مخصص 24/7</td>
+                    </tr>
+                    <tr>
+                        <td class="feature-name">SLA</td>
+                        <td>99%</td>
+                        <td>99.5%</td>
+                        <td>99.9%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+        <div class="faq-title">
+            <h2>الأسئلة الشائعة</h2>
+            <p>إجابات على أكثر الأسئلة تكراراً حول أسعارنا وخدماتنا</p>
+        </div>
+        
+        <div class="faq-grid">
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    هل يمكنني تغيير خطتي لاحقاً؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    نعم، يمكنك الترقية أو التنزيل بين الخطط في أي وقت. التغييرات تطبق فوراً وسيتم حساب التكلفة بشكل تناسبي.
+                </div>
+            </div>
+
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    ما هو ضمان استرداد المال؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    نقدم ضمان استرداد كامل للمال خلال 30 يوم من التسجيل. لا توجد أسئلة أو شروط معقدة.
+                </div>
+            </div>
+
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    هل توجد رسوم إضافية مخفية؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    لا توجد رسوم مخفية نهائياً. السعر المعروض يشمل جميع المميزات المذكورة في الخطة.
+                </div>
+            </div>
+
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    كيف يتم الدفع والفوترة؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    نقبل جميع بطاقات الائتمان الرئيسية وPayPal. الفوترة تتم شهرياً أو سنوياً حسب اختيارك.
+                </div>
+            </div>
+
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    ماذا يحدث إذا تجاوزت حدود الخطة؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    سنرسل تنبيهات قبل الوصول للحد. يمكنك الترقية للخطة الأعلى أو شراء رسائل إضافية.
+                </div>
+            </div>
+
+            <div class="faq-item fade-in">
+                <div class="faq-question">
+                    هل يمكنني إلغاء اشتراكي في أي وقت؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    نعم، يمكنك إلغاء اشتراكك في أي وقت من لوحة التحكم. لن تتم محاسبتك في الدورة Nextة.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Pricing toggle functionality
+        document.querySelectorAll('.toggle-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.toggle-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                const period = this.dataset.period;
+                updatePricing(period);
+            });
+        });
+
+        function updatePricing(period) {
+            document.querySelectorAll('.price-amount').forEach(price => {
+                const monthlyPrice = parseInt(price.dataset.monthly);
+                const yearlyPrice = parseInt(price.dataset.yearly);
+                
+                if (period === 'yearly') {
+                    price.textContent = `$${yearlyPrice}`;
+                    price.parentElement.querySelector('.price-currency').textContent = '/شهرياً';
+                } else {
+                    price.textContent = `$${monthlyPrice}`;
+                    price.parentElement.querySelector('.price-currency').textContent = '/شهرياً';
+                }
+            });
+
+            // Show/hide yearly pricing details
+            document.querySelectorAll('.yearly-price').forEach(element => {
+                if (period === 'yearly') {
+                    element.style.display = 'inline';
+                } else {
+                    element.style.display = 'none';
+                }
+            });
+        }
+
+        // FAQ functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.pricing-card, .faq-item, .comparison-section, .guarantee-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Update CTA buttons with selected plan
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedPlan = urlParams.get('plan');
+            
+            if (selectedPlan) {
+                document.querySelectorAll('.cta-button').forEach(btn => {
+                    const href = btn.getAttribute('href');
+                    if (href.includes('plan=')) {
+                        btn.setAttribute('href', href.replace(/plan=\w+/, `plan=${selectedPlan}`));
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

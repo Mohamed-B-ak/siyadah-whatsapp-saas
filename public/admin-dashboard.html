@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .overview-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .overview-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .overview-label {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .overview-growth {
+            font-size: 0.9rem;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .companies-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .companies-table th,
+        .companies-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .companies-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .plan-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .plan-premium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .plan-enterprise {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .system-health {
+            display: grid;
+            gap: 15px;
+        }
+
+        .health-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .health-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .health-excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .health-good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .health-warning {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .logs-section {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-info {
+            background: #e7f3ff;
+            border-right: 3px solid #007bff;
+        }
+
+        .log-warning {
+            background: #fff8e1;
+            border-right: 3px solid #ff9800;
+        }
+
+        .log-error {
+            background: #ffebee;
+            border-right: 3px solid #f44336;
+        }
+
+        .maintenance-section {
+            grid-column: 1 / -1;
+        }
+
+        .maintenance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1 class="admin-title">لوحة الإدارة الرئيسية</h1>
+            <div class="admin-actions">
+                <button class="btn" onclick="refreshData()">تحديث البيانات</button>
+                <button class="btn btn-warning" onclick="showMaintenance()">صيانة النظام</button>
+                <a href="/" class="btn btn-secondary">العودة للرئيسية</a>
+            </div>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="overview-grid">
+            <div class="overview-card">
+                <div class="overview-number" id="totalCompanies">0</div>
+                <div class="overview-label">إجمالي الشركات</div>
+                <div class="overview-growth" id="companiesGrowth">+0%</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-number" id="totalUsers">0</div>
+                <div class="overview-label">إجمالي المستخدمين</div>
+                <div class="overview-growth" id="usersGrowth">+0%</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-number" id="activeSessions">0</div>
+                <div class="overview-label">الجلسات النشطة</div>
+                <div class="overview-growth">🟢 عامل</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-number" id="monthlyRevenue">$0</div>
+                <div class="overview-label">إيرادات الشهر</div>
+                <div class="overview-growth" id="revenueGrowth">+0%</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Companies Management -->
+            <div class="content-card">
+                <h2 class="section-title">إدارة الشركات</h2>
+                <button class="btn" onclick="loadCompanies()">تحديث القائمة</button>
+                <button class="btn btn-success" onclick="exportCompanies()">تصدير البيانات</button>
+                
+                <table class="companies-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الشركة</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>الخطة</th>
+                            <th>المستخدمين</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companiesTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #666;">جاري تحميل البيانات...</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-placeholder">
+                    رسم بياني لنمو الشركات
+                </div>
+            </div>
+
+            <!-- System Health & Logs -->
+            <div>
+                <div class="content-card" style="margin-bottom: 20px;">
+                    <h2 class="section-title">صحة النظام</h2>
+                    <div class="system-health">
+                        <div class="health-item">
+                            <span>وقت التشغيل</span>
+                            <span class="health-status health-excellent" id="systemUptime">99.9%</span>
+                        </div>
+                        <div class="health-item">
+                            <span>متوسط الاستجابة</span>
+                            <span class="health-status health-good" id="avgResponse">45ms</span>
+                        </div>
+                        <div class="health-item">
+                            <span>معدل الأخطاء</span>
+                            <span class="health-status health-excellent" id="errorRate">0.1%</span>
+                        </div>
+                        <div class="health-item">
+                            <span>قاعدة البيانات</span>
+                            <span class="health-status health-excellent">متصلة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2 class="section-title">سجلات النظام</h2>
+                    <button class="btn" onclick="loadLogs()">تحديث السجلات</button>
+                    <button class="btn btn-warning" onclick="clearLogs()">مسح السجلات</button>
+                    
+                    <div class="logs-section" id="systemLogs">
+                        <div class="log-item log-info">
+                            [INFO] System started successfully
+                        </div>
+                        <div class="log-item log-warning">
+                            [WARN] High memory usage detected
+                        </div>
+                        <div class="log-item log-error">
+                            [ERROR] Failed database connection attempt
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Section -->
+        <div class="content-card maintenance-section">
+            <h2 class="section-title">صيانة النظام</h2>
+            <div class="maintenance-grid">
+                <button class="btn" onclick="runMaintenance('cleanup-sessions')">تنظيف الجلسات</button>
+                <button class="btn btn-success" onclick="runMaintenance('backup-database')">نسخ احتياطي</button>
+                <button class="btn btn-warning" onclick="runMaintenance('clear-logs')">مسح السجلات</button>
+                <button class="btn" onclick="systemDiagnostics()">فحص شامل</button>
+                <button class="btn btn-danger" onclick="restartServices()">إعادة تشغيل الخدمات</button>
+                <button class="btn" onclick="updateSystem()">تحديث النظام</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load admin dashboard data
+        function loadDashboardData() {
+            // Simulate API call to /api/admin/overview
+            const overviewData = {
+                totals: {
+                    companies: 45,
+                    users: 287,
+                    sessions: 89,
+                    revenue: 12580
+                },
+                growth: {
+                    companies: 12,
+                    users: 23,
+                    revenue: 18
+                },
+                systemHealth: {
+                    uptime: 99.8,
+                    avgResponseTime: 52,
+                    errorRate: 0.2
+                }
+            };
+
+            document.getElementById('totalCompanies').textContent = overviewData.totals.companies;
+            document.getElementById('totalUsers').textContent = overviewData.totals.users;
+            document.getElementById('activeSessions').textContent = overviewData.totals.sessions;
+            document.getElementById('monthlyRevenue').textContent = '$' + overviewData.totals.revenue.toLocaleString();
+            
+            document.getElementById('companiesGrowth').textContent = '+' + overviewData.growth.companies + '%';
+            document.getElementById('usersGrowth').textContent = '+' + overviewData.growth.users + '%';
+            document.getElementById('revenueGrowth').textContent = '+' + overviewData.growth.revenue + '%';
+            
+            document.getElementById('systemUptime').textContent = overviewData.systemHealth.uptime + '%';
+            document.getElementById('avgResponse').textContent = overviewData.systemHealth.avgResponseTime + 'ms';
+            document.getElementById('errorRate').textContent = overviewData.systemHealth.errorRate + '%';
+        }
+
+        function loadCompanies() {
+            const tableBody = document.getElementById('companiesTableBody');
+            
+            // Simulate API call to /api/admin/companies
+            setTimeout(() => {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td>شركة التكنولوجيا المتقدمة</td>
+                        <td>admin@techcompany.com</td>
+                        <td><span class="plan-badge plan-enterprise">Enterprise</span></td>
+                        <td>25</td>
+                        <td><span class="status-badge status-active">نشط</span></td>
+                        <td>
+                            <button class="btn" onclick="viewCompany('comp_1')">عرض</button>
+                            <button class="btn btn-warning" onclick="toggleCompany('comp_1')">تعطيل</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>شركة الحلول الذكية</td>
+                        <td>admin@smartsolutions.com</td>
+                        <td><span class="plan-badge plan-premium">Premium</span></td>
+                        <td>12</td>
+                        <td><span class="status-badge status-active">نشط</span></td>
+                        <td>
+                            <button class="btn" onclick="viewCompany('comp_2')">عرض</button>
+                            <button class="btn btn-warning" onclick="toggleCompany('comp_2')">تعطيل</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>شركة الأعمال الرقمية</td>
+                        <td>admin@digitalbiz.com</td>
+                        <td><span class="plan-badge">Basic</span></td>
+                        <td>8</td>
+                        <td><span class="status-badge status-inactive">معطل</span></td>
+                        <td>
+                            <button class="btn" onclick="viewCompany('comp_3')">عرض</button>
+                            <button class="btn btn-success" onclick="toggleCompany('comp_3')">تفعيل</button>
+                        </td>
+                    </tr>
+                `;
+            }, 1000);
+        }
+
+        function loadLogs() {
+            const logsContainer = document.getElementById('systemLogs');
+            
+            const currentTime = new Date().toLocaleTimeString('ar-SA');
+            logsContainer.innerHTML = `
+                <div class="log-item log-info">
+                    [${currentTime}] [INFO] Company registration: Tech Solutions Ltd
+                </div>
+                <div class="log-item log-info">
+                    [${currentTime}] [INFO] New WhatsApp session created: session_abc123
+                </div>
+                <div class="log-item log-warning">
+                    [${currentTime}] [WARN] High API usage detected for user_xyz789
+                </div>
+                <div class="log-item log-error">
+                    [${currentTime}] [ERROR] Message delivery failed - recipient unreachable
+                </div>
+                <div class="log-item log-info">
+                    [${currentTime}] [INFO] Database backup completed successfully
+                </div>
+            `;
+        }
+
+        function refreshData() {
+            loadDashboardData();
+            loadCompanies();
+            loadLogs();
+            alert('تم تحديث جميع البيانات بنجاح');
+        }
+
+        function viewCompany(companyId) {
+            alert('ستفتح صفحة تفاصيل الشركة: ' + companyId);
+        }
+
+        function toggleCompany(companyId) {
+            if (confirm('هل تريد تغيير حالة هذه الشركة؟')) {
+                alert('سيتم تغيير حالة الشركة: ' + companyId);
+                loadCompanies();
+            }
+        }
+
+        function runMaintenance(action) {
+            const actionNames = {
+                'cleanup-sessions': 'تنظيف الجلسات',
+                'backup-database': 'النسخ الاحتياطي',
+                'clear-logs': 'مسح السجلات'
+            };
+            
+            if (confirm('هل تريد تنفيذ إجراء: ' + actionNames[action] + '؟')) {
+                alert('جاري تنفيذ: ' + actionNames[action]);
+                // Simulate API call to /api/admin/maintenance/{action}
+                setTimeout(() => {
+                    alert('تم تنفيذ الإجراء بنجاح');
+                }, 2000);
+            }
+        }
+
+        function exportCompanies() {
+            alert('سيتم تصدير قائمة الشركات كملف CSV...');
+        }
+
+        function clearLogs() {
+            if (confirm('هل تريد مسح جميع سجلات النظام؟')) {
+                document.getElementById('systemLogs').innerHTML = '<p style="text-align: center; color: #666;">تم مسح السجلات</p>';
+            }
+        }
+
+        function showMaintenance() {
+            document.querySelector('.maintenance-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function systemDiagnostics() {
+            alert('جاري إجراء فحص شامل للنظام...');
+        }
+
+        function restartServices() {
+            if (confirm('تحذير: سيتم إعادة تشغيل جميع الخدمات. هل تريد المتابعة؟')) {
+                alert('جاري إعادة تشغيل الخدمات...');
+            }
+        }
+
+        function updateSystem() {
+            alert('جاري البحث عن تحديثات النظام...');
+        }
+
+        // Load initial data
+        window.onload = function() {
+            loadDashboardData();
+            loadCompanies();
+            loadLogs();
+        };
+    </script>
+</body>
+</html>

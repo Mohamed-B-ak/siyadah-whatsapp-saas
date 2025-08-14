@@ -1,0 +1,28 @@
+{
+  "name": "whatsapp-client-nodejs",
+  "version": "1.0.0",
+  "description": "Simple WhatsApp client library for Node.js with webhook support",
+  "main": "WhatsAppClient.js",
+  "scripts": {
+    "test": "node test.js",
+    "example": "node example.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "api",
+    "messaging",
+    "webhook",
+    "automation",
+    "nodejs"
+  ],
+  "author": "Siyadah WhatsApp",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "express": "^4.18.0",
+    "chalk": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

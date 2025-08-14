@@ -1,0 +1,183 @@
+{
+  "info": {
+    "name": "WPPConnect Server Tests",
+    "description": "Complete API testing collection for WPPConnect Server",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "secret_key",
+      "value": "THISISMYSECURETOKEN"
+    },
+    {
+      "key": "session_id",
+      "value": "test-session"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Check Server Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"]
+        }
+      }
+    },
+    {
+      "name": "2. Generate Session Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"session\": \"{{session_id}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/{{secret_key}}/generate-token",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "{{secret_key}}", "generate-token"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set('token', jsonData.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Start WhatsApp Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"webhook\": \"\",\n  \"waitQrCode\": true\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/start-session",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "start-session"]
+        }
+      }
+    },
+    {
+      "name": "4. Get Session Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/status-session",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "status-session"]
+        }
+      }
+    },
+    {
+      "name": "5. Get QR Code",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/qrcode-session",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "qrcode-session"]
+        }
+      }
+    },
+    {
+      "name": "6. List All Sessions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/{{secret_key}}/show-all-sessions",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{secret_key}}", "show-all-sessions"]
+        }
+      }
+    },
+    {
+      "name": "7. Send Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone\": \"5511999999999\",\n  \"message\": \"Test message from WPPConnect API\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/send-message",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "send-message"]
+        }
+      }
+    },
+    {
+      "name": "8. Close Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/{{session_id}}/close-session",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{session_id}}", "close-session"]
+        }
+      }
+    }
+  ]
+}

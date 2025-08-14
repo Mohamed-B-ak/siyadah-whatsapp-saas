@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطط الاشتراك - Siyadah WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .billing-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 15px;
+        }
+
+        .billing-toggle label {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.yearly {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.yearly .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .discount-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .plan-card.popular {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .plan-card.popular::before {
+            content: 'الأكثر شعبية';
+            position: absolute;
+            top: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .plan-price {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .price-currency {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .price-period {
+            color: #888;
+            font-size: 1rem;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-size: 12px;
+        }
+
+        .feature-icon.premium {
+            background: #667eea;
+        }
+
+        .feature-icon.enterprise {
+            background: #fd7e14;
+        }
+
+        .plan-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .plan-button.free {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #dee2e6;
+        }
+
+        .plan-button.basic {
+            background: #28a745;
+            color: white;
+        }
+
+        .plan-button.premium {
+            background: #667eea;
+            color: white;
+        }
+
+        .plan-button.enterprise {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .plan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .features-comparison {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .check-mark {
+            color: #28a745;
+            font-size: 1.2rem;
+        }
+
+        .x-mark {
+            color: #dc3545;
+            font-size: 1.2rem;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .plan-card.popular {
+                transform: none;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div>
+                <a href="/" style="font-size: 1.2rem; font-weight: bold; color: #667eea;">Siyadah WhatsApp</a>
+            </div>
+            <div class="nav-links">
+                <a href="/">الرئيسية</a>
+                <a href="/register.html">تسجيل</a>
+                <a href="/login.html">دخول</a>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="header">
+            <div id="welcomeMessage" style="display: none; background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
+                <h2 style="color: white; margin-bottom: 10px;">🎉 مرحباً بك في Siyadah WhatsApp!</h2>
+                <p style="color: white; opacity: 0.9;">تم إنشاء حسابك بنجاح. اختر الآن خطة الاشتراك المناسبة لبدء استخدام منصة WhatsApp API</p>
+            </div>
+            <h1>اختر خطة الاشتراك المناسبة</h1>
+            <p>خطط مرنة لجميع احتياجات عملك في WhatsApp API</p>
+        </div>
+
+        <!-- Billing Toggle -->
+        <div class="billing-toggle">
+            <label>شهري</label>
+            <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()">
+                <div class="toggle-slider"></div>
+            </div>
+            <label>سنوي</label>
+            <span class="discount-badge">وفر 20%</span>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid">
+            <!-- Free Plan -->
+            <div class="plan-card">
+                <div class="plan-name">مجاني</div>
+                <div class="plan-price">
+                    <span class="price-amount">0</span>
+                    <span class="price-currency">$</span>
+                    <div class="price-period">مجاني إلى الأبد</div>
+                </div>
+                <ul class="plan-features">
+                    <li><span class="feature-icon">✓</span> جلسة واحدة WhatsApp</li>
+                    <li><span class="feature-icon">✓</span> 100 رسالة شهرياً</li>
+                    <li><span class="feature-icon">✓</span> دعم أساسي</li>
+                    <li><span class="feature-icon">✓</span> Webhook بسيط</li>
+                </ul>
+                <button class="plan-button free" onclick="selectPlan('free', 0)">ابدأ مجاناً</button>
+            </div>
+
+            <!-- Basic Plan -->
+            <div class="plan-card">
+                <div class="plan-name">أساسي</div>
+                <div class="plan-price">
+                    <span class="price-amount monthly">19</span>
+                    <span class="price-amount yearly" style="display:none">15</span>
+                    <span class="price-currency">$</span>
+                    <span class="original-price yearly" style="display:none">$19</span>
+                    <div class="price-period monthly">شهرياً</div>
+                    <div class="price-period yearly" style="display:none">شهرياً (يدفع سنوياً)</div>
+                </div>
+                <ul class="plan-features">
+                    <li><span class="feature-icon">✓</span> 5 جلسات WhatsApp</li>
+                    <li><span class="feature-icon">✓</span> 5,000 رسالة شهرياً</li>
+                    <li><span class="feature-icon">✓</span> دعم عبر البريد</li>
+                    <li><span class="feature-icon">✓</span> Webhooks متقدمة</li>
+                    <li><span class="feature-icon">✓</span> تحليلات أساسية</li>
+                </ul>
+                <button class="plan-button basic" onclick="selectPlan('basic', getCurrentPrice('basic'))">اختر الأساسي</button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="plan-card popular">
+                <div class="plan-name">متميز</div>
+                <div class="plan-price">
+                    <span class="price-amount monthly">49</span>
+                    <span class="price-amount yearly" style="display:none">39</span>
+                    <span class="price-currency">$</span>
+                    <span class="original-price yearly" style="display:none">$49</span>
+                    <div class="price-period monthly">شهرياً</div>
+                    <div class="price-period yearly" style="display:none">شهرياً (يدفع سنوياً)</div>
+                </div>
+                <ul class="plan-features">
+                    <li><span class="feature-icon premium">✓</span> 20 جلسة WhatsApp</li>
+                    <li><span class="feature-icon premium">✓</span> 25,000 رسالة شهرياً</li>
+                    <li><span class="feature-icon premium">✓</span> دعم أولوية</li>
+                    <li><span class="feature-icon premium">✓</span> API متقدمة</li>
+                    <li><span class="feature-icon premium">✓</span> تحليلات تفصيلية</li>
+                    <li><span class="feature-icon premium">✓</span> إرسال الصور والملفات</li>
+                </ul>
+                <button class="plan-button premium" onclick="selectPlan('premium', getCurrentPrice('premium'))">اختر المتميز</button>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="plan-card">
+                <div class="plan-name">مؤسسي</div>
+                <div class="plan-price">
+                    <span class="price-amount monthly">99</span>
+                    <span class="price-amount yearly" style="display:none">79</span>
+                    <span class="price-currency">$</span>
+                    <span class="original-price yearly" style="display:none">$99</span>
+                    <div class="price-period monthly">شهرياً</div>
+                    <div class="price-period yearly" style="display:none">شهرياً (يدفع سنوياً)</div>
+                </div>
+                <ul class="plan-features">
+                    <li><span class="feature-icon enterprise">✓</span> جلسات غير محدودة</li>
+                    <li><span class="feature-icon enterprise">✓</span> رسائل غير محدودة</li>
+                    <li><span class="feature-icon enterprise">✓</span> دعم مخصص</li>
+                    <li><span class="feature-icon enterprise">✓</span> API مخصصة</li>
+                    <li><span class="feature-icon enterprise">✓</span> تحليلات متقدمة</li>
+                    <li><span class="feature-icon enterprise">✓</span> تكامل مخصص</li>
+                    <li><span class="feature-icon enterprise">✓</span> SLA مضمون</li>
+                </ul>
+                <button class="plan-button enterprise" onclick="selectPlan('enterprise', getCurrentPrice('enterprise'))">اختر المؤسسي</button>
+            </div>
+        </div>
+
+        <!-- Features Comparison -->
+        <div class="features-comparison">
+            <h2 class="comparison-title">مقارنة تفصيلية للخطط</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>الميزة</th>
+                        <th>مجاني</th>
+                        <th>أساسي</th>
+                        <th>متميز</th>
+                        <th>مؤسسي</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>عدد جلسات WhatsApp</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td>20</td>
+                        <td>غير محدود</td>
+                    </tr>
+                    <tr>
+                        <td>الرسائل الشهرية</td>
+                        <td>100</td>
+                        <td>5,000</td>
+                        <td>25,000</td>
+                        <td>غير محدود</td>
+                    </tr>
+                    <tr>
+                        <td>Webhooks</td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>إرسال الصور</td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>تحليلات متقدمة</td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>دعم أولوية</td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>SLA مضمون</td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="x-mark">✗</span></td>
+                        <td><span class="check-mark">✓</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let isYearly = false;
+
+        function toggleBilling() {
+            isYearly = !isYearly;
+            const toggle = document.getElementById('billingToggle');
+            const monthlyElements = document.querySelectorAll('.monthly');
+            const yearlyElements = document.querySelectorAll('.yearly');
+
+            if (isYearly) {
+                toggle.classList.add('yearly');
+                monthlyElements.forEach(el => el.style.display = 'none');
+                yearlyElements.forEach(el => el.style.display = 'inline');
+            } else {
+                toggle.classList.remove('yearly');
+                monthlyElements.forEach(el => el.style.display = 'inline');
+                yearlyElements.forEach(el => el.style.display = 'none');
+            }
+        }
+
+        function getCurrentPrice(plan) {
+            const prices = {
+                free: 0,
+                basic: isYearly ? 15 : 19,
+                premium: isYearly ? 39 : 49,
+                enterprise: isYearly ? 79 : 99
+            };
+            return prices[plan];
+        }
+
+        function selectPlan(planType, price) {
+            // Store selected plan in localStorage
+            const planData = {
+                type: planType,
+                price: price,
+                billing: isYearly ? 'yearly' : 'monthly',
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('selectedPlan', JSON.stringify(planData));
+            
+            if (planType === 'free') {
+                // For free plan, go directly to registration
+                window.location.href = '/register.html?plan=free';
+            } else {
+                // For paid plans, go to payment page
+                window.location.href = `/checkout.html?plan=${planType}&price=${price}&billing=${isYearly ? 'yearly' : 'monthly'}`;
+            }
+        }
+
+        // Load plan from URL parameters if coming from registration
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const planFromUrl = urlParams.get('plan');
+            const isRegistered = urlParams.get('registered') === 'true';
+            
+            // Show welcome message if coming from registration
+            if (isRegistered) {
+                const welcomeMessage = document.getElementById('welcomeMessage');
+                welcomeMessage.style.display = 'block';
+                
+                // Load registration data
+                const registrationData = JSON.parse(localStorage.getItem('registrationData') || '{}');
+                if (registrationData.name) {
+                    const nameElement = welcomeMessage.querySelector('h2');
+                    nameElement.textContent = `🎉 مرحباً ${registrationData.name} في Siyadah WhatsApp!`;
+                }
+                
+                // Auto-hide welcome message after 10 seconds
+                setTimeout(() => {
+                    welcomeMessage.style.display = 'none';
+                }, 10000);
+            }
+            
+            if (planFromUrl) {
+                // Highlight the selected plan
+                const planCards = document.querySelectorAll('.plan-card');
+                planCards.forEach(card => {
+                    if (card.querySelector('.plan-name').textContent.includes(planFromUrl)) {
+                        card.style.border = '3px solid #28a745';
+                        card.querySelector('.plan-button').textContent = 'محدد';
+                        card.querySelector('.plan-button').style.background = '#28a745';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

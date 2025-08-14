@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Configuration - Local FastAPI Setup</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .alert.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+        }
+        .alert.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+        }
+        .status {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Local FastAPI Webhook Setup</h1>
+        
+        <div class="step">
+            <h3>Step 1: Start Your Local FastAPI Service</h3>
+            <p>Download and run <strong>whatsapp_fastapi.py</strong> on your computer:</p>
+            <div class="code">
+pip install fastapi uvicorn colorama python-multipart<br>
+python whatsapp_fastapi.py
+            </div>
+            <p>Your FastAPI service will start on <strong>http://localhost:8001</strong></p>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Configure Webhook URL</h3>
+            <p>Enter your FastAPI webhook URL. Choose one option:</p>
+            
+            <div class="input-group">
+                <label>Option A - Using ngrok (Recommended):</label>
+                <input type="url" id="ngrokUrl" placeholder="https://abc123.ngrok.io/webhook/bridge">
+                <button onclick="setWebhookUrl('ngrok')">Use ngrok URL</button>
+                <p><small>Run: <code>ngrok http 8001</code> then copy the HTTPS URL</small></p>
+            </div>
+
+            <div class="input-group">
+                <label>Option B - Direct IP (if accessible):</label>
+                <input type="text" id="directIp" placeholder="192.168.1.100">
+                <button onclick="setWebhookUrl('direct')">Use Direct IP</button>
+                <p><small>Find your IP with: <code>ipconfig</code> (Windows) or <code>ifconfig</code> (Mac/Linux)</small></p>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Test Connection</h3>
+            <button onclick="testWebhook()">Test Webhook Connection</button>
+            <button onclick="sendTestMessage()">Send Test Message</button>
+        </div>
+
+        <div id="status" class="status">
+            <p>Current Webhook URL: <span id="currentUrl">Not configured</span></p>
+            <p>Status: <span id="connectionStatus">Unknown</span></p>
+        </div>
+
+        <div id="alerts"></div>
+    </div>
+
+    <script>
+        // Load current configuration
+        window.onload = function() {
+            loadCurrentConfig();
+        };
+
+        function loadCurrentConfig() {
+            fetch('/api/webhook/config')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('currentUrl').textContent = 
+                        data.webhookUrl || 'Not configured';
+                })
+                .catch(error => {
+                    showAlert('Failed to load current configuration', 'error');
+                });
+        }
+
+        function setWebhookUrl(type) {
+            let url;
+            
+            if (type === 'ngrok') {
+                url = document.getElementById('ngrokUrl').value;
+                if (!url.startsWith('https://') || !url.includes('ngrok.io')) {
+                    showAlert('Please enter a valid ngrok HTTPS URL', 'error');
+                    return;
+                }
+            } else if (type === 'direct') {
+                const ip = document.getElementById('directIp').value;
+                if (!ip.match(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)) {
+                    showAlert('Please enter a valid IP address', 'error');
+                    return;
+                }
+                url = `http://${ip}:8001/webhook/bridge`;
+            }
+
+            // Set environment variable
+            fetch('/api/webhook/configure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ webhookUrl: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(`Webhook URL configured: ${url}`, 'success');
+                    document.getElementById('currentUrl').textContent = url;
+                    testWebhook();
+                } else {
+                    showAlert('Failed to configure webhook URL', 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('Error configuring webhook: ' + error.message, 'error');
+            });
+        }
+
+        function testWebhook() {
+            const testData = {
+                event: 'test',
+                from: 'configuration-test',
+                body: 'Test message from webhook configuration',
+                type: 'test'
+            };
+
+            fetch('/webhook-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showAlert('Test webhook sent successfully! Check your local FastAPI terminal.', 'success');
+                    document.getElementById('connectionStatus').textContent = 'Connected';
+                } else {
+                    showAlert('Test webhook failed', 'error');
+                    document.getElementById('connectionStatus').textContent = 'Failed';
+                }
+            })
+            .catch(error => {
+                showAlert('Test failed: ' + error.message, 'error');
+                document.getElementById('connectionStatus').textContent = 'Error';
+            });
+        }
+
+        function sendTestMessage() {
+            const messageData = {
+                phone_number: '21653844063',
+                message: 'Test message from webhook configuration interface'
+            };
+
+            fetch('/send-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(messageData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Test message sent! QR code ready for scanning.', 'success');
+                } else {
+                    showAlert('Message failed: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showAlert('Send failed: ' + error.message, 'error');
+            });
+        }
+
+        function showAlert(message, type) {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            
+            alertsContainer.appendChild(alert);
+            
+            // Remove alert after 5 seconds
+            setTimeout(() => {
+                alertsContainer.removeChild(alert);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "demo-user-1",
+    "name": "Ahmed Test",
+    "email": "ahmed@test.com",
+    "passwordHash": "$2b$10$lqYXc54ZoAhAAqftEOQRV.PbFx/HUJmhtsDu1Q6c8m0/xtPJv8zGi",
+    "apiKey": "demo_api_key_123456",
+    "createdAt": "2025-06-20T14:37:02.554Z"
+  },
+  {
+    "id": "login-test-1",
+    "name": "Test User Login",
+    "email": "logintest@example.com",
+    "passwordHash": "$2b$10$ZyRiOuUiY8CThWjHolto0uxONRqlxntDsSu/EIV9GomZQSTCatt.6",
+    "apiKey": "user_k0bzouxkci_osp7ov",
+    "createdAt": "2025-06-20T14:37:02.616Z"
+  },
+  {
+    "id": "main-test-1",
+    "name": "Main System Test",
+    "email": "maintest@example.com",
+    "passwordHash": "$2b$10$Gq9FHQxrIlkZs6OEI6mw8OX8qpbWuEcUJURYvIjsa1yW3ceNDU3f.",
+    "apiKey": "user_zb2rvlz17fp_jko5st",
+    "createdAt": "2025-06-20T14:37:02.676Z"
+  }
+]

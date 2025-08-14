@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Create New Account</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+
+        .signup-info {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .signup-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .signup-info p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+        }
+
+        .features-list i {
+            color: #4CAF50;
+            width: 20px;
+        }
+
+        .signup-form {
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-signup {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-signup:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .terms {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .terms a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .login-link {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .signup-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+            
+            .signup-info {
+                padding: 30px 25px;
+                text-align: center;
+            }
+            
+            .signup-form {
+                padding: 30px 25px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e1e8ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            color: #666;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            width: 20px;
+            height: 2px;
+            background: #e1e8ed;
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.completed::after {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <!-- Info Panel -->
+        <div class="signup-info">
+            <h2>Join Siyadah WhatsApp Platform</h2>
+            <p>Start your journey with the most powerful WhatsApp business platform. Get advanced tools for managing your messages and analyzing your performance.</p>
+            
+            <ul class="features-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    Multi-session management
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    Advanced API & comprehensive docs
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    Detailed analytics & dashboard
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    24/7 technical support
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    14-day free trial
+                </li>
+            </ul>
+        </div>
+
+        <!-- Signup Form -->
+        <div class="signup-form">
+            <div class="form-header">
+                <h1>Create New Account</h1>
+                <p>Create your account and get API keys instantly</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="signupForm">
+                <!-- Step 1: Company Info -->
+                <div class="form-step active" id="step1">
+                    <div class="step-indicator">
+                        <div class="step active">1</div>
+                        <div class="step">2</div>
+                        <div class="step">3</div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 20px; color: #333;">Company Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="companyName">Company Name *</label>
+                        <input type="text" id="companyName" name="companyName" required placeholder="Enter your company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyEmail">Company Email *</label>
+                        <input type="email" id="companyEmail" name="companyEmail" required placeholder="company@example.com">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="industry">Industry Type</label>
+                            <select id="industry" name="industry">
+                                <option value="">Select Industry Type</option>
+                                <option value="technology">Information Technology</option>
+                                <option value="retail">Retail</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="education">Education</option>
+                                <option value="finance">Finance</option>
+                                <option value="real-estate">Real Estate</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="companySize">Company Size</label>
+                            <select id="companySize" name="companySize">
+                                <option value="">Select Company Size</option>
+                                <option value="startup">Startup (1-10)</option>
+                                <option value="small">Small (11-50)</option>
+                                <option value="medium">Medium (51-200)</option>
+                                <option value="large">Large (200+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-signup" onclick="nextStep()">
+                        Next
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+
+                <!-- Step 2: Admin User -->
+                <div class="form-step" id="step2">
+                    <div class="step-indicator">
+                        <div class="step completed">1</div>
+                        <div class="step active">2</div>
+                        <div class="step">3</div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 20px; color: #333;">Admin Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" required placeholder="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Smith">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminEmail">Email Address *</label>
+                        <input type="email" id="adminEmail" name="adminEmail" required placeholder="admin@company.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1234567890">
+                    </div>
+                    
+                    <div class="form-row">
+                        <button type="button" class="btn-signup" style="background: #6c757d;" onclick="prevStep()">
+                            <i class="fas fa-arrow-right"></i>
+                            Previous
+                        </button>
+                        <button type="button" class="btn-signup" onclick="nextStep()">
+                            Next
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Plan Selection -->
+                <div class="form-step" id="step3">
+                    <div class="step-indicator">
+                        <div class="step completed">1</div>
+                        <div class="step completed">2</div>
+                        <div class="step active">3</div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 20px; color: #333;">Choose Your Plan</h3>
+                    
+                    <div class="form-group">
+                        <label for="planType">Plan Type *</label>
+                        <select id="planType" name="planType" required onchange="updatePlanInfo()">
+                            <option value="">Select the right plan</option>
+                            <option value="basic">Basic - $29/month</option>
+                            <option value="premium">Premium - $79/month</option>
+                            <option value="enterprise">Enterprise - $199/month</option>
+                        </select>
+                    </div>
+                    
+                    <div id="planDetails" style="display: none; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <!-- Plan details will be populated here -->
+                    </div>
+                    
+                    <div class="form-row">
+                        <button type="button" class="btn-signup" style="background: #6c757d;" onclick="prevStep()">
+                            <i class="fas fa-arrow-right"></i>
+                            Previous
+                        </button>
+                        <button type="submit" class="btn-signup" id="submitBtn">
+                            <i class="fas fa-rocket"></i>
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="terms">
+                بCreate Account، أوافق على 
+                <a href="/terms">شروط الاستخدام</a> و 
+                <a href="/privacy">سياسة الخصوصية</a>
+            </div>
+
+            <div class="login-link">
+                لديك حساب بالفعل؟ 
+                <a href="/login">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function validateStep(step) {
+            const stepElement = document.getElementById(`step${step}`);
+            const requiredFields = stepElement.querySelectorAll('input[required], select[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    showAlert(`الرجاء ملء حقل ${field.previousElementSibling.textContent}`);
+                    field.focus();
+                    return false;
+                }
+            }
+            
+            if (step === 1) {
+                const email = document.getElementById('companyEmail').value;
+                if (!isValidEmail(email)) {
+                    showAlert('الرجاء إدخال بريد إلكتروني صحيح');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function nextStep() {
+            if (!validateStep(currentStep)) return;
+            
+            if (currentStep < totalSteps) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateStepIndicators();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                updateStepIndicators();
+            }
+        }
+
+        function updateStepIndicators() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function updatePlanInfo() {
+            const planType = document.getElementById('planType').value;
+            const planDetails = document.getElementById('planDetails');
+            
+            if (!planType) {
+                planDetails.style.display = 'none';
+                return;
+            }
+            
+            const plans = {
+                basic: {
+                    users: '5 مستخدمين',
+                    sessions: '10 جلسات',
+                    messages: '1,000 رسالة شهرياً',
+                    support: 'دعم فني أساسي'
+                },
+                premium: {
+                    users: '20 مستخدم',
+                    sessions: '50 جلسة',
+                    messages: '10,000 رسالة شهرياً',
+                    support: 'دعم فني متقدم'
+                },
+                enterprise: {
+                    users: 'مستخدمين غير محدود',
+                    sessions: 'جلسات غير محدودة',
+                    messages: 'رسائل غير محدودة',
+                    support: 'دعم فني مخصص'
+                }
+            };
+            
+            const plan = plans[planType];
+            planDetails.innerHTML = `
+                <h4 style="margin-bottom: 10px;">تفاصيل الخطة:</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin: 5px 0;"><i class="fas fa-check" style="color: #28a745; margin-left: 8px;"></i> ${plan.users}</li>
+                    <li style="margin: 5px 0;"><i class="fas fa-check" style="color: #28a745; margin-left: 8px;"></i> ${plan.sessions}</li>
+                    <li style="margin: 5px 0;"><i class="fas fa-check" style="color: #28a745; margin-left: 8px;"></i> ${plan.messages}</li>
+                    <li style="margin: 5px 0;"><i class="fas fa-check" style="color: #28a745; margin-left: 8px;"></i> ${plan.support}</li>
+                </ul>
+            `;
+            planDetails.style.display = 'block';
+        }
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateStep(3)) return;
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> جارٍ Create Account...';
+            
+            // Collect form data
+            const formData = {
+                company: {
+                    name: document.getElementById('companyName').value,
+                    email: document.getElementById('companyEmail').value,
+                    industry: document.getElementById('industry').value,
+                    size: document.getElementById('companySize').value,
+                    planType: document.getElementById('planType').value
+                },
+                admin: {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('adminEmail').value,
+                    phone: document.getElementById('phone').value
+                }
+            };
+            
+            try {
+                const response = await fetch('/saas/companies/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    showAlert('تم Create Account بنجاح! سيتم تحويلك إلى لوحة التحكم...', 'success');
+                    
+                    // Store user data
+                    localStorage.setItem('userToken', result.data.userApiKey);
+                    localStorage.setItem('masterApiKey', result.data.masterApiKey);
+                    localStorage.setItem('companyInfo', JSON.stringify(result.data.company));
+                    localStorage.setItem('userInfo', JSON.stringify(result.data.admin));
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error(result.message || 'حدث خطأ في Create Account');
+                }
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                showAlert(error.message || 'حدث خطأ في Create Account. جرب الدخول السريع بدلاً من ذلك.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        // Initialize form steps
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide all steps except the first
+            for (let i = 2; i <= totalSteps; i++) {
+                document.getElementById(`step${i}`).style.display = 'none';
+            }
+        });
+
+        // Show/hide steps
+        function showStep(step) {
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                if (i === step) {
+                    stepElement.style.display = 'block';
+                    stepElement.classList.add('active');
+                } else {
+                    stepElement.style.display = 'none';
+                    stepElement.classList.remove('active');
+                }
+            }
+        }
+
+        // Update step navigation
+        function nextStep() {
+            if (!validateStep(currentStep)) return;
+            
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                updateStepIndicators();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                updateStepIndicators();
+            }
+        }
+    </script>
+</body>
+</html>

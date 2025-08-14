@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الدفع - Siyadah WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #2c3e50;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .checkout-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .order-summary {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plan-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .plan-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .plan-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .billing-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .discount-info {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .total-section {
+            border-top: 2px solid #667eea;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .total-amount {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+        }
+
+        .security-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .security-icons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .features-included {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .features-included h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            color: #28a745;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .promo-code {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .promo-input {
+            flex: 1;
+        }
+
+        .apply-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div>
+                <a href="/" style="font-size: 1.2rem; font-weight: bold; color: #667eea;">Siyadah WhatsApp</a>
+            </div>
+            <div class="nav-links">
+                <a href="/plans.html">الخطط</a>
+                <a href="/register.html">تسجيل</a>
+                <a href="/login.html">دخول</a>
+            </div>
+        </nav>
+
+        <div class="checkout-container">
+            <!-- Order Summary -->
+            <div class="checkout-card">
+                <h2 class="card-title">ملخص الطلب</h2>
+                
+                <div class="order-summary">
+                    <div class="plan-info">
+                        <div>
+                            <div class="plan-name" id="selectedPlanName">خطة متميزة</div>
+                            <div class="billing-info" id="billingInfo">دفع شهري</div>
+                        </div>
+                        <div class="plan-price" id="planPrice">$49</div>
+                    </div>
+                </div>
+
+                <div class="discount-info" id="discountInfo" style="display: none;">
+                    <strong>خصم سنوي 20%</strong><br>
+                    وفرت <span id="savedAmount">$120</span> سنوياً
+                </div>
+
+                <div class="promo-code">
+                    <input type="text" placeholder="كود الخصم" class="promo-input" id="promoCode">
+                    <button class="apply-btn" onclick="applyPromoCode()">تطبيق</button>
+                </div>
+
+                <div class="total-section">
+                    <div class="total-amount">
+                        <span>المجموع</span>
+                        <span id="totalAmount">$49</span>
+                    </div>
+                </div>
+
+                <div class="features-included">
+                    <h4>ما يشمله اشتراكك:</h4>
+                    <ul class="features-list" id="includedFeatures">
+                        <li>20 جلسة WhatsApp</li>
+                        <li>25,000 رسالة شهرياً</li>
+                        <li>دعم أولوية</li>
+                        <li>API متقدمة</li>
+                        <li>تحليلات تفصيلية</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <div class="checkout-card">
+                <h2 class="card-title">معلومات الدفع</h2>
+                
+                <form id="paymentForm" onsubmit="processPayment(event)">
+                    <div class="form-group">
+                        <label>طريقة الدفع</label>
+                        <div class="payment-methods">
+                            <div class="payment-method active" onclick="selectPaymentMethod('card')">
+                                💳<br>بطاقة
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('paypal')">
+                                💰<br>PayPal
+                            </div>
+                            <div class="payment-method" onclick="selectPaymentMethod('bank')">
+                                🏦<br>بنك
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cardPayment">
+                        <div class="form-group">
+                            <label>رقم البطاقة</label>
+                            <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" onkeyup="formatCardNumber(this)">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>تاريخ الانتهاء</label>
+                                <input type="text" placeholder="MM/YY" maxlength="5" onkeyup="formatExpiry(this)">
+                            </div>
+                            <div class="form-group">
+                                <label>CVV</label>
+                                <input type="text" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>اسم حامل البطاقة</label>
+                        <input type="text" placeholder="الاسم كما يظهر على البطاقة" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" placeholder="email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>البلد</label>
+                        <select required>
+                            <option value="">اختر البلد</option>
+                            <option value="TN">تونس</option>
+                            <option value="SA">السعودية</option>
+                            <option value="EG">مصر</option>
+                            <option value="AE">الإمارات</option>
+                            <option value="US">الولايات المتحدة</option>
+                            <option value="GB">المملكة المتحدة</option>
+                        </select>
+                    </div>
+
+                    <div class="security-info">
+                        <strong>🔒 دفع آمن ومشفر</strong>
+                        <p>جميع معلومات الدفع محمية بتشفير SSL 256-bit</p>
+                        <div class="security-icons">
+                            <span>🛡️ SSL Secured</span>
+                            <span>💳 PCI Compliant</span>
+                            <span>🔐 Bank Level Security</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        إتمام الدفع - <span id="finalAmount">$49</span>
+                    </button>
+
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="/plans.html" class="btn btn-secondary">العودة للخطط</a>
+                    </div>
+                </form>
+
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>جاري معالجة الدفع...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPlan = 'premium';
+        let selectedPrice = 49;
+        let isYearly = false;
+        let selectedPaymentMethod = 'card';
+
+        // Load plan details from URL parameters
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            selectedPlan = urlParams.get('plan') || 'premium';
+            selectedPrice = parseInt(urlParams.get('price')) || 49;
+            isYearly = urlParams.get('billing') === 'yearly';
+
+            updateOrderSummary();
+        });
+
+        function updateOrderSummary() {
+            const planNames = {
+                basic: 'خطة أساسية',
+                premium: 'خطة متميزة',
+                enterprise: 'خطة مؤسسية'
+            };
+
+            const planFeatures = {
+                basic: [
+                    '5 جلسات WhatsApp',
+                    '5,000 رسالة شهرياً',
+                    'دعم عبر البريد',
+                    'Webhooks متقدمة',
+                    'تحليلات أساسية'
+                ],
+                premium: [
+                    '20 جلسة WhatsApp',
+                    '25,000 رسالة شهرياً',
+                    'دعم أولوية',
+                    'API متقدمة',
+                    'تحليلات تفصيلية',
+                    'إرسال الصور والملفات'
+                ],
+                enterprise: [
+                    'جلسات غير محدودة',
+                    'رسائل غير محدودة',
+                    'دعم مخصص',
+                    'API مخصصة',
+                    'تحليلات متقدمة',
+                    'تكامل مخصص',
+                    'SLA مضمون'
+                ]
+            };
+
+            document.getElementById('selectedPlanName').textContent = planNames[selectedPlan];
+            document.getElementById('billingInfo').textContent = isYearly ? 'دفع سنوي' : 'دفع شهري';
+            document.getElementById('planPrice').textContent = '$' + selectedPrice;
+            document.getElementById('totalAmount').textContent = '$' + selectedPrice;
+            document.getElementById('finalAmount').textContent = '$' + selectedPrice;
+
+            // Show discount info for yearly billing
+            if (isYearly) {
+                const monthlyPrices = { basic: 19, premium: 49, enterprise: 99 };
+                const yearlyDiscount = (monthlyPrices[selectedPlan] - selectedPrice) * 12;
+                
+                document.getElementById('discountInfo').style.display = 'block';
+                document.getElementById('savedAmount').textContent = '$' + yearlyDiscount;
+            }
+
+            // Update features list
+            const featuresList = document.getElementById('includedFeatures');
+            featuresList.innerHTML = '';
+            planFeatures[selectedPlan].forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featuresList.appendChild(li);
+            });
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.closest('.payment-method').classList.add('active');
+
+            // Show/hide payment forms
+            const cardPayment = document.getElementById('cardPayment');
+            if (method === 'card') {
+                cardPayment.style.display = 'block';
+            } else {
+                cardPayment.style.display = 'none';
+            }
+        }
+
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            input.value = formattedValue;
+        }
+
+        function formatExpiry(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            input.value = value;
+        }
+
+        function applyPromoCode() {
+            const promoCode = document.getElementById('promoCode').value;
+            
+            // Simulate promo code validation
+            const validCodes = {
+                'WELCOME10': 0.1,
+                'SAVE20': 0.2,
+                'NEWUSER': 0.15
+            };
+
+            if (validCodes[promoCode]) {
+                const discount = validCodes[promoCode];
+                const newPrice = Math.round(selectedPrice * (1 - discount));
+                
+                document.getElementById('totalAmount').textContent = '$' + newPrice;
+                document.getElementById('finalAmount').textContent = '$' + newPrice;
+                
+                alert(`تم تطبيق كود الخصم! وفرت $${selectedPrice - newPrice}`);
+            } else if (promoCode) {
+                alert('كود الخصم غير صالح');
+            }
+        }
+
+        async function processPayment(event) {
+            event.preventDefault();
+            
+            // Show loading
+            document.getElementById('paymentForm').style.display = 'none';
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            // Simulate payment processing
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Store subscription data
+            const subscriptionData = {
+                plan: selectedPlan,
+                price: selectedPrice,
+                billing: isYearly ? 'yearly' : 'monthly',
+                paymentMethod: selectedPaymentMethod,
+                status: 'active',
+                startDate: new Date().toISOString(),
+                nextBilling: new Date(Date.now() + (isYearly ? 365 : 30) * 24 * 60 * 60 * 1000).toISOString()
+            };
+
+            localStorage.setItem('userSubscription', JSON.stringify(subscriptionData));
+
+            // Redirect to success page
+            window.location.href = '/payment-success.html';
+        }
+    </script>
+</body>
+</html>

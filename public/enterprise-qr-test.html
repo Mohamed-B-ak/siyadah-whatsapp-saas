@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise QR Code Testing Interface</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status-online { background: #27ae60; }
+        .status-testing { background: #f39c12; }
+        .main-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .test-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            border: 2px solid #e9ecef;
+        }
+        .test-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .qr-display {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            border: 2px dashed #3498db;
+            margin-top: 20px;
+        }
+        .qr-image {
+            max-width: 250px;
+            border: 3px solid #2c3e50;
+            border-radius: 10px;
+            display: none;
+        }
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-timestamp {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        .log-message {
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        .warning { color: #f39c12; font-weight: bold; }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Enterprise QR Code Testing</h1>
+            <p>Advanced WhatsApp API Integration Testing Interface</p>
+            <div class="status-badge status-online">System Online</div>
+        </div>
+
+        <div class="main-content">
+            <div class="test-panel">
+                <h3>🔧 API Testing Controls</h3>
+                <button class="btn" onclick="startFullTest()">🎯 Start Complete Test</button>
+                <button class="btn" onclick="generateToken()" id="tokenBtn">🔑 Generate Token</button>
+                <button class="btn" onclick="startSession()" id="sessionBtn" disabled>🚀 Start WhatsApp Session</button>
+                <button class="btn" onclick="getQRCode()" id="qrBtn" disabled>📱 Get QR Code</button>
+                <button class="btn" onclick="checkStatus()" id="statusBtn" disabled>📊 Check Status</button>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+
+                <div class="result-box" id="resultBox">
+                    <div class="log-entry">
+                        <div class="log-timestamp">System Ready</div>
+                        <div class="log-message">Enterprise testing interface initialized</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-panel">
+                <h3>📱 QR Code Display</h3>
+                <div class="qr-display" id="qrDisplay">
+                    <p style="color: #7f8c8d; font-size: 1.1rem;">QR Code will appear here</p>
+                    <p style="color: #bdc3c7; font-size: 0.9rem; margin-top: 10px;">Start a session to generate QR code</p>
+                    <img id="qrImage" class="qr-image" />
+                </div>
+
+                <div class="result-box" id="sessionInfo">
+                    <div class="log-entry">
+                        <div class="log-timestamp">Session Info</div>
+                        <div class="log-message">No active session</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionName = 'enterprise-' + Date.now();
+        let token = '';
+        let testStep = 0;
+
+        function log(message, type = 'info') {
+            const resultBox = document.getElementById('resultBox');
+            const timestamp = new Date().toLocaleTimeString('ar-SA');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <div class="log-timestamp">${timestamp}</div>
+                <div class="log-message ${type}">${message}</div>
+            `;
+            resultBox.appendChild(logEntry);
+            resultBox.scrollTop = resultBox.scrollHeight;
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progressBar').style.width = percent + '%';
+        }
+
+        function updateSessionInfo(info) {
+            const sessionInfo = document.getElementById('sessionInfo');
+            sessionInfo.innerHTML = `
+                <div class="log-entry">
+                    <div class="log-timestamp">${new Date().toLocaleTimeString('ar-SA')}</div>
+                    <div class="log-message">${info}</div>
+                </div>
+            `;
+        }
+
+        async function startFullTest() {
+            log('🚀 Starting complete enterprise test sequence', 'info');
+            updateProgress(10);
+            await generateToken();
+            updateProgress(30);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            await startSession();
+            updateProgress(60);
+            await new Promise(resolve => setTimeout(resolve, 30000));
+            await getQRCode();
+            updateProgress(80);
+            await checkStatus();
+            updateProgress(100);
+            log('✅ Complete test sequence finished', 'success');
+        }
+
+        async function generateToken() {
+            try {
+                log('🔑 Generating authentication token...', 'info');
+                
+                const response = await fetch(`/api/${sessionName}/THISISMYSECURETOKEN/generate-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session: sessionName })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    token = data.token;
+                    log(`✅ Token generated: ${token.substring(0, 25)}...`, 'success');
+                    updateSessionInfo(`Session: ${sessionName}<br>Token: ${token.substring(0, 30)}...`);
+                    document.getElementById('sessionBtn').disabled = false;
+                    return true;
+                } else {
+                    log('❌ Token generation failed', 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Token error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function startSession() {
+            try {
+                log('🚀 Starting WhatsApp session...', 'info');
+                
+                // Start session (will timeout, this is expected)
+                fetch(`/api/${sessionName}/start-session`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ webhook: '', waitQrCode: true })
+                }).catch(() => {}); // Expected timeout
+
+                log('⏳ Session starting in background...', 'warning');
+                updateSessionInfo(`Session: ${sessionName}<br>Status: Initializing<br>Waiting 30 seconds...`);
+                
+                // Wait for initialization
+                setTimeout(() => {
+                    log('🎯 Session initialization complete', 'success');
+                    document.getElementById('qrBtn').disabled = false;
+                    document.getElementById('statusBtn').disabled = false;
+                }, 30000);
+
+                return true;
+            } catch (error) {
+                log(`❌ Session error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function getQRCode() {
+            try {
+                log('📱 Requesting QR Code...', 'info');
+
+                const response = await fetch(`/api/${sessionName}/qrcode-session`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType?.includes('application/json')) {
+                        const data = await response.json();
+                        if (data.qrcode) {
+                            displayQRCode(data.qrcode);
+                            log('✅ QR Code received and displayed', 'success');
+                            return true;
+                        } else {
+                            log(`⚠️ No QR in response: ${data.message || 'Unknown'}`, 'warning');
+                        }
+                    } else {
+                        // Binary response
+                        const blob = await response.blob();
+                        const url = URL.createObjectURL(blob);
+                        displayQRCode(url);
+                        log('✅ QR Code received as image', 'success');
+                        return true;
+                    }
+                } else {
+                    log(`❌ QR request failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ QR Code error: ${error.message}`, 'error');
+            }
+            return false;
+        }
+
+        function displayQRCode(qrData) {
+            const qrImage = document.getElementById('qrImage');
+            const qrDisplay = document.getElementById('qrDisplay');
+            
+            qrImage.src = qrData;
+            qrImage.style.display = 'block';
+            qrDisplay.innerHTML = '';
+            qrDisplay.appendChild(qrImage);
+            
+            const instructions = document.createElement('p');
+            instructions.style.marginTop = '15px';
+            instructions.style.color = '#27ae60';
+            instructions.style.fontWeight = 'bold';
+            instructions.textContent = 'امسح هذا الكود بتطبيق WhatsApp';
+            qrDisplay.appendChild(instructions);
+        }
+
+        async function checkStatus() {
+            try {
+                log('📊 Checking session status...', 'info');
+
+                const response = await fetch(`/api/${sessionName}/status-session`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                log(`📊 Status: ${data.status || 'Unknown'}`, 'info');
+                
+                let statusMessage = `Status: ${data.status}<br>`;
+                if (data.qrcode) statusMessage += 'QR Code: Available<br>';
+                if (data.message) statusMessage += `Message: ${data.message}`;
+                
+                updateSessionInfo(`Session: ${sessionName}<br>${statusMessage}`);
+                
+                return data.status;
+            } catch (error) {
+                log(`❌ Status check error: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        // Auto-refresh status every 15 seconds
+        setInterval(() => {
+            if (token && !document.getElementById('statusBtn').disabled) {
+                checkStatus();
+            }
+        }, 15000);
+
+        log('🎯 Enterprise testing interface ready', 'success');
+    </script>
+</body>
+</html>

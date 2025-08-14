@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Company Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            margin: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <i class="fab fa-whatsapp"></i>
+            <h1>Siyadah WhatsApp Registration</h1>
+            <p>Create your company or user account</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="type">Account Type</label>
+                <select id="type" name="type" required>
+                    <option value="">Choose account type</option>
+                    <option value="company">Company</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <div class="form-group" id="companyIdGroup" style="display: none;">
+                <label for="companyId">معرف الشركة</label>
+                <input type="text" id="companyId" name="companyId">
+            </div>
+
+            <div class="form-group" id="planTypeGroup" style="display: none;">
+                <label for="planType">نوع الخطة</label>
+                <select id="planType" name="planType">
+                    <option value="basic">أساسية</option>
+                    <option value="premium">متقدمة</option>
+                    <option value="enterprise">مؤسسية</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-register">
+                <i class="fas fa-user-plus"></i>
+                Create Account
+            </button>
+        </form>
+
+        <div id="result" class="result"></div>
+
+        <div class="login-link">
+            <p>لديك حساب بالفعل؟ <a href="/login.html">Sign In</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('type').addEventListener('change', function() {
+            const type = this.value;
+            const companyIdGroup = document.getElementById('companyIdGroup');
+            const planTypeGroup = document.getElementById('planTypeGroup');
+            
+            if (type === 'user') {
+                companyIdGroup.style.display = 'block';
+                planTypeGroup.style.display = 'none';
+                document.getElementById('companyId').required = true;
+            } else if (type === 'company') {
+                companyIdGroup.style.display = 'none';
+                planTypeGroup.style.display = 'block';
+                document.getElementById('companyId').required = false;
+            } else {
+                companyIdGroup.style.display = 'none';
+                planTypeGroup.style.display = 'none';
+                document.getElementById('companyId').required = false;
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const result = document.getElementById('result');
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التسجيل...';
+            
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const responseData = await response.json();
+                
+                if (response.ok && responseData.success) {
+                    result.className = 'result success';
+                    result.style.display = 'block';
+                    
+                    // Store registration data for plan selection
+                    localStorage.setItem('registrationData', JSON.stringify({
+                        ...responseData.data,
+                        type: data.type,
+                        timestamp: new Date().toISOString()
+                    }));
+                    
+                    if (data.type === 'company') {
+                        result.innerHTML = `
+                            <h3>تم إنشاء الشركة بنجاح!</h3>
+                            <p><strong>مفتاح API الرئيسي:</strong> ${responseData.data.masterApiKey}</p>
+                            <p>احتفظ بهذا المفتاح في مكان آمن</p>
+                            <p style="color: #667eea; font-weight: bold;">جاري التوجيه لاختيار خطة الاشتراك...</p>
+                        `;
+                        
+                        // Redirect to plans page for companies
+                        setTimeout(() => {
+                            window.location.href = '/plans.html?registered=true';
+                        }, 3000);
+                    } else {
+                        result.innerHTML = `
+                            <h3>تم إنشاء المستخدم بنجاح!</h3>
+                            <p><strong>مفتاح API:</strong> ${responseData.data.apiKey}</p>
+                            <p>احتفظ بهذا المفتاح في مكان آمن</p>
+                            <p style="color: #667eea; font-weight: bold;">جاري التوجيه لتسجيل الدخول...</p>
+                        `;
+                        
+                        // Users go to login
+                        setTimeout(() => {
+                            window.location.href = '/login.html';
+                        }, 3000);
+                    }
+                } else {
+                    result.className = 'result error';
+                    result.style.display = 'block';
+                    result.innerHTML = responseData.message || 'حدث خطأ أثناء التسجيل';
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.style.display = 'block';
+                result.innerHTML = 'خطأ في الاتصال بالخادم';
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        });
+    </script>
+</body>
+</html>

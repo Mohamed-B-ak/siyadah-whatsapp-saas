@@ -1,0 +1,86 @@
+modules = ["nodejs-20", "web", "postgresql-16", "python-3.11", "python3"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+packages = [
+  "alsa-lib",
+  "at-spi2-atk",
+  "atk",
+  "cargo",
+  "chromium",
+  "cups",
+  "freetype",
+  "glib",
+  "gtk3",
+  "lcms2",
+  "libiconv",
+  "libimagequant",
+  "libjpeg",
+  "libtiff",
+  "libwebp",
+  "libxcrypt",
+  "mesa",
+  "nss",
+  "openjpeg",
+  "rustc",
+  "tcl",
+  "tk",
+  "xorg.libX11",
+  "xorg.libXScrnSaver",
+  "xorg.libXcomposite",
+  "xorg.libXcursor",
+  "xorg.libXdamage",
+  "xorg.libXrandr",
+  "xorg.libXtst",
+  "xorg.libxcb",
+  "zlib",
+  "git",
+]
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[[ports]]
+localPort = 3000
+externalPort = 3002
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
+localPort = 8001
+externalPort = 3001
+
+[[ports]]
+localPort = 21465
+externalPort = 3000

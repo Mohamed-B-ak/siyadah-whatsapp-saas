@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم الدفع بنجاح - Siyadah WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 40px;
+            color: white;
+            animation: successPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .subscription-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: right;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .detail-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .next-steps {
+            background: #e8f4fd;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-right: 4px solid #667eea;
+        }
+
+        .next-steps h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .steps-list {
+            list-style: none;
+            text-align: right;
+        }
+
+        .steps-list li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .action-buttons {
+            margin-top: 40px;
+        }
+
+        .support-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .support-info h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .support-info p {
+            color: #856404;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 40px 20px;
+            }
+            
+            .success-title {
+                font-size: 2rem;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        
+        <h1 class="success-title">تم الدفع بنجاح!</h1>
+        
+        <p class="success-message">
+            شكراً لك! تم تفعيل اشتراكك بنجاح وأصبح بإمكانك الآن الاستفادة من جميع ميزات منصة Siyadah WhatsApp
+        </p>
+
+        <div class="subscription-details">
+            <div class="detail-row">
+                <span class="detail-label">الخطة المحددة:</span>
+                <span class="detail-value" id="planName">خطة متميزة</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">المبلغ المدفوع:</span>
+                <span class="detail-value" id="paidAmount">$49</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">دورة الفوترة:</span>
+                <span class="detail-value" id="billingCycle">شهري</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">تاريخ التفعيل:</span>
+                <span class="detail-value" id="activationDate">27 يونيو 2025</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">الفوترة التالية:</span>
+                <span class="detail-value" id="nextBilling">27 يوليو 2025</span>
+            </div>
+        </div>
+
+        <div class="next-steps">
+            <h3>الخطوات التالية:</h3>
+            <ol class="steps-list">
+                <li>
+                    <span class="step-number">1</span>
+                    انتقل إلى لوحة التحكم لإعداد حسابك
+                </li>
+                <li>
+                    <span class="step-number">2</span>
+                    أنشئ أول جلسة WhatsApp وادع رمز QR
+                </li>
+                <li>
+                    <span class="step-number">3</span>
+                    ابدأ في إرسال الرسائل واستخدام API
+                </li>
+                <li>
+                    <span class="step-number">4</span>
+                    راجع دليل المطور للتكامل المتقدم
+                </li>
+            </ol>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/login.html" class="btn btn-primary">تسجيل الدخول</a>
+            <a href="/plans.html" class="btn btn-secondary">عرض الخطط</a>
+        </div>
+
+        <div class="support-info">
+            <h4>هل تحتاج مساعدة؟</h4>
+            <p>
+                فريق الدعم متاح 24/7 لمساعدتك. تواصل معنا عبر البريد الإلكتروني أو الدردشة المباشرة
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Load subscription details from localStorage
+        window.addEventListener('load', function() {
+            const subscription = JSON.parse(localStorage.getItem('userSubscription') || '{}');
+            
+            if (subscription.plan) {
+                const planNames = {
+                    basic: 'خطة أساسية',
+                    premium: 'خطة متميزة',
+                    enterprise: 'خطة مؤسسية'
+                };
+
+                document.getElementById('planName').textContent = planNames[subscription.plan];
+                document.getElementById('paidAmount').textContent = '$' + subscription.price;
+                document.getElementById('billingCycle').textContent = subscription.billing === 'yearly' ? 'سنوي' : 'شهري';
+                
+                const startDate = new Date(subscription.startDate);
+                const nextBilling = new Date(subscription.nextBilling);
+                
+                document.getElementById('activationDate').textContent = startDate.toLocaleDateString('ar-EG');
+                document.getElementById('nextBilling').textContent = nextBilling.toLocaleDateString('ar-EG');
+            }
+
+            // Auto-redirect to login after 10 seconds
+            setTimeout(() => {
+                if (confirm('هل تريد الانتقال إلى تسجيل الدخول الآن؟')) {
+                    window.location.href = '/login.html';
+                }
+            }, 10000);
+        });
+    </script>
+</body>
+</html>

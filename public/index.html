@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Enterprise API Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: ltr;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white !important;
+            padding: 12px 25px !important;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 20px 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px 35px;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 20px;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .stats-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 20px;
+            background: #f8f9fa;
+        }
+
+        .pricing-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card.popular {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: "الأكثر شعبية";
+            position: absolute;
+            top: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .plan-price {
+            font-size: 3rem;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .plan-period {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features i {
+            color: #28a745;
+            width: 20px;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .contact p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            text-align: right;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 20px 20px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+
+        .footer-section a {
+            color: #bdc3c7;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+            color: #bdc3c7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .features-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Demo Status Styles */
+        .success-status {
+            background: #4CAF50 !important;
+            color: white !important;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .warning-status {
+            background: #ff9800 !important;
+            color: white !important;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .default-status {
+            background: #ffc107 !important;
+            color: white !important;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* Responsive Demo Section */
+        @media (max-width: 768px) {
+            .try-api div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fab fa-whatsapp"></i>
+                Siyadah WhatsApp
+            </a>
+            <nav>
+                <ul class="nav-menu" id="mainNavMenu">
+                    <li><a href="#try-api">جرب المنصة</a></li>
+                    <li><a href="/features.html">المميزات</a></li>
+                    <li><a href="/plans.html">الخطط والأسعار</a></li>
+                    <li><a href="/contact.html">اتصل بنا</a></li>
+                    <li id="dashboardLink" style="display:none;"><a href="/company-dashboard.html">لوحة التحكم</a></li>
+                    <li id="loginLink"><a href="/login.html">Sign In</a></li>
+                    <li id="logoutLink" style="display:none;"><a href="#" onclick="logout()">تسجيل الخروج</a></li>
+                </ul>
+            </nav>
+            <div id="navCtaSection">
+                <span id="userWelcome" style="display:none; color:white; margin-left:15px;"></span>
+                <a href="/signup.html" class="cta-button" id="signupButton">ابدأ الآن</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container fade-in-up">
+            <h1>منصة WhatsApp الاحترافية للأعمال</h1>
+            <p>حل متكامل لإدارة رسائل WhatsApp للشركات مع واجهة برمجة تطبيقات قوية ونظام إدارة متقدم</p>
+            <div class="hero-buttons">
+                <a href="/signup.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    ابدأ التجربة المجانية
+                </a>
+                <a href="/dashboard" class="btn-secondary">
+                    <i class="fas fa-play"></i>
+                    شاهد العرض التوضيحي
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Try API Section -->
+    <section class="try-api" id="try-api" style="padding: 80px 20px; background: #f8f9fa;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-title fade-in-up">
+                <h2>جرب واجهة برمجة التطبيقات مباشرة</h2>
+                <p>اختبر قوة منصة WhatsApp API الخاصة بنا في الوقت الفعلي - بدون تسجيل أو إعداد معقد</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 50px;">
+                <!-- Steps Guide -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <h3 style="color: #333; margin-bottom: 25px; font-size: 1.5rem;">كيفية الاختبار</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">1</div>
+                            <div>
+                                <h4 style="color: #333; margin: 0;">اتصال تلقائي</h4>
+                                <p style="color: #666; margin: 5px 0 0;">ستظهر جلسة تجريبية تلقائياً مع رمز QR</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">2</div>
+                            <div>
+                                <h4 style="color: #333; margin: 0;">مسح الرمز</h4>
+                                <p style="color: #666; margin: 5px 0 0;">امسح رمز QR بتطبيق WhatsApp على هاتفك</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">3</div>
+                            <div>
+                                <h4 style="color: #333; margin: 0;">اختبار فوري</h4>
+                                <p style="color: #666; margin: 5px 0 0;">أرسل واستقبل الرسائل مباشرة عبر الواجهة</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 25px; padding: 15px; background: #e8f5e8; border-radius: 10px; border-left: 4px solid #4CAF50;">
+                        <p style="color: #2e7d32; margin: 0; font-weight: 500;">هذا عرض توضيحي مجاني بالكامل!</p>
+                    </div>
+                </div>
+
+                <!-- Demo Interface -->
+                <div style="background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;">
+                        <h3 style="color: #333; margin: 0;">جرب WhatsApp API الآن</h3>
+                        <div id="demoStatus" style="background: #ffc107; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold;">جاري التحضير...</div>
+                    </div>
+                    
+                    <!-- QR Code Section -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+                            اتصال WhatsApp
+                        </h4>
+                        <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <div id="qrContainer" style="display: none;">
+                                <img id="qrImage" style="max-width: 180px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);" alt="QR Code" />
+                                <p id="qrStatus" style="color: #666; margin-top: 10px; font-size: 0.9rem;">امسح هذا الرمز بتطبيق WhatsApp</p>
+                            </div>
+                            <div id="loadingQR" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                                <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                                <p style="color: #666; margin: 0;">جاري إنشاء جلسة تجريبية...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Send Message Section -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-paper-plane" style="color: #667eea;"></i>
+                            إرسال رسالة
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <input type="text" id="testPhone" placeholder="رقم الهاتف (مثال: +966501234567)" style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;" />
+                            <textarea id="testMessage" placeholder="اكتب رسالتك هنا..." style="padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; height: 80px; resize: vertical; font-size: 1rem;"></textarea>
+                            <button onclick="redirectToAuth()" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 12px 25px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s;">Sign In المطلوب</button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Display -->
+                    <div>
+                        <h4 style="color: #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-comments" style="color: #28a745;"></i>
+                            الرسائل الواردة
+                        </h4>
+                        <div id="messagesDisplay" style="background: #f8f9fa; border-radius: 10px; padding: 15px; min-height: 100px; max-height: 200px; overflow-y: auto;">
+                            <p style="color: #999; margin: 0; text-align: center;">سيتم عرض الرسائل الواردة هنا تلقائياً...</p>
+                        </div>
+                    </div>
+
+                    <!-- Results Display -->
+                    <div id="testResults" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                <p style="color: #666; margin: 0;">هذا مجرد عرض توضيحي - للاستخدام التجاري الكامل، <a href="#pricing" style="color: #667eea; text-decoration: none; font-weight: bold;">اشترك في إحدى خططنا</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-title fade-in-up">
+                <h2>لماذا تختار منصتنا؟</h2>
+                <p>نوفر حلول WhatsApp متقدمة وآمنة للشركات من جميع الأحجام</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>إدارة متعددة العملاء</h3>
+                    <p>نظام شامل لإدارة عدة شركات ومستخدمين مع عزل كامل للبيانات وصلاحيات مخصصة</p>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>API قوي ومرن</h3>
+                    <p>واجهة برمجة تطبيقات متقدمة تدعم جميع عمليات WhatsApp مع وثائق شاملة وأمثلة عملية</p>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>أمان متقدم</h3>
+                    <p>تشفير قوي ومفاتيح API آمنة مع حدود معدلات وحماية شاملة ضد الهجمات</p>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>تحليلات مفصلة</h3>
+                    <p>تتبع شامل للرسائل والاستهلاك مع تقارير مفصلة ولوحة تحكم تفاعلية</p>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>جلسات منفصلة</h3>
+                    <p>كل مستخدم له جلساته المستقلة مع QR Code منفصل وإدارة كاملة للاتصالات</p>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>إشعارات فورية</h3>
+                    <p>نظام webhook متقدم لاستقبال الأحداث في الوقت الفعلي مع دعم Socket.IO</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container fade-in-up">
+            <h2>أرقام تتحدث عن نفسها</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="companiesCount">500+</div>
+                    <div class="stat-label">شركة تثق بنا</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="messagesCount">10M+</div>
+                    <div class="stat-label">رسالة شهرياً</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="uptimePercent">99.9%</div>
+                    <div class="stat-label">وقت التشغيل</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="supportTime">24/7</div>
+                    <div class="stat-label">دعم فني</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="pricing-container">
+            <div class="section-title fade-in-up">
+                <h2>خطط أسعار مرنة</h2>
+                <p>اختر الخطة التي تناسب احتياجات عملك</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in-up">
+                    <div class="plan-name">الأساسية</div>
+                    <div class="plan-price">$29</div>
+                    <div class="plan-period">شهرياً</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> حتى 5 مستخدمين</li>
+                        <li><i class="fas fa-check"></i> 10 جلسات WhatsApp</li>
+                        <li><i class="fas fa-check"></i> 1000 رسالة شهرياً</li>
+                        <li><i class="fas fa-check"></i> API أساسي</li>
+                        <li><i class="fas fa-check"></i> دعم فني</li>
+                    </ul>
+                    <a href="#start" class="btn-primary">ابدأ الآن</a>
+                </div>
+                <div class="pricing-card popular fade-in-up">
+                    <div class="plan-name">المتقدمة</div>
+                    <div class="plan-price">$79</div>
+                    <div class="plan-period">شهرياً</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> حتى 20 مستخدم</li>
+                        <li><i class="fas fa-check"></i> 50 جلسة WhatsApp</li>
+                        <li><i class="fas fa-check"></i> 10,000 رسالة شهرياً</li>
+                        <li><i class="fas fa-check"></i> API متقدم</li>
+                        <li><i class="fas fa-check"></i> تحليلات مفصلة</li>
+                        <li><i class="fas fa-check"></i> دعم أولوية</li>
+                    </ul>
+                    <a href="#start" class="btn-primary">ابدأ الآن</a>
+                </div>
+                <div class="pricing-card fade-in-up">
+                    <div class="plan-name">المؤسسات</div>
+                    <div class="plan-price">$199</div>
+                    <div class="plan-period">شهرياً</div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> مستخدمين غير محدود</li>
+                        <li><i class="fas fa-check"></i> جلسات غير محدودة</li>
+                        <li><i class="fas fa-check"></i> رسائل غير محدودة</li>
+                        <li><i class="fas fa-check"></i> API كامل</li>
+                        <li><i class="fas fa-check"></i> نسخ احتياطي</li>
+                        <li><i class="fas fa-check"></i> دعم مخصص</li>
+                    </ul>
+                    <a href="#start" class="btn-primary">ابدأ الآن</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container fade-in-up">
+            <h2>هل لديك أسئلة؟</h2>
+            <p>تواصل معنا وسنساعدك في إيجاد الحل المناسب لعملك</p>
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" placeholder="الاسم الكامل" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="اسم الشركة">
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="كيف يمكننا مساعدتك؟" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    إرسال الرسالة
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>المنصة</h3>
+                <a href="#features">المميزات</a>
+                <a href="#pricing">الأسعار</a>
+                <a href="/api-docs">وثائق API</a>
+                <a href="#demo">العرض التوضيحي</a>
+            </div>
+            <div class="footer-section">
+                <h3>الدعم</h3>
+                <a href="#contact">اتصل بنا</a>
+                <a href="/help">مركز المساعدة</a>
+                <a href="/tutorials">الدروس Educationية</a>
+                <a href="/status">حالة النظام</a>
+            </div>
+            <div class="footer-section">
+                <h3>الشركة</h3>
+                <a href="/about">من نحن</a>
+                <a href="/careers">الوظائف</a>
+                <a href="/privacy">سياسة الخصوصية</a>
+                <a href="/terms">شروط الاستخدام</a>
+            </div>
+            <div class="footer-section">
+                <h3>تابعنا</h3>
+                <a href="#"><i class="fab fa-twitter"></i> تويتر</a>
+                <a href="#"><i class="fab fa-linkedin"></i> لينكد إن</a>
+                <a href="#"><i class="fab fa-github"></i> جيت هاب</a>
+                <a href="#"><i class="fab fa-youtube"></i> يوتيوب</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Siyadah WhatsApp. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        // Load system stats from API
+        async function loadStats() {
+            try {
+                const response = await fetch('/saas/system/stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Update stats with real data
+                    document.getElementById('companiesCount').textContent = data.data?.totalCompanies || '500+';
+                    document.getElementById('messagesCount').textContent = (data.data?.totalSessions * 100 || 10000) + '+';
+                }
+            } catch (error) {
+                }
+        }
+
+        // WhatsApp API Demo Functionality
+        let currentToken = '';
+        // No demo sessions - authentication required
+        let socket = null;
+        let autoSessionStarted = false;
+
+        // Initialize socket for real-time messaging
+        function initDemoSocket() {
+            socket = io();
+            
+            socket.on('connect', function() {
+                updateDemoStatus('متصل', 'success');
+            });
+            
+            socket.on('webhook-received', function(data) {
+                displayDemoMessage(data);
+            });
+            
+            socket.on('received-message', function(data) {
+                displayDemoMessage(data);
+            });
+            
+            socket.on('onmessage', function(data) {
+                displayDemoMessage(data);
+            });
+            
+            socket.on('disconnect', function() {
+                updateDemoStatus('منقطع', 'warning');
+            });
+        }
+
+        function updateDemoStatus(text, type) {
+            const statusEl = document.getElementById('demoStatus');
+            statusEl.textContent = text;
+            statusEl.className = type === 'success' ? 'success-status' : 
+                               type === 'warning' ? 'warning-status' : 'default-status';
+        }
+
+        function displayDemoMessage(data) {
+            if (data.event === 'onmessage' && data.body && data.body !== 'N/A') {
+                const messagesDiv = document.getElementById('messagesDisplay');
+                const messageTime = new Date().toLocaleTimeString('ar-SA');
+                
+                const messageHtml = `
+                    <div style="background: #e8f5e8; padding: 10px; margin: 5px 0; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>[${messageTime}] رسالة جديدة من WhatsApp</strong><br>
+                        <strong>من:</strong> ${data.from}<br>
+                        <strong>الرسالة:</strong> "${data.body}"
+                    </div>`;
+                
+                if (messagesDiv.innerHTML.includes('سيتم عرض الرسائل')) {
+                    messagesDiv.innerHTML = '';
+                }
+                messagesDiv.innerHTML += messageHtml;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+
+        async function startDemoSession() {
+            try {
+                updateDemoStatus('جاري إنشاء الجلسة...', 'warning');
+                
+                // Generate token
+                const tokenResponse = await fetch(`/api/${currentSession}/THISISMYSECURETOKEN/generate-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const tokenResult = await tokenResponse.json();
+                currentToken = tokenResult.full || '';
+                
+                // Start session
+                const sessionResponse = await fetch(`/api/${currentSession}/start-session`, {
+                    method: 'POST',
+                    headers: {
+                        'authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (sessionResponse.ok) {
+                    updateDemoStatus('جاري إنشاء رمز QR...', 'warning');
+                    // Authentication required
+                }
+            } catch (error) {
+                updateDemoStatus('خطأ في الاتصال', 'error');
+                showDemoResult('حدث خطأ أثناء إنشاء الجلسة: ' + error.message, 'error');
+            }
+        }
+
+        function redirectToAuth() {
+            alert('يتطلب Sign In لاستخدام هذه الميزة');
+            window.location.href = '/register.html';
+        }
+        
+        async function getDemoQRCode() {
+            try {
+                const response = await fetch(`/api/${currentSession}/qrcode-session`, {
+                    headers: { 
+                        'authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && contentType.includes('application/json')) {
+                        const result = await response.json();
+                        if (result.base64) {
+                            showDemoQR(`data:image/png;base64,${result.base64}`);
+                        } else {
+                            setTimeout(getDemoQRCode, 3000);
+                        }
+                    } else {
+                        const blob = await response.blob();
+                        const reader = new FileReader();
+                        reader.onloadend = function() {
+                            showDemoQR(reader.result);
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                } else {
+                    setTimeout(getDemoQRCode, 3000);
+                }
+            } catch (error) {
+                setTimeout(getDemoQRCode, 3000);
+            }
+        }
+
+        function showDemoQR(qrData) {
+            document.getElementById('loadingQR').style.display = 'none';
+            document.getElementById('qrContainer').style.display = 'block';
+            document.getElementById('qrImage').src = qrData;
+            updateDemoStatus('جاهز للاتصال', 'success');
+        }
+
+        function sendTestMessage() {
+            redirectToAuth();
+        }
+        
+        async function sendTestMessageOld() {
+            const phone = document.getElementById('testPhone').value;
+            const message = document.getElementById('testMessage').value;
+            
+            if (!phone || !message) {
+                showDemoResult('يرجى إدخال رقم الهاتف والرسالة', 'error');
+                return;
+            }
+            
+            if (!currentToken) {
+                showDemoResult('يرجى انتظار إنشاء الجلسة أولاً', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/${currentSession}/send-message`, {
+                    method: 'POST',
+                    headers: {
+                        'authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone, message })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && (result.status === 'success' || result.result)) {
+                    showDemoResult('تم إرسال الرسالة بنجاح!', 'success');
+                    document.getElementById('testMessage').value = '';
+                } else {
+                    showDemoResult('فشل في إرسال الرسالة: ' + JSON.stringify(result), 'error');
+                }
+            } catch (error) {
+                showDemoResult('خطأ في إرسال الرسالة: ' + error.message, 'error');
+            }
+        }
+
+        function showDemoResult(text, type) {
+            const resultsDiv = document.getElementById('testResults');
+            const alertClass = type === 'success' ? 'success' : 'error';
+            const bgColor = type === 'success' ? '#e8f5e8' : '#ffebee';
+            const borderColor = type === 'success' ? '#4CAF50' : '#f44336';
+            const textColor = type === 'success' ? '#2e7d32' : '#c62828';
+            
+            resultsDiv.innerHTML = `
+                <div style="background: ${bgColor}; border: 1px solid ${borderColor}; border-radius: 8px; padding: 15px; margin-top: 10px;">
+                    <p style="color: ${textColor}; margin: 0; font-weight: 500;">${text}</p>
+                </div>`;
+        }
+
+        // Authentication state management
+        function checkAuthState() {
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            const userApiKey = localStorage.getItem('userApiKey');
+            
+            if (userEmail && userName && userApiKey) {
+                // User is logged in
+                showLoggedInState(userName, userEmail, userApiKey);
+                return true;
+            } else {
+                // User is not logged in
+                showLoggedOutState();
+                return false;
+            }
+        }
+        
+        function showLoggedInState(userName, userEmail, userApiKey) {
+            // Update navigation
+            document.getElementById('loginLink').style.display = 'none';
+            document.getElementById('logoutLink').style.display = 'block';
+            document.getElementById('dashboardLink').style.display = 'block';
+            
+            // Show welcome message
+            document.getElementById('userWelcome').textContent = `مرحباً ${userName}`;
+            document.getElementById('userWelcome').style.display = 'inline';
+            
+            // Hide signup button
+            document.getElementById('signupButton').style.display = 'none';
+            
+            // Update demo section to use user's API key
+            if (userApiKey) {
+                currentToken = userApiKey;
+                currentSession = `${userEmail.split('@')[0]}-${Date.now()}`;
+            }
+        }
+        
+        function showLoggedOutState() {
+            // Update navigation
+            document.getElementById('loginLink').style.display = 'block';
+            document.getElementById('logoutLink').style.display = 'none';
+            document.getElementById('dashboardLink').style.display = 'none';
+            
+            // Hide welcome message
+            document.getElementById('userWelcome').style.display = 'none';
+            
+            // Show signup button
+            document.getElementById('signupButton').style.display = 'inline-block';
+        }
+        
+        function logout() {
+            // Clear localStorage
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userApiKey');
+            
+            // Reset authentication state
+            showLoggedOutState();
+            
+            // Show logout message
+            alert('تم تسجيل الخروج بنجاح');
+            
+            // Refresh page to reset demo
+            window.location.reload();
+        }
+        
+        // Auto-start demo when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication state first
+            const isLoggedIn = checkAuthState();
+            
+            initDemoSocket();
+            loadStats();
+            
+            // Auto-start demo after 2 seconds (only if not logged in for demo purposes)
+            setTimeout(() => {
+                if (!autoSessionStarted && !isLoggedIn) {
+                    autoSessionStarted = true;
+                    startDemoSession();
+                }
+            }, 2000);
+        });
+
+        // Contact form submission
+        document.querySelector('.contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const button = this.querySelector('button');
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<span class="loading"></span> جارٍ الإرسال...';
+            button.disabled = true;
+
+            // Simulate form submission
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i> تم الإرسال بنجاح';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    this.reset();
+                }, 2000);
+            }, 2000);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siyadah WhatsApp - Features & Capabilities</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: ltr;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23pattern)"/></svg>');
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .nav-back {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-back a {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .nav-back a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .feature-benefits {
+            list-style: none;
+            text-align: right;
+        }
+
+        .feature-benefits li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+        }
+
+        .feature-benefits li i {
+            color: #28a745;
+            width: 16px;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .api-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .api-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .method {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .endpoint-body {
+            padding: 20px;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .performance-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border-color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-back">
+        <a href="/">
+            <i class="fas fa-arrow-right"></i>
+            العودة للرئيسية
+        </a>
+    </div>
+
+    <div class="header">
+        <div class="header-content fade-in">
+            <h1>مميزات متقدمة</h1>
+            <p>اكتشف قوة منصة Siyadah WhatsApp للأعمال والتطوير</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="feature-title">إعداد سريع</h3>
+                <p class="feature-description">
+                    ابدأ في دقائق معدودة مع API جاهز للاستخدام وإعدادات تلقائية ذكية
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> إعداد تلقائي لـ WhatsApp Web</li>
+                    <li><i class="fas fa-check"></i> QR Code آمن ومشفر</li>
+                    <li><i class="fas fa-check"></i> اتصال مستقر 24/7</li>
+                    <li><i class="fas fa-check"></i> مراقبة حالة الاتصال</li>
+                </ul>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="feature-title">API متطور</h3>
+                <p class="feature-description">
+                    واجهة برمجية شاملة مع دعم RESTful وWebSocket للتطبيقات الحديثة
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> REST API كامل</li>
+                    <li><i class="fas fa-check"></i> WebSocket للأحداث الفورية</li>
+                    <li><i class="fas fa-check"></i> وثائق تفاعلية</li>
+                    <li><i class="fas fa-check"></i> مكتبات برمجية جاهزة</li>
+                </ul>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="feature-title">إدارة متعددة المستويات</h3>
+                <p class="feature-description">
+                    نظام هرمي لإدارة الشركات والمستخدمين مع صلاحيات مفصلة
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> لوحة تحكم للشركات</li>
+                    <li><i class="fas fa-check"></i> إدارة المستخدمين</li>
+                    <li><i class="fas fa-check"></i> صلاحيات مرنة</li>
+                    <li><i class="fas fa-check"></i> تتبع الاستخدام</li>
+                </ul>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">أمان متقدم</h3>
+                <p class="feature-description">
+                    حماية شاملة مع تشفير البيانات ومصادقة متعددة المستويات
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> تشفير end-to-end</li>
+                    <li><i class="fas fa-check"></i> مفاتيح API آمنة</li>
+                    <li><i class="fas fa-check"></i> مراقبة الوصول</li>
+                    <li><i class="fas fa-check"></i> حماية من DDOS</li>
+                </ul>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">تحليلات شاملة</h3>
+                <p class="feature-description">
+                    إحصائيات مفصلة ولوحات مراقبة لتتبع الأداء والاستخدام
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> إحصائيات الرسائل</li>
+                    <li><i class="fas fa-check"></i> معدلات التسليم</li>
+                    <li><i class="fas fa-check"></i> تقارير مخصصة</li>
+                    <li><i class="fas fa-check"></i> تنبيهات ذكية</li>
+                </ul>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 class="feature-title">أتمتة ذكية</h3>
+                <p class="feature-description">
+                    أدوات أتمتة متقدمة لإرسال الرسائل والردود التلقائية
+                </p>
+                <ul class="feature-benefits">
+                    <li><i class="fas fa-check"></i> ردود تلقائية</li>
+                    <li><i class="fas fa-check"></i> جدولة الرسائل</li>
+                    <li><i class="fas fa-check"></i> تصفية المحتوى</li>
+                    <li><i class="fas fa-check"></i> قوالب الرسائل</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Performance Stats -->
+        <div class="performance-stats">
+            <div class="stat-card fade-in">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">معدل التشغيل</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">< 100ms</div>
+                <div class="stat-label">زمن الاستجابة</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">10M+</div>
+                <div class="stat-label">رسالة يومياً</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">عميل نشط</div>
+            </div>
+        </div>
+
+        <!-- API Examples -->
+        <div class="api-section fade-in">
+            <h2 class="api-title">أمثلة برمجية</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method">POST</span>
+                    <span>/api/sessions/{sessionName}/send-message</span>
+                </div>
+                <div class="endpoint-body">
+                    <div class="code-example">
+{
+  "phone": "966501234567",
+  "message": "مرحباً! كيف يمكنني مساعدتك؟"
+}
+
+// Response
+{
+  "success": true,
+  "messageId": "msg_12345",
+  "status": "sent",
+  "timestamp": "2025-06-18T19:30:00Z"
+}
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method">GET</span>
+                    <span>/api/sessions/{sessionName}/qrcode</span>
+                </div>
+                <div class="endpoint-body">
+                    <div class="code-example">
+// JavaScript Example
+const response = await fetch('/api/sessions/my-session/qrcode', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+});
+const data = await response.json();
+// Base64 QR Code
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method">WebSocket</span>
+                    <span>/ws/messages</span>
+                </div>
+                <div class="endpoint-body">
+                    <div class="code-example">
+// Real-time message receiving
+const ws = new WebSocket('wss://api.wppconnect.com/ws/messages');
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  };
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section fade-in">
+            <h2>جرب المنصة الآن</h2>
+            <p>ابدأ مع النسخة التجريبية المجانية واكتشف قوة API WhatsApp المتطور</p>
+            <div class="cta-buttons">
+                <a href="/quick-login.html" class="btn btn-primary">تجربة مجانية</a>
+                <a href="/api-docs.html" class="btn btn-secondary">مراجعة الوثائق</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .stat-card, .api-section, .cta-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم المؤسسية - WhatsApp API Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .enterprise-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .enterprise-header {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            padding: 25px 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .enterprise-title {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 400px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.12);
+        }
+
+        .card-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: rgba(248, 249, 250, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .metric-up {
+            color: #28a745;
+        }
+
+        .metric-down {
+            color: #dc3545;
+        }
+
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .activity-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .activity-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .activity-info {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .activity-content h4 {
+            color: #2c3e50;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .activity-content p {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .activity-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-weight: 600;
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            margin: 15px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.6);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-right: 4px solid;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+            color: #4a5568;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .enterprise-container {
+                padding: 15px;
+            }
+            
+            .enterprise-header {
+                padding: 20px;
+            }
+            
+            .enterprise-title {
+                font-size: 2rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="enterprise-container">
+        <!-- Enterprise Header -->
+        <div class="enterprise-header">
+            <div class="header-top">
+                <h1 class="enterprise-title">لوحة التحكم المؤسسية</h1>
+                <div class="status-indicators">
+                    <div class="status-indicator status-online">
+                        <span>🟢</span>
+                        <span>جميع الأنظمة تعمل</span>
+                    </div>
+                    <div class="status-indicator status-warning">
+                        <span>⚠️</span>
+                        <span>صيانة مجدولة</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <div class="stat-value" id="totalRevenue">$47,350</div>
+                    <div class="stat-label">إجمالي الإيرادات</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="stat-value" id="activeEnterpriseClients">127</div>
+                    <div class="stat-label">العملاء المؤسسيين</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="stat-value" id="systemUptime">99.97%</div>
+                    <div class="stat-label">وقت التشغيل</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="stat-value" id="apiCalls">2.4M</div>
+                    <div class="stat-label">استدعاءات API</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="stat-value" id="messagesProcessed">847K</div>
+                    <div class="stat-label">رسائل مُعالجة</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Real-time Analytics -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <span class="card-icon">📊</span>
+                    التحليلات في الوقت الفعلي
+                </h2>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('performance')">الأداء</div>
+                    <div class="tab" onclick="switchTab('revenue')">الإيرادات</div>
+                    <div class="tab" onclick="switchTab('usage')">الاستخدام</div>
+                </div>
+
+                <div id="performance" class="tab-content active">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">45ms</div>
+                            <div class="metric-label">متوسط الاستجابة</div>
+                            <div class="metric-change metric-up">↗ +2ms</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">99.8%</div>
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-change metric-up">↗ +0.2%</div>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        رسم بياني لأداء النظام
+                    </div>
+                </div>
+
+                <div id="revenue" class="tab-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">$12,847</div>
+                            <div class="metric-label">إيرادات الشهر</div>
+                            <div class="metric-change metric-up">↗ +18%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$156</div>
+                            <div class="metric-label">متوسط لكل عميل</div>
+                            <div class="metric-change metric-up">↗ +5%</div>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        رسم بياني للإيرادات الشهرية
+                    </div>
+                </div>
+
+                <div id="usage" class="tab-content">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value">2.4M</div>
+                            <div class="metric-label">طلبات API</div>
+                            <div class="metric-change metric-up">↗ +12%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">847K</div>
+                            <div class="metric-label">رسائل WhatsApp</div>
+                            <div class="metric-change metric-up">↗ +8%</div>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        رسم بياني لاستخدام API
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Management -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <span class="card-icon">⚙️</span>
+                    إدارة النظام
+                </h2>
+
+                <div class="alert alert-success">
+                    <strong>حالة النظام:</strong> جميع الخدمات تعمل بشكل طبيعي
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h4>الأمان</h4>
+                        <p>Threat Monitoring</p>
+                        <button class="btn btn-outline" onclick="openSecurityCenter()">إدارة</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h4>الأداء</h4>
+                        <p>تحسين الخوادم</p>
+                        <button class="btn btn-outline" onclick="openPerformanceCenter()">تحليل</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h4>التقارير</h4>
+                        <p>تقارير مخصصة</p>
+                        <button class="btn btn-outline" onclick="generateReport()">إنشاء</button>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h4>الصيانة</h4>
+                        <p>إجراءات الصيانة</p>
+                        <button class="btn btn-outline" onclick="maintenanceCenter()">صيانة</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="fullSystemRestart()">إعادة تشغيل كاملة</button>
+                    <button class="btn btn-warning" onclick="emergencyMode()">وضع الطوارئ</button>
+                    <button class="btn btn-success" onclick="backupSystem()">نسخ احتياطي</button>
+                </div>
+            </div>
+
+            <!-- Activity Monitor -->
+            <div class="dashboard-card">
+                <h2 class="card-title">
+                    <span class="card-icon">📈</span>
+                    مراقب النشاط
+                </h2>
+
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-icon activity-success">✅</div>
+                        <div class="activity-content">
+                            <h4>شركة تم تسجيلها بنجاح</h4>
+                            <p>Tech Solutions Ltd - خطة Enterprise</p>
+                            <span class="activity-time">منذ 5 دقائق</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-warning">⚠️</div>
+                        <div class="activity-content">
+                            <h4>استخدام مرتفع للذاكرة</h4>
+                            <p>الخادم الرئيسي - 85% استخدام</p>
+                            <span class="activity-time">منذ 12 دقيقة</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-info">ℹ️</div>
+                        <div class="activity-content">
+                            <h4>تحديث النظام مُكتمل</h4>
+                            <p>إصدار 2.8.6 تم تطبيقه بنجاح</p>
+                            <span class="activity-time">منذ 1 ساعة</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon activity-success">✅</div>
+                        <div class="activity-content">
+                            <h4>نسخ احتياطي مُكتمل</h4>
+                            <p>قاعدة البيانات - 2.4 GB</p>
+                            <span class="activity-time">منذ 2 ساعة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-outline" onclick="viewFullLogs()">عرض السجلات الكاملة</button>
+                    <button class="btn btn-outline" onclick="exportLogs()">تصدير السجلات</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Features -->
+        <div class="dashboard-card full-width">
+            <h2 class="card-title">
+                <span class="card-icon">🏢</span>
+                الميزات المؤسسية
+            </h2>
+
+            <div class="alert alert-info">
+                <strong>إشعار:</strong> الصيانة المجدولة ستبدأ في 23:00 وتستمر لمدة ساعتين
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Webhooks متقدمة</h3>
+                    <p>إدارة الـ webhooks مع إعادة المحاولة التلقائية</p>
+                    <button class="btn" onclick="manageWebhooks()">إدارة</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏷️</div>
+                    <h3>العلامة التجارية</h3>
+                    <p>تخصيص كامل للواجهات والـ APIs</p>
+                    <button class="btn" onclick="manageBranding()">تخصيص</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>تحليلات متقدمة</h3>
+                    <p>تقارير مفصلة وتحليل السلوك</p>
+                    <button class="btn" onclick="advancedAnalytics()">تحليل</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Advanced Security</h3>
+                    <p>Threat Monitoring وسجلات الأمان</p>
+                    <button class="btn" onclick="securityCenter()">أمان</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>High Performance</h3>
+                    <p>مراقبة الأداء وResource Optimization</p>
+                    <button class="btn" onclick="performanceOptimization()">تحسين</button>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>CDN عالمي</h3>
+                    <p>توزيع المحتوى على مستوى العالم</p>
+                    <button class="btn" onclick="cdnManagement()">إدارة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Enterprise functions
+        function openSecurityCenter() {
+            alert('فتح مركز Advanced Security...');
+        }
+
+        function openPerformanceCenter() {
+            alert('فتح مركز مراقبة الأداء...');
+        }
+
+        function generateReport() {
+            alert('إنشاء تقرير مخصص...');
+        }
+
+        function maintenanceCenter() {
+            alert('فتح مركز الصيانة...');
+        }
+
+        function fullSystemRestart() {
+            if (confirm('تحذير: سيتم إعادة تشغيل النظام بالكامل. هل تريد المتابعة؟')) {
+                alert('جاري إعادة تشغيل النظام...');
+            }
+        }
+
+        function emergencyMode() {
+            if (confirm('تحذير: سيتم تفعيل وضع الطوارئ. هل تريد المتابعة؟')) {
+                alert('تم تفعيل وضع الطوارئ');
+            }
+        }
+
+        function backupSystem() {
+            alert('جاري إنشاء نسخة احتياطية كاملة...');
+        }
+
+        function viewFullLogs() {
+            alert('عرض السجلات الكاملة...');
+        }
+
+        function exportLogs() {
+            alert('تصدير السجلات بصيغة CSV...');
+        }
+
+        function manageWebhooks() {
+            alert('فتح إدارة الـ Webhooks المتقدمة...');
+        }
+
+        function manageBranding() {
+            alert('فتح إعدادات العلامة التجارية...');
+        }
+
+        function advancedAnalytics() {
+            alert('فتح التحليلات المتقدمة...');
+        }
+
+        function securityCenter() {
+            alert('فتح مركز Advanced Security...');
+        }
+
+        function performanceOptimization() {
+            alert('فتح أدوات تحسين الأداء...');
+        }
+
+        function cdnManagement() {
+            alert('فتح إدارة CDN العالمي...');
+        }
+
+        // Real-time updates simulation
+        function updateRealTimeData() {
+            // Update random values to simulate real-time data
+            const elements = {
+                'totalRevenue': () => '$' + (45000 + Math.floor(Math.random() * 5000)).toLocaleString(),
+                'activeEnterpriseClients': () => 120 + Math.floor(Math.random() * 15),
+                'systemUptime': () => (99.95 + Math.random() * 0.04).toFixed(2) + '%',
+                'apiCalls': () => (2.3 + Math.random() * 0.2).toFixed(1) + 'M',
+                'messagesProcessed': () => (840 + Math.floor(Math.random() * 20)) + 'K'
+            };
+
+            Object.entries(elements).forEach(([id, generator]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = generator();
+                }
+            });
+        }
+
+        // Update activity feed
+        function addNewActivity() {
+            const activities = [
+                { icon: '✅', type: 'activity-success', title: 'جلسة WhatsApp جديدة', desc: 'شركة ABC - متصلة بنجاح' },
+                { icon: '📊', type: 'activity-info', title: 'تقرير أداء جديد', desc: 'تقرير شهري تم إنشاؤه' },
+                { icon: '🔒', type: 'activity-warning', title: 'تحديث أمني', desc: 'تم تطبيق تحديث الأمان 1.2.3' },
+                { icon: '💰', type: 'activity-success', title: 'دفعة جديدة', desc: 'تم استلام دفعة $299 من عميل Enterprise' }
+            ];
+
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const activityFeed = document.getElementById('activityFeed');
+            
+            const newActivity = document.createElement('div');
+            newActivity.className = 'activity-item';
+            newActivity.innerHTML = `
+                <div class="activity-icon ${activity.type}">${activity.icon}</div>
+                <div class="activity-content">
+                    <h4>${activity.title}</h4>
+                    <p>${activity.desc}</p>
+                    <span class="activity-time">الآن</span>
+                </div>
+            `;
+            
+            activityFeed.insertBefore(newActivity, activityFeed.firstChild);
+            
+            // Keep only 10 activities
+            while (activityFeed.children.length > 10) {
+                activityFeed.removeChild(activityFeed.lastChild);
+            }
+        }
+
+        // Initialize real-time updates
+        setInterval(updateRealTimeData, 30000); // Update every 30 seconds
+        setInterval(addNewActivity, 45000); // Add new activity every 45 seconds
+
+        // Initial load
+        window.onload = function() {
+            updateRealTimeData();
+            console.log('🏢 Enterprise Dashboard loaded successfully');
+        };
+    </script>
+</body>
+</html>
