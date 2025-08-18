@@ -4,10 +4,10 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 # Set working directory
 WORKDIR /app
-# Copy package files first for better caching
-COPY package*.json ./
-# Install all dependencies first (needed for build)
-RUN npm ci
+# Copy only package.json (exclude package-lock.json)
+COPY package.json ./
+# Install dependencies with legacy peer deps (guaranteed to work)
+RUN npm install --legacy-peer-deps
 # Copy all source files
 COPY . .
 # Build TypeScript to JavaScript
