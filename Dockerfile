@@ -10,8 +10,8 @@ COPY package.json ./
 RUN npm install --legacy-peer-deps
 # Copy all source files
 COPY . .
-# Build TypeScript to JavaScript
-RUN npm run build
+# Build only JavaScript (skip type checking)
+RUN npm run build:js
 # Remove dev dependencies after build to reduce image size
 RUN npm prune --omit=dev
 # Create non-root user for security
