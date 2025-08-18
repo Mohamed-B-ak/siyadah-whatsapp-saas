@@ -1,30 +1,22 @@
-# Use Node.js 22 slim as base image
 FROM node:22-slim
-# Install curl for health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-# Set working directory
+# Install Chrome for WhatsApp Web automation
+RUN apt-get update && \
+    apt-get install -y wget gnupg2 curl && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-# Copy only package.json (exclude package-lock.json)
-COPY package.json ./
-# Install dependencies with legacy peer deps (guaranteed to work)
-RUN npm install --legacy-peer-deps
-# Copy all source files
+# Copy everything
 COPY . .
-# Build only JavaScript (skip type checking)
-RUN npm run build:js
-# Remove dev dependencies after build to reduce image size
-RUN npm prune --omit=dev
-# Create non-root user for security
+# Install dependencies
+RUN npm install --legacy-peer-deps
+# Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser appuser
-# Create necessary directories with proper permissions
-RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/wppconnect_tokens && \
+RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages && \
     chown -R appuser:appuser /app
-# Switch to non-root user
 USER appuser
-# Expose port 5000
 EXPOSE 5000
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:5000/api/health || exit 1
-# Start the application
-CMD ["npm", "start"]
+# Run directly with tsx (no build needed)
+CMD ["npx", "tsx", "src/server.ts"]
