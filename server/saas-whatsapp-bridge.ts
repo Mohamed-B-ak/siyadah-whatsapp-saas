@@ -139,10 +139,10 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
-    // The sessionName parameter already contains the full session ID, don't add prefix
-    const fullSessionId = sessionName;
+    // Construct full session ID - if sessionName doesn't contain userId, add it
+    const fullSessionId = sessionName.includes('_') ? sessionName : `${userId}_${sessionName}`;
     
-    console.log(`[QR-REQUEST] QR code requested for session: ${fullSessionId}`);
+    console.log(`[QR-REQUEST] QR code requested for session: ${sessionName} -> ${fullSessionId}`);
 
     // First check if we have a stored QR code in database (PRIORITY)
     const sessionData = await storage.getSessionByName(fullSessionId);
@@ -189,7 +189,32 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
         generatedAt: sessionData.qrCodeGeneratedAt
       });
     } else {
-      console.warn(`[QR-REQUEST] Session not found: ${fullSessionId}`);
+      console.warn(`[QR-REQUEST] Session not found in database: ${fullSessionId}`);
+      console.log(`[QR-REQUEST] Attempting alternative lookup formats...`);
+      
+      // Try alternative session name formats
+      const alternatives = [
+        `${req.user?.companyId}_${sessionName}`,
+        `${req.user?.id}_${sessionName}`,
+        sessionName
+      ];
+      
+      for (const altSessionId of alternatives) {
+        if (altSessionId !== fullSessionId) {
+          console.log(`[QR-REQUEST] Trying alternative: ${altSessionId}`);
+          const altSessionData = await storage.getSessionByName(altSessionId);
+          if (altSessionData && altSessionData.qrCode) {
+            console.log(`[QR-REQUEST] Found session with alternative ID: ${altSessionId}`);
+            return res.json({
+              success: true,
+              qrCode: altSessionData.qrCode,
+              status: altSessionData.status,
+              source: 'database_alt',
+              generatedAt: altSessionData.qrCodeGeneratedAt
+            });
+          }
+        }
+      }
     }
 
     console.log(`[QR-REQUEST] No stored QR code found for session: ${fullSessionId}, attempting WhatsApp API`);
