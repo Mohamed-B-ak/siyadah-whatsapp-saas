@@ -347,9 +347,9 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
       companyId: req.user?.companyId,
       endpoint: 'send-message',
       method: 'POST',
-      timestamp: new Date(),
+
       responseStatus: messageResponse.status,
-      responseTime: Date.now() - req.startTime
+      responseTime: Date.now() - (req.startTime || Date.now())
     });
 
     res.json({
