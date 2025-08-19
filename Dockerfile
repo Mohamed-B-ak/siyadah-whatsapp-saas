@@ -58,8 +58,8 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --legacy-peer-deps --omit=dev
+# Install dependencies (skip prepare scripts to avoid Husky in production)
+RUN npm install --legacy-peer-deps --omit=dev --ignore-scripts
 
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./

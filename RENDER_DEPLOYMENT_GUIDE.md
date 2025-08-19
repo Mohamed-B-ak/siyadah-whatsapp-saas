@@ -73,9 +73,11 @@ The platform requires Chrome for WhatsApp Web automation. The `Dockerfile.render
 
 **Package Installation Issues**:
 - **Error**: `npm ci` requires package-lock.json with lockfileVersion >= 1
-- **Solution**: Updated to use `npm install --legacy-peer-deps --omit=dev`
+- **Solution**: Updated to use `npm install --legacy-peer-deps --omit=dev --ignore-scripts`
 - **Error**: ERESOLVE dependency conflicts with TypeScript ESLint packages
 - **Solution**: Added `--legacy-peer-deps` flag to bypass peer dependency conflicts
+- **Error**: `sh: 1: husky: not found` during npm install
+- **Solution**: Added `--ignore-scripts` to skip Husky prepare scripts in production
 - **Alternative**: Use `npm install --force` if deployment still fails
 
 **Chrome Issues**:
