@@ -27,7 +27,5 @@ RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppIm
     chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
 USER appuser
 EXPOSE 5000
-# Ensure clean startup on Render
-RUN echo '#!/bin/bash\nrm -f /tmp/server.lock\nexec npx tsx src/server.ts' > /app/start.sh && \
-    chmod +x /app/start.sh
-CMD ["/app/start.sh"]
+# Run directly with tsx (no build needed)
+CMD ["npx", "tsx", "src/server.ts"]
