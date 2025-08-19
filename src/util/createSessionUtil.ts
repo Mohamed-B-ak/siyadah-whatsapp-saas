@@ -256,15 +256,17 @@ export default class CreateSessionUtil {
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser',
+              executablePath: process.env.RENDER ? '/usr/bin/google-chrome' : '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser',
               args: [
                 // Essential security and stability flags
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-gpu',
-                '--single-process',
-                '--no-zygote',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor',
+                '--remote-debugging-port=9222',
+                '--remote-debugging-address=0.0.0.0',
                 
                 // Memory and performance optimization for Replit
                 '--memory-pressure-off',
@@ -275,7 +277,6 @@ export default class CreateSessionUtil {
                 '--disable-ipc-flooding-protection',
                 
                 // Profile and process management
-                '--disable-web-security',
                 '--force-new-browser-profile',
                 '--disable-profile-directory-check',
                 '--disable-process-singleton-dialog',
@@ -287,7 +288,7 @@ export default class CreateSessionUtil {
                 '--disable-translate',
                 '--disable-default-apps',
                 '--disable-extensions',
-                '--disable-features=VizDisplayCompositor,AudioServiceOutOfProcess',
+                '--disable-features=AudioServiceOutOfProcess',
                 
                 // WhatsApp Web specific optimizations
                 '--disable-blink-features=AutomationControlled',
