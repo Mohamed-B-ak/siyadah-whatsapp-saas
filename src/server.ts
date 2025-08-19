@@ -81,7 +81,7 @@ app.get('/api/health', async (req, res) => {
     services: {
       database: { status: 'up' },
       whatsapp: { status: 'up', activeSessions: sessionManager.getStats().active },
-      system: { 
+      system: {
         uptime: process.uptime(),
         memory: process.memoryUsage()
       }
@@ -175,4 +175,14 @@ app.get('/dashboard', (req, res) => {
 // قائمة التنقل الإدارية
 app.get('/menu', (req, res) => {
   res.redirect('/navigation-menu.html');
+});
+
+// Render.com requires binding to 0.0.0.0 and dynamic PORT
+const PORT = process.env.PORT || config.port;
+const HOST = '0.0.0.0'; // Required for Render external access
+
+app.listen(PORT, HOST, () => {
+  logger.info(`Server is running on port: ${PORT}`);
+  logger.info(` Visit ${HOST}:${PORT}/api-docs for Swagger docs`);
+  logger.info(`WPPConnect-Server version: ${version}`);
 });

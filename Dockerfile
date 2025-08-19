@@ -27,5 +27,6 @@ RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppIm
     chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
 USER appuser
 EXPOSE 5000
-# Run directly with tsx (no build needed)
-CMD ["npx", "tsx", "src/server.ts"]
+# Build first, then run for production
+RUN npm run build
+CMD ["node", "render-start.js"]

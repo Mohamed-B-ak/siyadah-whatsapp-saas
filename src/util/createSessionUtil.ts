@@ -247,17 +247,59 @@ export default class CreateSessionUtil {
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: await (async () => {
-                const { deploymentConfig } = await import('../../server/config/environment');
-                console.log('[CHROME-CONFIG] Platform:', deploymentConfig.platform);
-                console.log('[CHROME-CONFIG] Chrome path:', deploymentConfig.chromeExecutablePath);
-                return deploymentConfig.chromeExecutablePath;
+              executablePath: (() => {
+                // Render.com detection and configuration
+                if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+                  const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome';
+                  console.log('[CHROME-CONFIG] Render Platform - Chrome path:', chromePath);
+                  return chromePath;
+                }
+                // Replit detection
+                if (process.env.REPLIT_DEV_DOMAIN) {
+                  const chromePath = '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser';
+                  console.log('[CHROME-CONFIG] Replit Platform - Chrome path:', chromePath);
+                  return chromePath;
+                }
+                // Default
+                const chromePath = process.env.CHROME_BIN || '/usr/bin/google-chrome';
+                console.log('[CHROME-CONFIG] Default Platform - Chrome path:', chromePath);
+                return chromePath;
               })(),
-              args: await (async () => {
-                const { getBrowserArgs, deploymentConfig } = await import('../../server/config/environment');
-                const args = getBrowserArgs(deploymentConfig.platform);
-                console.log('[CHROME-CONFIG] Browser args:', args.join(' '));
-                return args;
+              args: (() => {
+                const baseArgs = [
+                  '--no-sandbox',
+                  '--disable-setuid-sandbox',
+                  '--disable-dev-shm-usage',
+                  '--disable-gpu',
+                  '--disable-web-security',
+                  '--disable-features=VizDisplayCompositor',
+                  '--remote-debugging-port=9222',
+                  '--remote-debugging-address=0.0.0.0',
+                  '--no-first-run',
+                  '--disable-default-apps',
+                  '--disable-extensions',
+                  '--disable-sync',
+                  '--disable-translate',
+                  '--disable-background-networking',
+                  '--memory-pressure-off',
+                  '--user-data-dir=/tmp/chrome-user-data',
+                  '--data-path=/tmp/chrome-data',
+                  '--disk-cache-dir=/tmp/chrome-cache'
+                ];
+
+                if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+                  const renderArgs = [
+                    ...baseArgs,
+                    '--disable-accelerated-2d-canvas',
+                    '--disable-accelerated-video-decode',
+                    '--disable-background-mode'
+                  ];
+                  console.log('[CHROME-CONFIG] Render args:', renderArgs.join(' '));
+                  return renderArgs;
+                }
+                
+                console.log('[CHROME-CONFIG] Default args:', baseArgs.join(' '));
+                return baseArgs;
               })(),
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport

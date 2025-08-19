@@ -44,10 +44,19 @@ export default {
     logger: ['console', 'file'],
   },
   createOptions: {
-    // Force Replit Chromium path regardless of environment detection issues
-    executablePath: process.env.REPLIT_DEV_DOMAIN ? 
-      '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser' :
-      (process.env.CHROME_BIN || '/usr/bin/google-chrome'),
+    // Detect environment and set Chrome path accordingly
+    executablePath: (() => {
+      // Render.com detection
+      if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+        return process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome';
+      }
+      // Replit detection
+      if (process.env.REPLIT_DEV_DOMAIN) {
+        return '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser';
+      }
+      // Default/local
+      return process.env.CHROME_BIN || '/usr/bin/google-chrome';
+    })(),
     // Fixed QR behavior - generate once and wait for connection
     autoClose: 300000, // 5 minutes timeout - proper session management
     disableSpins: true,
@@ -60,41 +69,60 @@ export default {
     disableWelcome: true,
     // Stop continuous QR regeneration
     refreshQR: false, // Prevent automatic QR refresh
-    browserArgs: [
-      '--disable-web-security',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--single-process',
-      '--no-zygote',
-      '--disable-features=VizDisplayCompositor',
-      // Fix profile conflicts
-      '--force-new-browser-profile',
-      '--disable-profile-directory-check',
-      '--disable-process-singleton-dialog',
-      '--no-first-run',
-      '--disable-component-extensions-with-background-pages',
-      // Performance optimizations
-      '--memory-pressure-off',
-      '--max_old_space_size=4096',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-      '--disable-ipc-flooding-protection',
-      // Reduced browser overhead
-      '--disable-sync',
-      '--disable-translate',
-      '--disable-default-apps',
-      '--disable-extensions',
-      '--disable-sync',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-translate',
-      '--hide-scrollbars',
-      '--metrics-recording-only',
-      '--mute-audio',
-      '--no-first-run',
+    browserArgs: (() => {
+      const baseArgs = [
+        '--disable-web-security',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-features=VizDisplayCompositor',
+        '--remote-debugging-port=9222',
+        '--remote-debugging-address=0.0.0.0',
+        '--no-first-run',
+        '--disable-default-apps',
+        '--disable-extensions',
+        '--disable-sync',
+        '--disable-translate',
+        '--disable-background-networking',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--memory-pressure-off',
+        '--disable-crash-reporter',
+        '--disable-crashpad',
+        '--user-data-dir=/tmp/chrome-user-data',
+        '--data-path=/tmp/chrome-data',
+        '--homedir=/tmp',
+        '--disk-cache-dir=/tmp/chrome-cache',
+        '--no-default-browser-check',
+        '--disable-software-rasterizer'
+      ];
+
+      // Render.com specific args
+      if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+        return [
+          ...baseArgs,
+          '--disable-accelerated-2d-canvas',
+          '--disable-accelerated-video-decode',
+          '--disable-background-mode',
+          '--disable-background-networking',
+          '--disable-ipc-flooding-protection'
+        ];
+      }
+      
+      // Replit specific args
+      if (process.env.REPLIT_DEV_DOMAIN) {
+        return [
+          ...baseArgs,
+          '--single-process',
+          '--no-zygote'
+        ];
+      }
+      
+      // Default args
+      return baseArgs;
+    })(),
       '--safebrowsing-disable-auto-update',
       '--ignore-certificate-errors',
       '--ignore-ssl-errors',
