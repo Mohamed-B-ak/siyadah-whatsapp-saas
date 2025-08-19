@@ -122,11 +122,8 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     console.log(`[QR-DATABASE] No stored QR code found for session: ${sessionId}, fetching from WhatsApp API`);
 
     // Fallback: Get QR from WhatsApp API
-    const baseUrl = process.env.RENDER 
-      ? 'https://siyadah-whatsapp-saas.onrender.com'
-      : process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-      : 'http://0.0.0.0:5000';
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
     
     const qrResponse = await fetch(`${baseUrl}/api/${sessionId}/qrcode-session`);
     
@@ -223,11 +220,9 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
     console.log(`[QR-REQUEST] No stored QR code found for session: ${fullSessionId}, attempting WhatsApp API`);
 
     // Fallback: Get QR from WhatsApp API
-    const baseUrl = process.env.RENDER 
-      ? 'https://siyadah-whatsapp-saas.onrender.com'
-      : process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-      : 'http://0.0.0.0:5000';
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
+      : 'http://localhost:5000';
       
     const qrResponse = await fetch(`${baseUrl}/api/${fullSessionId}/qrcode-session`);
     
@@ -352,9 +347,9 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
       companyId: req.user?.companyId,
       endpoint: 'send-message',
       method: 'POST',
-
+      timestamp: new Date(),
       responseStatus: messageResponse.status,
-      responseTime: Date.now() - (req.startTime || Date.now())
+      responseTime: Date.now() - req.startTime
     });
 
     res.json({
