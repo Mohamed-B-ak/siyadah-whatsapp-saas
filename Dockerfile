@@ -59,7 +59,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --omit=dev
+RUN npm install --legacy-peer-deps --omit=dev
 
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
