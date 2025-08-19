@@ -28,7 +28,7 @@
     "test": "jest"
   },
   "engines": {
-    "node": "22.16.0"
+    "node": ">=22.16.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
