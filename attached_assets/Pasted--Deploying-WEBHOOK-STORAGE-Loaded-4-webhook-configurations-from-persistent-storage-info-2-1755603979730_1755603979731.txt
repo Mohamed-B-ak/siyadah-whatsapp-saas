@@ -1,0 +1,169 @@
+==> Deploying...
+[WEBHOOK-STORAGE] Loaded 4 webhook configurations from persistent storage
+info: 2025-08-19T11:38:59.159Z [STARTUP] WPPConnect Server starting with autoClose: 0 configuration
+info: 2025-08-19T11:38:59.163Z [STARTUP] Chrome executable path configured for Replit environment
+info: 2025-08-19T11:38:59.164Z [STARTUP] Enhanced logging enabled for session tracking
+🧹 Session cleanup manager initialized
+info: 2025-08-19T11:38:59.358Z SaaS routes loaded successfully
+🚀 Siyadah WhatsApp Enterprise Platform Ready
+📊 Unified API: /api/v1/*
+📈 Performance monitoring active
+🧹 Session management initialized
+info: 2025-08-19T11:38:59.363Z Server is running on port: 5000
+info: 2025-08-19T11:38:59.364Z  Visit 0.0.0.0:5000/api-docs for Swagger docs
+info: 2025-08-19T11:38:59.364Z WPPConnect-Server version: 2.8.6
+🔄 Migration from PostgreSQL to MongoDB...
+⚠️ PostgreSQL deprecated - skipping migration
+✅ MongoDB is the primary database
+🔧 Initializing MongoDB connection...
+✅ MongoDB connected successfully
+✅ MongoDB indexes created successfully
+✅ MongoDB connected successfully
+📬 Message Queue Manager initialized
+📬 Message Queue System initialized with WhatsApp integration
+✅ System initialized without demo data
+=== Siyadah WhatsApp SaaS Platform ===
+🚀 Server running on port: 5000
+📚 Available API Endpoints:
+   • Company API: /api/v1/company
+   • Sub-client API: /api/v1/subclient
+   • Health Check: /api/health
+   • API Docs: /api/docs
+   • WhatsApp Bridge: /saas/api
+🔑 Authentication:
+     Register companies and users via /auth/register
+     Login via /auth/login
+📖 Documentation: Visit /api/docs for full API reference
+📋 Register: /register.html | Login: /login.html
+================================
+==> Your service is live 🎉
+==> 
+==> ///////////////////////////////////////////////////////////
+==> 
+==> Available at your primary URL https://siyadah-whatsapp-saas.onrender.com
+==> 
+==> ///////////////////////////////////////////////////////////
+info: 2025-08-19T11:40:19.407Z ID: NkrrhFKJ_sIZWsMQAAAB entrou
+info: 2025-08-19T11:40:20.770Z ID: NkrrhFKJ_sIZWsMQAAAB saiu
+[UNIFIED-AUTH] Login request received: {"type":"company","email":"mohamed.ak@d10.sa","password":"demo123456"}
+[UNIFIED-AUTH] Processing company login for: mohamed.ak@d10.sa
+[AUTH-DEBUG] Looking up company: mohamed.ak@d10.sa
+[AUTH-DEBUG] Company found: YES
+[AUTH-DEBUG] Company name: mohamed, API Key: comp_mei6o0co_b5ebef99b36e2885b338a33ec3ba41f4
+[AUTH-DEBUG] Password field exists: false
+[AUTH-DEBUG] Raw password hash length: 0
+[AUTH-DEBUG] Transformed company password exists: false
+[AUTH-DEBUG] Transformed password hash length: 0
+[UNIFIED-AUTH] Company found: mohamed
+[UNIFIED-AUTH] Password field exists: true
+[UNIFIED-AUTH] Starting password verification...
+[UNIFIED-AUTH] Password verification result: true
+[UNIFIED-AUTH] Authentication successful for mohamed.ak@d10.sa
+[UNIFIED-AUTH] Sending response: {"success":true,"message":"تم تسجيل الدخول بنجاح","data":{"id":"68a41e673426e514ef82f705","name":"mohamed","email":"mohamed.ak@d10.sa","masterApiKey":"comp_mei6o0co_b5ebef99b36e2885b338a33ec3ba41f4","type":"company"}}
+[WEBHOOK-GET] Request received, hasAuth: true
+[WEBHOOK-GET] Retrieved config for key: comp_mei6o0co_b5ebef...
+[DEBUG] startSession function called
+[DEBUG] Session: undefined
+[DEBUG] Request body: { waitQrCode: true, webhook: '' }
+info: 2025-08-19T11:42:02.978Z [SESSION-START] Initiating session 68a41e673426e514ef82f705_jjaallssaa1 with autoClose: 0
+info: 2025-08-19T11:42:02.978Z [SESSION-START] waitQrCode: true
+info: 2025-08-19T11:42:02.978Z [SESSION-START] Request body:
+info: 2025-08-19T11:42:02.978Z [SESSION-START] Getting session state for 68a41e673426e514ef82f705_jjaallssaa1
+info: 2025-08-19T11:42:02.979Z [STATUS-CHECK] Checking status for session: 68a41e673426e514ef82f705_jjaallssaa1
+info: 2025-08-19T11:42:02.979Z [STATUS-CHECK] Client found: false, Status: undefined
+info: 2025-08-19T11:42:02.979Z [STATUS-CHECK] No client found for session: 68a41e673426e514ef82f705_jjaallssaa1
+info: 2025-08-19T11:42:02.980Z [SESSION-START] Session state retrieved, opening session data for 68a41e673426e514ef82f705_jjaallssaa1
+[CHROME-CONFIG] Platform: render
+[CHROME-CONFIG] Chrome path: /usr/bin/google-chrome
+[CHROME-CONFIG] Browser args: --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu --disable-web-security --disable-features=VizDisplayCompositor --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0 --no-first-run --disable-default-apps --disable-extensions --disable-sync --disable-translate --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --memory-pressure-off --max_old_space_size=4096 --disable-crash-reporter --disable-crashpad --user-data-dir=/tmp/chrome-user-data --data-path=/tmp/chrome-data --homedir=/tmp --disk-cache-dir=/tmp/chrome-cache --no-default-browser-check --disable-software-rasterizer --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-background-mode
+info:     Checking for updates
+info:     You're up to date
+info:     [68a41e673426e514ef82f705_jjaallssaa1:browser] Using browser folder '/app/tokens/68a41e673426e514ef82f705_jjaallssaa1'
+info:     [68a41e673426e514ef82f705_jjaallssaa1:browser] Initializing browser...
+info:     [68a41e673426e514ef82f705_jjaallssaa1:client] Initializing...
+info:     [68a41e673426e514ef82f705_jjaallssaa1:session] Session Unpaired
+info: 2025-08-19T11:42:11.267Z [68a41e673426e514ef82f705_jjaallssaa1] Raw status received: desconnectedMobile
+info: 2025-08-19T11:42:11.346Z [68a41e673426e514ef82f705_jjaallssaa1] 📱 Phone disconnected: desconnectedMobile
+info: 2025-08-19T11:42:11.347Z [68a41e673426e514ef82f705_jjaallssaa1] ✅ Webhook allowed (1/10)
+info: 2025-08-19T11:42:11.347Z [68a41e673426e514ef82f705_jjaallssaa1] ✅ Message webhook allowed - status-find (1/50)
+🔔 Webhook received: {
+  "event": "status-find",
+  "session": "68a41e673426e514ef82f705_jjaallssaa1",
+  "rateLimited": true,
+  "status": "DISCONNECTED"
+}
+📋 Processed webhook data: { event: 'status-find', from: 'unknown', body: 'N/A', type: 'text' }
+[QR-CAPTURE-DEBUG] Event: status-find, Has base64: false, Session: 68a41e673426e514ef82f705_jjaallssaa1
+📡 Emitted webhook data via socket
+[WEBHOOK-LOAD] Looking up webhook for session: 68a41e673426e514ef82f705_jjaallssaa1
+[WEBHOOK-LOAD] Session found - Company ID: 68a41e673426e514ef82f705, User ID: 68a41e673426e514ef82f705
+[WEBHOOK-LOAD] ❌ No webhook configured for session: 68a41e673426e514ef82f705_jjaallssaa1 (Company: 68a41e673426e514ef82f705)
+💡 No webhook URL configured for session: 68a41e673426e514ef82f705_jjaallssaa1
+[QR-REQUEST] QR code requested for session: jjaallssaa1 -> 68a41e673426e514ef82f705_jjaallssaa1
+[QR-REQUEST] Session not found in database: 68a41e673426e514ef82f705_jjaallssaa1
+[QR-REQUEST] No stored QR code found for session: 68a41e673426e514ef82f705_jjaallssaa1, attempting WhatsApp API
+info: 2025-08-19T11:42:12.747Z [QR-REQUEST] QR code requested for session: 68a41e673426e514ef82f705_jjaallssaa1
+warn: 2025-08-19T11:42:12.748Z [QR-REQUEST] QR code not available for session: 68a41e673426e514ef82f705_jjaallssaa1, status: DISCONNECTED
+info:     [68a41e673426e514ef82f705_jjaallssaa1:client] WhatsApp WEB version: 2.3000.1024390760
+info:     [68a41e673426e514ef82f705_jjaallssaa1:client] WA-JS version: 3.18.0
+info: 2025-08-19T11:42:14.147Z [68a41e673426e514ef82f705_jjaallssaa1] Raw status received: notLogged
+info: 2025-08-19T11:42:14.148Z [68a41e673426e514ef82f705_jjaallssaa1] 🔄 Status update: notLogged
+info: 2025-08-19T11:42:14.148Z [68a41e673426e514ef82f705_jjaallssaa1] ✅ Webhook allowed (2/10)
+info: 2025-08-19T11:42:14.148Z [68a41e673426e514ef82f705_jjaallssaa1] ✅ Message webhook allowed - status-find (2/50)
+🔔 Webhook received: {
+  "event": "status-find",
+  "session": "68a41e673426e514ef82f705_jjaallssaa1",
+  "rateLimited": true,
+  "status": "notLogged"
+}
+📋 Processed webhook data: { event: 'status-find', from: 'unknown', body: 'N/A', type: 'text' }
+[QR-CAPTURE-DEBUG] Event: status-find, Has base64: false, Session: 68a41e673426e514ef82f705_jjaallssaa1
+📡 Emitted webhook data via socket
+[WEBHOOK-LOAD] Looking up webhook for session: 68a41e673426e514ef82f705_jjaallssaa1
+[WEBHOOK-LOAD] Session found - Company ID: 68a41e673426e514ef82f705, User ID: 68a41e673426e514ef82f705
+[WEBHOOK-LOAD] ❌ No webhook configured for session: 68a41e673426e514ef82f705_jjaallssaa1 (Company: 68a41e673426e514ef82f705)
+💡 No webhook URL configured for session: 68a41e673426e514ef82f705_jjaallssaa1
+[WEBHOOK-STORAGE] Loaded 4 webhook configurations from persistent storage
+info: 2025-08-19T11:42:22.385Z [STARTUP] WPPConnect Server starting with autoClose: 0 configuration
+info: 2025-08-19T11:42:22.386Z [STARTUP] Chrome executable path configured for Replit environment
+info: 2025-08-19T11:42:22.387Z [STARTUP] Enhanced logging enabled for session tracking
+🧹 Session cleanup manager initialized
+info: 2025-08-19T11:42:22.423Z SaaS routes loaded successfully
+🚀 Siyadah WhatsApp Enterprise Platform Ready
+📊 Unified API: /api/v1/*
+📈 Performance monitoring active
+🧹 Session management initialized
+info: 2025-08-19T11:42:22.427Z Server is running on port: 5000
+info: 2025-08-19T11:42:22.428Z  Visit 0.0.0.0:5000/api-docs for Swagger docs
+info: 2025-08-19T11:42:22.428Z WPPConnect-Server version: 2.8.6
+🔄 Migration from PostgreSQL to MongoDB...
+⚠️ PostgreSQL deprecated - skipping migration
+✅ MongoDB is the primary database
+🔧 Initializing MongoDB connection...
+✅ MongoDB connected successfully
+✅ MongoDB indexes created successfully
+✅ MongoDB connected successfully
+📬 Message Queue Manager initialized
+📬 Message Queue System initialized with WhatsApp integration
+✅ System initialized without demo data
+=== Siyadah WhatsApp SaaS Platform ===
+🚀 Server running on port: 5000
+📚 Available API Endpoints:
+   • Company API: /api/v1/company
+   • Sub-client API: /api/v1/subclient
+   • Health Check: /api/health
+   • API Docs: /api/docs
+   • WhatsApp Bridge: /saas/api
+🔑 Authentication:
+     Register companies and users via /auth/register
+     Login via /auth/login
+📖 Documentation: Visit /api/docs for full API reference
+📋 Register: /register.html | Login: /login.html
+================================
+[QR-REQUEST] QR code requested for session: 68a41e673426e514ef82f705_jjaallssaa1 -> 68a41e673426e514ef82f705_68a41e673426e514ef82f705_jjaallssaa1
+[QR-REQUEST] Session not found in database: 68a41e673426e514ef82f705_68a41e673426e514ef82f705_jjaallssaa1
+[QR-REQUEST] No stored QR code found for session: 68a41e673426e514ef82f705_68a41e673426e514ef82f705_jjaallssaa1, attempting WhatsApp API
+info: 2025-08-19T11:42:50.465Z [QR-REQUEST] QR code requested for session: 68a41e673426e514ef82f705_68a41e673426e514ef82f705_jjaallssaa1
+warn: 2025-08-19T11:42:50.466Z [QR-REQUEST] Session not found: 68a41e673426e514ef82f705_68a41e673426e514ef82f705_jjaallssaa1
+info: 2025-08-19T11:42:50.827Z [QR-REQUEST] QR code requested for session: 68a41e673426e514ef82f705_jjaallssaa1
+warn: 2025-08-19T11:42:50.828Z [QR-REQUEST] Session not found: 68a41e673426e514ef82f705_jjaallssaa1
