@@ -1,9 +1,6 @@
 import { Router } from 'express';
 import { storage } from './storage';
 import { authenticateUser, authenticateSession, type AuthenticatedRequest } from './saas-auth';
-import { SessionValidator } from './session-validator';
-import { persistentTokenStorage } from './token-storage';
-import { SessionStatus, SessionStatusManager } from './session-status';
 
 const router = Router();
 
@@ -21,26 +18,10 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       return res.status(401).json({ success: false, message: 'User authentication required' });
     }
 
-    // Validate and sanitize session name for filesystem compatibility
-    const validation = SessionValidator.validateSessionName(sessionName);
-    if (!validation.isValid) {
-      return res.status(400).json({ 
-        success: false, 
-        message: `Invalid session name: ${validation.error}`,
-        suggestion: validation.sanitized
-      });
-    }
-    
-    // Create session with validated session ID that matches WPPConnect format
-    const sessionId = SessionValidator.buildFullSessionId(companyId, sessionName);
+    // Create session with full session ID that matches WPPConnect format
+    const sessionId = `${companyId}_${sessionName}`;
     console.log(`[SESSION-CREATE] Creating session in database: ${sessionId}`);
     console.log(`[SESSION-CREATE] User: ${userId}, Company: ${companyId}, Name: ${sessionName}`);
-    
-    // Check for persistent tokens for session recovery
-    const existingToken = await persistentTokenStorage.loadToken(sessionId);
-    const initialStatus = existingToken ? 'reconnecting' : 'initializing';
-    
-    console.log(`[SESSION-CREATE] ${existingToken ? 'Found existing token' : 'No existing token'} for ${sessionId}`);
     
     // Create session in database
     const sessionData = await storage.createSession({
@@ -48,7 +29,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       userId: userId,
       companyId: companyId,
       sessionName: sessionName,
-      status: initialStatus as SessionStatus,
+      status: 'initializing',
       qrCode: undefined,
       webhook: req.body.webhook,
       config: {
@@ -92,9 +73,8 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     console.log(`[SESSION-UPDATE] QR code present: ${!!whatsappResult.qrcode}`);
     
     const updatedSession = await storage.updateSession(sessionData.id, {
-      status: SessionStatus.QR_PENDING,
-      qrCode: whatsappResult.qrcode || null,
-      qrCodeGeneratedAt: whatsappResult.qrcode ? new Date() : undefined
+      status: 'qr_pending',
+      qrCode: whatsappResult.qrcode || null
     });
     
     console.log(`[SESSION-UPDATE] Session update result: ${!!updatedSession}`);
@@ -130,12 +110,13 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     
     if (sessionData && sessionData.qrCode) {
       console.log(`[QR-DATABASE] Found stored QR code for session: ${sessionId}`);
-      return res.json(SessionStatusManager.createStatusResponse(
-        sessionData.status as SessionStatus,
-        sessionData.qrCode,
-        sessionData.qrCodeGeneratedAt || undefined,
-        'QR code ready for scanning'
-      ));
+      return res.json({
+        success: true,
+        qrCode: sessionData.qrCode,
+        status: sessionData.status,
+        source: 'database',
+        generatedAt: sessionData.qrCodeGeneratedAt
+      });
     }
 
     console.log(`[QR-DATABASE] No stored QR code found for session: ${sessionId}, fetching from WhatsApp API`);
