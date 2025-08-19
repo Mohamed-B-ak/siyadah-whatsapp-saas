@@ -25,7 +25,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       companyId: companyId,
       sessionName: sessionName,
       status: 'initializing',
-      qrCode: null,
+      qrCode: null as string | null,
       webhook: req.body.webhook || null,
       config: {
         autoClose: 0,
@@ -35,9 +35,8 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     });
 
     // Start actual WhatsApp session
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
-      : 'http://localhost:5000';
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
     
     const whatsappResponse = await fetch(`${baseUrl}/api/${sessionData.id}/start-session`, {
       method: 'POST',
@@ -53,7 +52,6 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     // Update session with WhatsApp response
     await storage.updateSession(sessionData.id, {
       status: 'qr_pending',
-      whatsappStatus: whatsappResult.status || 'QRCODE',
       qrCode: whatsappResult.qrcode || null
     });
 
@@ -69,7 +67,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     res.status(500).json({ 
       success: false, 
       message: 'Failed to create session',
-      error: error.message 
+      error: error instanceof Error ? error.message : String(error) 
     });
   }
 });
@@ -100,9 +98,8 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     console.log(`[QR-DATABASE] No stored QR code found for session: ${sessionId}, fetching from WhatsApp API`);
 
     // Fallback: Get QR from WhatsApp API
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
-      : 'http://localhost:5000';
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
     
     const qrResponse = await fetch(`${baseUrl}/api/${sessionId}/qrcode-session`);
     
@@ -245,16 +242,14 @@ router.get('/sessions/:sessionName/status', authenticateUser, authenticateSessio
     }
 
     // Get status from WhatsApp API
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
-      : 'http://localhost:5000';
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
       
     const statusResponse = await fetch(`${baseUrl}/api/${sessionId}/status-session`);
     const statusData = await statusResponse.json();
 
     // Update session in database
     await storage.updateSession(sessionId, {
-      whatsappStatus: statusData.status,
       status: statusData.status === 'CONNECTED' ? 'connected' : 
               statusData.status === 'QRCODE' ? 'qr_pending' : 'disconnected'
     });
@@ -291,9 +286,8 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
     }
 
     // Send message through WhatsApp API
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
-      : 'http://localhost:5000';
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
       
     const messageResponse = await fetch(`${baseUrl}/api/${sessionId}/send-message`, {
       method: 'POST',
@@ -303,19 +297,24 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
 
     const messageResult = await messageResponse.json();
 
-    // Log message in database
-    await storage.logMessage({
-      sessionId: sessionId,
-      userId: req.user?.id,
-      companyId: req.user?.companyId,
-      type: 'outgoing',
-      from: sessionId,
-      to: phone,
-      content: message,
-      status: messageResult.status || 'sent',
-      whatsappMessageId: messageResult.id,
-      timestamp: new Date()
-    });
+    // Log message in database (skip if not available)
+    try {
+      if (storage.logMessage) {
+        await storage.logMessage({
+          sessionId: sessionId,
+          userId: req.user?.id || '',
+          companyId: req.user?.companyId || '',
+          type: 'outgoing',
+          from: sessionId,
+          to: phone,
+          content: message,
+          status: messageResult.status || 'sent',
+          whatsappMessageId: messageResult.id
+        });
+      }
+    } catch (logError) {
+      console.warn('Message logging skipped:', logError);
+    }
 
     // Log API usage
     await storage.logApiUsage({
@@ -383,9 +382,8 @@ router.delete('/sessions/:sessionName', authenticateUser, authenticateSession, a
 
     // Close WhatsApp session
     try {
-      const baseUrl = process.env.NODE_ENV === 'production' 
-        ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
-        : 'http://localhost:5000';
+      const { getBaseUrl } = await import('./config/environment');
+      const baseUrl = getBaseUrl();
         
       await fetch(`${baseUrl}/api/${sessionId}/close-session`, {
         method: 'POST'

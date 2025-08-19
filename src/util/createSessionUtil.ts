@@ -241,65 +241,20 @@ export default class CreateSessionUtil {
             qrMaxRetries: 5, // Allow multiple QR generation attempts
             qrRefreshS: 30, // Refresh QR every 30 seconds
             qrLogSkip: false, // Log all QR activities
-            // Force disable auto-close at browser level
-            browserArgs: [
-              '--disable-web-security',
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-gpu',
-              '--single-process',
-              '--no-zygote',
-              '--disable-features=VizDisplayCompositor',
-            ],
+            // Force disable auto-close at browser level - using environment-aware config
+            browserArgs: [],
             // Add timeout for browser launch
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: process.env.RENDER ? '/usr/bin/google-chrome' : '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser',
-              args: [
-                // Essential security and stability flags
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--disable-web-security',
-                '--disable-features=VizDisplayCompositor',
-                '--remote-debugging-port=9222',
-                '--remote-debugging-address=0.0.0.0',
-                
-                // Memory and performance optimization for Replit
-                '--memory-pressure-off',
-                '--max_old_space_size=4096',
-                '--disable-background-timer-throttling',
-                '--disable-backgrounding-occluded-windows',
-                '--disable-renderer-backgrounding',
-                '--disable-ipc-flooding-protection',
-                
-                // Profile and process management
-                '--force-new-browser-profile',
-                '--disable-profile-directory-check',
-                '--disable-process-singleton-dialog',
-                '--no-first-run',
-                
-                // Reduce browser overhead
-                '--disable-component-extensions-with-background-pages',
-                '--disable-sync',
-                '--disable-translate',
-                '--disable-default-apps',
-                '--disable-extensions',
-                '--disable-features=AudioServiceOutOfProcess',
-                
-                // WhatsApp Web specific optimizations
-                '--disable-blink-features=AutomationControlled',
-                '--exclude-switches=enable-automation',
-                '--disable-client-side-phishing-detection',
-                '--disable-component-update',
-                '--disable-domain-reliability',
-                '--disable-features=TranslateUI',
-                '--disable-background-networking',
-                '--disable-breakpad'
-              ],
+              executablePath: await (async () => {
+                const { deploymentConfig } = await import('../../server/config/environment');
+                return deploymentConfig.chromeExecutablePath;
+              })(),
+              args: await (async () => {
+                const { getBrowserArgs, deploymentConfig } = await import('../../server/config/environment');
+                return getBrowserArgs(deploymentConfig.platform);
+              })(),
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
               ignoreDefaultArgs: ['--enable-automation'], // Hide automation detection
