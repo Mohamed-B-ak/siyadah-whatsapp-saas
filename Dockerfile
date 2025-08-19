@@ -14,8 +14,6 @@ ENV DISPLAY=:99
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
-ENV RENDER=true
-ENV NODE_ENV=production
 WORKDIR /app
 # Copy everything
 COPY . .
