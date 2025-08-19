@@ -97,7 +97,7 @@ console.log('📈 Performance monitoring active');
 console.log('🧹 Session management initialized');
 
 // Global error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
   res.status(err.statusCode || 500).json({
     error: err.message || 'Internal server error',
@@ -116,7 +116,7 @@ const startupMessage = async () => {
   }
 
   console.log('\n=== Siyadah WhatsApp SaaS Platform ===');
-  console.log(`🚀 Server running on port: ${config.port || 5000}`);
+  console.log(`🚀 Server running on ${HOST}:${PORT}`);
   console.log('📚 Available API Endpoints:');
   console.log('   • Company API: /api/v1/company');
   console.log('   • Sub-client API: /api/v1/subclient');
@@ -175,4 +175,8 @@ app.get('/dashboard', (req, res) => {
 // قائمة التنقل الإدارية
 app.get('/menu', (req, res) => {
   res.redirect('/navigation-menu.html');
+});
+const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
+app.listen(PORT, HOST, () => {
 });

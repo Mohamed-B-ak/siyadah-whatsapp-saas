@@ -247,18 +247,53 @@ export default class CreateSessionUtil {
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: await (async () => {
-                const { deploymentConfig } = await import('../../server/config/environment');
-                console.log('[CHROME-CONFIG] Platform:', deploymentConfig.platform);
-                console.log('[CHROME-CONFIG] Chrome path:', deploymentConfig.chromeExecutablePath);
-                return deploymentConfig.chromeExecutablePath;
-              })(),
-              args: await (async () => {
-                const { getBrowserArgs, deploymentConfig } = await import('../../server/config/environment');
-                const args = getBrowserArgs(deploymentConfig.platform);
-                console.log('[CHROME-CONFIG] Browser args:', args.join(' '));
-                return args;
-              })(),
+              executablePath: process.env.RENDER ? '/usr/bin/google-chrome' : 
+                             process.env.REPLIT_DEV_DOMAIN ? '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser' :
+                             '/usr/bin/google-chrome',
+              args: process.env.RENDER ? [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor',
+                '--remote-debugging-port=9222',
+                '--remote-debugging-address=0.0.0.0',
+                '--no-first-run',
+                '--disable-default-apps',
+                '--disable-extensions',
+                '--disable-sync',
+                '--disable-translate',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-renderer-backgrounding',
+                '--memory-pressure-off',
+                '--max_old_space_size=2048',
+                '--disable-crash-reporter',
+                '--disable-crashpad',
+                '--user-data-dir=/tmp/chrome-user-data',
+                '--data-path=/tmp/chrome-data',
+                '--homedir=/tmp',
+                '--disk-cache-dir=/tmp/chrome-cache',
+                '--no-default-browser-check',
+                '--disable-software-rasterizer',
+                '--disable-accelerated-2d-canvas',
+                '--disable-accelerated-video-decode',
+                '--disable-background-mode'
+              ] : [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor',
+                '--remote-debugging-port=9222',
+                '--remote-debugging-address=0.0.0.0',
+                '--memory-pressure-off',
+                '--max_old_space_size=4096',
+                '--disable-crash-reporter'
+              ],
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
               ignoreDefaultArgs: ['--enable-automation'], // Hide automation detection
