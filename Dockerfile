@@ -1,31 +1,109 @@
-FROM node:22-slim
+# Multi-stage Node.js Dockerfile optimized for Render.com
+FROM node:22.16.0-slim as builder
 
-# Install Chrome and dependencies for Render deployment
-RUN apt-get update && \
-    apt-get install -y wget gnupg2 curl xvfb && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
+# Install Chrome dependencies and Chrome itself
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    libxss1 \
+    libgconf-2-4 \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set Chrome environment variables for deployment
-ENV DISPLAY=:99
-ENV CHROME_BIN=/usr/bin/google-chrome
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+# Set working directory
 WORKDIR /app
-# Copy everything
-COPY . .
+
+# Copy package files
+COPY package*.json ./
+
 # Install dependencies
-RUN npm install --legacy-peer-deps
-# Create non-root user and set up directories
-RUN groupadd -r appuser && useradd -r -g appuser -m -d /tmp appuser
-RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages && \
-    mkdir -p /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
-    chmod 755 /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
-    chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
-USER appuser
+RUN npm ci --only=production
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Production stage
+FROM node:22.16.0-slim
+
+# Install Chrome and dependencies (same as builder)
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    libxss1 \
+    libgconf-2-4 \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN groupadd -r whatsapp && useradd -r -g whatsapp -s /bin/bash whatsapp \
+    && mkdir -p /app/tokens /app/userDataDir /app/logs /tmp/chrome-user-data \
+    && chown -R whatsapp:whatsapp /app /tmp/chrome-user-data
+
+# Copy built application from builder
+COPY --from=builder --chown=whatsapp:whatsapp /app .
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV CHROME_BIN=/usr/bin/google-chrome
+ENV RENDER=true
+ENV DISPLAY=:99
+
+# Switch to non-root user
+USER whatsapp
+
+# Expose port
 EXPOSE 5000
-# Run directly with tsx (no build needed)
-CMD ["npx", "tsx", "src/server.ts"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { \
+        res.statusCode === 200 ? process.exit(0) : process.exit(1) \
+    }).on('error', () => process.exit(1))"
+
+# Start the application
+CMD ["npm", "start"]

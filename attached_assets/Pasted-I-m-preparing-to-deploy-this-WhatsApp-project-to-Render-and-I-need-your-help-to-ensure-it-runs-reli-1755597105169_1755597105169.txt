@@ -1,0 +1,33 @@
+I'm preparing to deploy this WhatsApp project to Render, and I need your help to ensure it runs reliably in that environment. Please apply the following critical changes and optimizations:
+
+1. **Persistent Token Storage**:
+   - Replace or abstract the `./tokens/` directory to use MongoDB or another persistent backend (e.g., GridFS, base64 in session documents).
+   - Ensure the system can restore sessions from the database after deployment restarts (since Render doesn't persist local files).
+
+2. **QR Code Polling Support**:
+   - Confirm the QR code generation flow works even if the QR is not immediately available.
+   - Update the session API to expose `status` clearly (e.g., `INITIALIZING`, `QRCODE`, `CONNECTED`) so the frontend can poll for `/qrcode`.
+
+3. **Webhook Resilience**:
+   - Add validation for webhook URLs before calling them.
+   - Improve error handling: log when webhook fails, and optionally retry failed calls or mark the webhook as inactive after N errors.
+
+4. **Session Naming Fixes**:
+   - Sanitize session names: disallow multiple underscores (`__`), limit length to safe filesystem-compatible values (under 100 characters), and remove special characters.
+
+5. **Environment Configuration for Render**:
+   - Ensure Chrome is detected correctly via `CHROME_BIN=/usr/bin/google-chrome`.
+   - Default to Render-compatible Chromium flags like:
+     ```
+     --no-sandbox --disable-dev-shm-usage --disable-extensions --disable-gpu --disable-background-networking
+     ```
+   - Confirm the browser launches reliably in memory-limited Render instances.
+
+6. **Optional - Render Deployment Optimization**:
+   - Provide a Dockerfile or render.yaml that includes:
+     - Chrome installation (or Puppeteer-compatible Chromium)
+     - Environment variable setup
+     - Correct build/start commands: `npm run build && npm start`
+     - Port configuration for 0.0.0.0
+
+Please implement these fixes directly or provide the necessary code/configuration changes so the system is production-ready for Render. Let me know if anything is ambiguous.

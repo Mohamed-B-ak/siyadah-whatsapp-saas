@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { storage } from './storage';
+import { webhookValidator } from './webhook-validator';
+import { SessionStatus, SessionStatusManager } from './session-status';
 
 const router = Router();
 
@@ -44,30 +46,51 @@ router.post('/webhook-handler', async (req, res) => {
     } else if (webhookData.event === 'onqr') {
       // QR code event
       const { session, qrcode } = webhookData;
-      console.log(`QR code generated for session ${session}`);
+      console.log(`[WEBHOOK] QR code generated for session ${session}`);
       
       // Update session with QR code
       const sessionData = await storage.getSession(session);
       if (sessionData) {
         await storage.updateSession(sessionData.id, {
           qrCode: qrcode,
-          status: 'qr_pending',
-          whatsappStatus: 'QRCODE'
+          status: SessionStatus.QRCODE,
+          whatsappStatus: 'QRCODE',
+          qrCodeGeneratedAt: new Date()
         });
+        console.log(`[WEBHOOK] Session ${session} status updated to QRCODE`);
       }
     } else if (webhookData.event === 'onstatechange') {
       // Status change event
       const { session, state } = webhookData;
-      console.log(`Session ${session} state changed to: ${state}`);
+      console.log(`[WEBHOOK] Session ${session} state changed to: ${state}`);
       
-      // Update session status
+      // Update session status with proper enum mapping
       const sessionData = await storage.getSession(session);
       if (sessionData) {
+        let newStatus: SessionStatus;
+        switch (state) {
+          case 'CONNECTED':
+            newStatus = SessionStatus.CONNECTED;
+            break;
+          case 'QRCODE':
+            newStatus = SessionStatus.QRCODE;
+            break;
+          case 'DISCONNECTED':
+            newStatus = SessionStatus.DISCONNECTED;
+            break;
+          case 'CONNECTING':
+            newStatus = SessionStatus.CONNECTING;
+            break;
+          default:
+            newStatus = SessionStatus.ERROR;
+        }
+        
         await storage.updateSession(sessionData.id, {
           whatsappStatus: state,
-          status: state === 'CONNECTED' ? 'connected' : 
-                 state === 'QRCODE' ? 'qr_pending' : 'disconnected'
+          status: newStatus,
+          lastUpdated: new Date()
         });
+        console.log(`[WEBHOOK] Session ${session} status updated to ${newStatus}`);
       }
     }
     

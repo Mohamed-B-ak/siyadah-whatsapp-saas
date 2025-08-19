@@ -1,0 +1,25 @@
+# Render.com Deployment Configuration
+services:
+  - type: web
+    name: siyadah-whatsapp-saas
+    env: node
+    region: oregon
+    plan: starter # Start with free tier, upgrade as needed
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CHROME_BIN
+        value: /usr/bin/google-chrome
+      - key: RENDER
+        value: true
+      - key: PORT
+        generateValue: true
+    # Health check endpoint
+    healthCheckPath: /api/health
+    # Auto-deploy on push
+    autoDeploy: true
+    # Environment-specific configuration
+    dockerfilePath: ./Dockerfile
+    numInstances: 1

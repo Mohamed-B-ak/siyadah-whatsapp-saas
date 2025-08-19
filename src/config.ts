@@ -44,12 +44,16 @@ export default {
     logger: ['console', 'file'],
   },
   createOptions: {
-    // Chrome executable path for Render.com deployment
-    executablePath: process.env.RENDER ? 
-      (process.env.CHROME_BIN || '/usr/bin/google-chrome') :
-      process.env.REPLIT_DEV_DOMAIN ? 
-        '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser' :
-        (process.env.CHROME_BIN || '/usr/bin/google-chrome'),
+    // Chrome executable path with platform detection
+    executablePath: (() => {
+      if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+        return process.env.CHROME_BIN || '/usr/bin/google-chrome';
+      }
+      if (process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DB_URL) {
+        return '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser';
+      }
+      return process.env.CHROME_BIN || '/usr/bin/google-chrome';
+    })(),
     // Fixed QR behavior - generate once and wait for connection
     autoClose: 300000, // 5 minutes timeout - proper session management
     disableSpins: true,
@@ -62,46 +66,62 @@ export default {
     disableWelcome: true,
     // Stop continuous QR regeneration
     refreshQR: false, // Prevent automatic QR refresh
-    browserArgs: [
-      '--disable-web-security',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--single-process',
-      '--no-zygote',
-      '--disable-features=VizDisplayCompositor',
-      // Fix profile conflicts
-      '--force-new-browser-profile',
-      '--disable-profile-directory-check',
-      '--disable-process-singleton-dialog',
-      '--no-first-run',
-      '--disable-component-extensions-with-background-pages',
-      // Performance optimizations
-      '--memory-pressure-off',
-      '--max_old_space_size=4096',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-      '--disable-ipc-flooding-protection',
-      // Reduced browser overhead
-      '--disable-sync',
-      '--disable-translate',
-      '--disable-default-apps',
-      '--disable-extensions',
-      '--disable-sync',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-translate',
-      '--hide-scrollbars',
-      '--metrics-recording-only',
-      '--mute-audio',
-      '--no-first-run',
-      '--safebrowsing-disable-auto-update',
-      '--ignore-certificate-errors',
-      '--ignore-ssl-errors',
-      '--ignore-certificate-errors-spki-list',
-    ],
+    browserArgs: (() => {
+      const baseArgs = [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',  
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--remote-debugging-port=9222',
+        '--remote-debugging-address=0.0.0.0'
+      ];
+
+      const cloudArgs = [
+        '--disable-extensions',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--disable-translate',
+        '--disable-background-networking',
+        '--disable-background-timer-throttling',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-renderer-backgrounding',
+        '--memory-pressure-off',
+        '--user-data-dir=/tmp/chrome-user-data',
+        '--data-path=/tmp/chrome-data',
+        '--disk-cache-dir=/tmp/chrome-cache',
+        '--homedir=/tmp',
+        '--disable-crash-reporter',
+        '--disable-crashpad'
+      ];
+
+      // Render.com optimized flags
+      if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+        return [
+          ...baseArgs,
+          ...cloudArgs,
+          '--disable-accelerated-2d-canvas',
+          '--disable-accelerated-video-decode',
+          '--disable-background-mode',
+          '--disable-software-rasterizer'
+        ];
+      }
+
+      // Replit optimized flags (can use more aggressive settings)
+      if (process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DB_URL) {
+        return [
+          ...baseArgs,
+          ...cloudArgs,
+          '--single-process',
+          '--no-zygote',
+          '--disable-ipc-flooding-protection'
+        ];
+      }
+
+      // Local development
+      return baseArgs;
+    })(),
     /**
      * Example of configuring the linkPreview generator
      * If you set this to 'null', it will use global servers; however, you have the option to define your own server
