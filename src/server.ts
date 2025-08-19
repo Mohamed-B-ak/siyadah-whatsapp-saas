@@ -67,7 +67,10 @@ app.use('/api/notifications', notificationSystem);
 app.use('/api/backup', backupSystem);
 
 // Initialize enterprise middleware
-import { performanceMonitor, memoryMonitor } from '../server/middleware/performance';
+import {
+  performanceMonitor,
+  memoryMonitor,
+} from '../server/middleware/performance';
 import { sessionManager } from '../server/services/session-manager';
 
 app.use(performanceMonitor);
@@ -80,13 +83,16 @@ app.get('/api/health', async (req, res) => {
     timestamp: new Date().toISOString(),
     services: {
       database: { status: 'up' },
-      whatsapp: { status: 'up', activeSessions: sessionManager.getStats().active },
-      system: { 
+      whatsapp: {
+        status: 'up',
+        activeSessions: sessionManager.getStats().active,
+      },
+      system: {
         uptime: process.uptime(),
-        memory: process.memoryUsage()
-      }
+        memory: process.memoryUsage(),
+      },
     },
-    version: '2.8.6'
+    version: '2.8.6',
   };
   res.json(health);
 });
@@ -101,7 +107,7 @@ app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
   res.status(err.statusCode || 500).json({
     error: err.message || 'Internal server error',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -112,7 +118,10 @@ const startupMessage = async () => {
     const { seedDatabase } = await import('../server/seed');
     await seedDatabase();
   } catch (error) {
-    console.warn('Database seeding skipped:', error instanceof Error ? error.message : error);
+    console.warn(
+      'Database seeding skipped:',
+      error instanceof Error ? error.message : error
+    );
   }
 
   console.log('\n=== Siyadah WhatsApp SaaS Platform ===');
@@ -179,15 +188,40 @@ app.get('/menu', (req, res) => {
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
+// Process lock to prevent multiple instances
+const LOCK_FILE = '/tmp/server.lock';
+const fs = require('fs');
+
+// Check if another instance is already running
+if (fs.existsSync(LOCK_FILE)) {
+  console.log('🔒 Another server instance detected, exiting...');
+  process.exit(0);
+}
+
+// Create lock file
+fs.writeFileSync(LOCK_FILE, process.pid.toString());
+
+// Clean up lock file on exit
+process.on('exit', () => {
+  try {
+    fs.unlinkSync(LOCK_FILE);
+  } catch (err) {
+    // Lock file might already be deleted
+  }
+});
+
 // Check if port is already in use before starting
 const server = app.listen(PORT, HOST, () => {
   console.log(`🚀 Server successfully started on ${HOST}:${PORT}`);
+  console.log(`🔒 Process lock created: ${process.pid}`);
 });
 
 // Handle port already in use error
 server.on('error', (err: any) => {
   if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use. Please wait a moment and try again.`);
+    console.error(
+      `❌ Port ${PORT} is already in use. Please wait a moment and try again.`
+    );
     console.log('🔄 Attempting to restart in 5 seconds...');
     setTimeout(() => {
       process.exit(1);
@@ -198,9 +232,22 @@ server.on('error', (err: any) => {
   }
 });
 
-// Graceful shutdown
+// Graceful shutdown with cleanup
+const cleanup = () => {
+  console.log('🧹 Cleaning up resources...');
+  try {
+    if (fs.existsSync(LOCK_FILE)) {
+      fs.unlinkSync(LOCK_FILE);
+      console.log('🔓 Process lock removed');
+    }
+  } catch (err) {
+    console.warn('⚠️ Lock cleanup error:', err.message);
+  }
+};
+
 process.on('SIGTERM', () => {
   console.log('🛑 Received SIGTERM, shutting down gracefully');
+  cleanup();
   server.close(() => {
     console.log('✅ Server closed');
     process.exit(0);
@@ -209,8 +256,30 @@ process.on('SIGTERM', () => {
 
 process.on('SIGINT', () => {
   console.log('🛑 Received SIGINT, shutting down gracefully');
+  cleanup();
   server.close(() => {
     console.log('✅ Server closed');
     process.exit(0);
   });
+});
+
+process.on('SIGHUP', () => {
+  console.log('🔄 Received SIGHUP, restarting...');
+  cleanup();
+  server.close(() => {
+    process.exit(1); // Let the process manager restart us
+  });
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+  cleanup();
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
+  cleanup();
+  process.exit(1);
 });
