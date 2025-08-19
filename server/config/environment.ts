@@ -18,7 +18,7 @@ export const getDeploymentConfig = (): DeploymentConfig => {
   const isProduction = platform !== 'local';
   
   return {
-    baseUrl: getBaseUrl(platform),
+    baseUrl: getBaseUrlForPlatform(platform),
     isProduction,
     platform,
     chromeExecutablePath: getChromeExecutablePath(platform),
@@ -37,7 +37,7 @@ function detectPlatform(): 'replit' | 'render' | 'local' {
   return 'local';
 }
 
-function getBaseUrl(platform: 'replit' | 'render' | 'local'): string {
+function getBaseUrlForPlatform(platform: 'replit' | 'render' | 'local'): string {
   switch (platform) {
     case 'render':
       return process.env.RENDER_EXTERNAL_URL || 'https://siyadah-whatsapp-saas.onrender.com';
