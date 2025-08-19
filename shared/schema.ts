@@ -6,6 +6,7 @@ export interface Company {
   id: string;
   name: string;
   email: string;
+  passwordHash?: string;
   masterApiKey: string;
   messagingApiKey?: string;
   planType: string;
