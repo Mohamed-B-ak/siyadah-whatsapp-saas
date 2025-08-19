@@ -96,7 +96,11 @@ export default {
         '--homedir=/tmp',
         '--disk-cache-dir=/tmp/chrome-cache',
         '--no-default-browser-check',
-        '--disable-software-rasterizer'
+        '--disable-software-rasterizer',
+        '--safebrowsing-disable-auto-update',
+        '--ignore-certificate-errors',
+        '--ignore-ssl-errors',
+        '--ignore-certificate-errors-spki-list'
       ];
 
       // Render.com specific args
@@ -106,8 +110,8 @@ export default {
           '--disable-accelerated-2d-canvas',
           '--disable-accelerated-video-decode',
           '--disable-background-mode',
-          '--disable-background-networking',
-          '--disable-ipc-flooding-protection'
+          '--disable-ipc-flooding-protection',
+          '--max-old-space-size=4096'
         ];
       }
       
@@ -123,11 +127,6 @@ export default {
       // Default args
       return baseArgs;
     })(),
-      '--safebrowsing-disable-auto-update',
-      '--ignore-certificate-errors',
-      '--ignore-ssl-errors',
-      '--ignore-certificate-errors-spki-list',
-    ],
     /**
      * Example of configuring the linkPreview generator
      * If you set this to 'null', it will use global servers; however, you have the option to define your own server
