@@ -51,6 +51,7 @@ export interface Session {
   qrCodeGeneratedAt?: Date;
   lastActivity?: Date;
   connectedAt?: Date;
+  webhook?: string;
   createdAt: Date;
 }
 

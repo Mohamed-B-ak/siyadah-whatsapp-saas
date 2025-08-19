@@ -6,6 +6,15 @@ This is a comprehensive WhatsApp SaaS platform built on WPPConnect technology wi
 
 Preferred communication style: Simple, everyday language.
 
+# Recent Changes
+
+## August 19, 2025 - QR Code Generation Fixed ✅
+- **BREAKTHROUGH**: Resolved critical QR code generation failure
+- **Root Cause**: Platform detection was incorrectly identifying "render" instead of "replit"
+- **Solution**: Fixed Chrome/Chromium executable path configuration in src/config.ts
+- **Result**: WhatsApp sessions now initialize successfully with QR code generation
+- **Status**: System confirmed working - sessions show "QRCODE" status ready for scanning
+
 # System Architecture
 
 ## Backend Architecture

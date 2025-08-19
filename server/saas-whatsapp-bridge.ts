@@ -30,8 +30,8 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       companyId: companyId,
       sessionName: sessionName,
       status: 'initializing',
-      qrCode: null as string | null,
-      webhook: req.body.webhook || null,
+      qrCode: undefined,
+      webhook: req.body.webhook,
       config: {
         autoClose: 0,
         qrTimeout: 0,
@@ -86,7 +86,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       message: 'Session created successfully'
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating session:', error);
     res.status(500).json({ 
       success: false, 

@@ -1,0 +1,82 @@
+[WEBHOOK-GET] Request received, hasAuth: true
+[WEBHOOK-GET] Retrieved config for key: comp_mei6o0co_b5ebef...
+[DEBUG] startSession function called
+[DEBUG] Session: undefined
+[DEBUG] Request body: { waitQrCode: true, webhook: '' }
+info: 2025-08-19T09:16:27.853Z [SESSION-START] Initiating session 68a41e673426e514ef82f705_med__test__01 with autoClose: 0
+info: 2025-08-19T09:16:27.853Z [SESSION-START] waitQrCode: true
+info: 2025-08-19T09:16:27.854Z [SESSION-START] Request body:
+info: 2025-08-19T09:16:27.854Z [SESSION-START] Getting session state for 68a41e673426e514ef82f705_med__test__01
+info: 2025-08-19T09:16:27.854Z [STATUS-CHECK] Checking status for session: 68a41e673426e514ef82f705_med__test__01
+info: 2025-08-19T09:16:27.854Z [STATUS-CHECK] Client found: false, Status: undefined
+info: 2025-08-19T09:16:27.855Z [STATUS-CHECK] No client found for session: 68a41e673426e514ef82f705_med__test__01
+info: 2025-08-19T09:16:27.855Z [SESSION-START] Session state retrieved, opening session data for 68a41e673426e514ef82f705_med__test__01
+[CHROME-CONFIG] Platform: render
+[CHROME-CONFIG] Chrome path: /usr/bin/google-chrome
+[CHROME-CONFIG] Browser args: --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu --disable-web-security --disable-features=VizDisplayCompositor --remote-debugging-port=9222 --remote-debugging-address=0.0.0.0 --no-first-run --disable-default-apps --disable-extensions --disable-sync --disable-translate --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding --memory-pressure-off --max_old_space_size=4096 --disable-crash-reporter --disable-crashpad --user-data-dir=/tmp/chrome-user-data --data-path=/tmp/chrome-data --homedir=/tmp --disk-cache-dir=/tmp/chrome-cache --no-default-browser-check --disable-software-rasterizer --disable-accelerated-2d-canvas --disable-accelerated-video-decode --disable-background-mode
+info:     Checking for updates
+info:     You're up to date
+info:     [68a41e673426e514ef82f705_med__test__01:browser] Using browser folder '/app/tokens/68a41e673426e514ef82f705_med__test__01'
+info:     [68a41e673426e514ef82f705_med__test__01:browser] Initializing browser...
+info:     [68a41e673426e514ef82f705_med__test__01:client] Initializing...
+[QR-REQUEST] QR code requested for session: med__test__01 -> 68a41e673426e514ef82f705_med__test__01
+[QR-REQUEST] Session not found in database: 68a41e673426e514ef82f705_med__test__01
+[QR-REQUEST] No stored QR code found for session: 68a41e673426e514ef82f705_med__test__01, attempting WhatsApp API
+info: 2025-08-19T09:16:34.248Z [QR-REQUEST] QR code requested for session: 68a41e673426e514ef82f705_med__test__01
+warn: 2025-08-19T09:16:34.248Z [QR-REQUEST] QR code not available for session: 68a41e673426e514ef82f705_med__test__01, status: INITIALIZING
+info:     [68a41e673426e514ef82f705_med__test__01:session] Session Unpaired
+info: 2025-08-19T09:16:36.348Z [68a41e673426e514ef82f705_med__test__01] Raw status received: desconnectedMobile
+info: 2025-08-19T09:16:36.349Z [68a41e673426e514ef82f705_med__test__01] 📱 Phone disconnected: desconnectedMobile
+info: 2025-08-19T09:16:36.349Z [68a41e673426e514ef82f705_med__test__01] ✅ Webhook allowed (1/10)
+info: 2025-08-19T09:16:36.349Z [68a41e673426e514ef82f705_med__test__01] ✅ Message webhook allowed - status-find (1/50)
+warn: 2025-08-19T09:16:36.456Z Error calling Webhook. - AggregateError
+    at Function.AxiosError.from (/app/node_modules/axios/lib/core/AxiosError.js:92:14)
+    at RedirectableRequest.handleRequestError (/app/node_modules/axios/lib/adapters/http.js:620:25)
+    at RedirectableRequest.emit (node:events:518:28)
+    at eventHandlers.<computed> (/app/node_modules/follow-redirects/index.js:49:24)
+    at ClientRequest.emit (node:events:518:28)
+    at emitErrorEvent (node:_http_client:104:11)
+    at Socket.socketErrorListener (node:_http_client:518:5)
+    at Socket.emit (node:events:518:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+    at Axios.request (/app/node_modules/axios/lib/core/Axios.js:45:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[WEBHOOK-STORAGE] Loaded 4 webhook configurations from persistent storage
+info: 2025-08-19T09:16:45.338Z [STARTUP] WPPConnect Server starting with autoClose: 0 configuration
+info: 2025-08-19T09:16:45.340Z [STARTUP] Chrome executable path configured for Replit environment
+info: 2025-08-19T09:16:45.340Z [STARTUP] Enhanced logging enabled for session tracking
+🧹 Session cleanup manager initialized
+info: 2025-08-19T09:16:45.411Z SaaS routes loaded successfully
+🚀 Siyadah WhatsApp Enterprise Platform Ready
+📊 Unified API: /api/v1/*
+📈 Performance monitoring active
+🧹 Session management initialized
+info: 2025-08-19T09:16:45.416Z Server is running on port: 10000
+info: 2025-08-19T09:16:45.416Z  Visit 0.0.0.0:10000/api-docs for Swagger docs
+info: 2025-08-19T09:16:45.417Z WPPConnect-Server version: 2.8.6
+🔄 Migration from PostgreSQL to MongoDB...
+⚠️ PostgreSQL deprecated - skipping migration
+✅ MongoDB is the primary database
+🔧 Initializing MongoDB connection...
+✅ MongoDB connected successfully
+✅ MongoDB indexes created successfully
+✅ MongoDB connected successfully
+📬 Message Queue Manager initialized
+📬 Message Queue System initialized with WhatsApp integration
+✅ System initialized without demo data
+=== Siyadah WhatsApp SaaS Platform ===
+🚀 Server running on port: 10000
+📚 Available API Endpoints:
+   • Company API: /api/v1/company
+   • Sub-client API: /api/v1/subclient
+   • Health Check: /api/health
+   • API Docs: /api/docs
+   • WhatsApp Bridge: /saas/api
+🔑 Authentication:
+     Register companies and users via /auth/register
+     Login via /auth/login
+📖 Documentation: Visit /api/docs for full API reference
+📋 Register: /register.html | Login: /login.html
+================================
