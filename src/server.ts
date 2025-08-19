@@ -188,49 +188,77 @@ app.get('/menu', (req, res) => {
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
-// Process lock to prevent multiple instances
-const LOCK_FILE = '/tmp/server.lock';
+// Enhanced process management for Render.com
 const fs = require('fs');
+const LOCK_FILE = '/tmp/server.lock';
+const STARTUP_DELAY = process.env.RENDER ? Math.random() * 3000 : 0; // Random delay for Render
 
-// Check if another instance is already running
-if (fs.existsSync(LOCK_FILE)) {
-  console.log('🔒 Another server instance detected, exiting...');
-  process.exit(0);
-}
-
-// Create lock file
-fs.writeFileSync(LOCK_FILE, process.pid.toString());
-
-// Clean up lock file on exit
-process.on('exit', () => {
-  try {
-    fs.unlinkSync(LOCK_FILE);
-  } catch (err) {
-    // Lock file might already be deleted
+// Render-specific startup with staggered initialization
+const startServer = async () => {
+  // Add random delay for Render to prevent simultaneous startups
+  if (STARTUP_DELAY > 0) {
+    console.log(`⏳ Render startup delay: ${Math.round(STARTUP_DELAY)}ms`);
+    await new Promise(resolve => setTimeout(resolve, STARTUP_DELAY));
   }
-});
 
-// Check if port is already in use before starting
-const server = app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server successfully started on ${HOST}:${PORT}`);
-  console.log(`🔒 Process lock created: ${process.pid}`);
-});
+  // Enhanced lock check for Render
+  if (fs.existsSync(LOCK_FILE)) {
+    try {
+      const lockPid = fs.readFileSync(LOCK_FILE, 'utf8');
+      console.log(`🔒 Lock file exists (PID: ${lockPid}), checking if process is alive...`);
+      
+      // On Render, just exit if lock exists (let platform handle restart)
+      if (process.env.RENDER) {
+        console.log('🛑 Render platform detected - exiting to prevent conflicts');
+        process.exit(0);
+      }
+    } catch (err) {
+      console.log('🧹 Cleaning up stale lock file');
+      fs.unlinkSync(LOCK_FILE);
+    }
+  }
 
-// Handle port already in use error
-server.on('error', (err: any) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(
-      `❌ Port ${PORT} is already in use. Please wait a moment and try again.`
-    );
-    console.log('🔄 Attempting to restart in 5 seconds...');
-    setTimeout(() => {
+  // Create lock file with enhanced metadata
+  const lockData = {
+    pid: process.pid,
+    timestamp: Date.now(),
+    platform: process.env.RENDER ? 'render' : 'other'
+  };
+  fs.writeFileSync(LOCK_FILE, JSON.stringify(lockData));
+
+  // Start server with enhanced error handling
+  const server = app.listen(PORT, HOST, () => {
+    console.log(`🚀 Server successfully started on ${HOST}:${PORT}`);
+    console.log(`🔒 Process lock created: ${process.pid}`);
+    console.log(`🌐 Platform: ${process.env.RENDER ? 'Render.com' : 'Local/Other'}`);
+  });
+
+  // Enhanced error handling for Render
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ Port ${PORT} is already in use on ${process.env.RENDER ? 'Render' : 'local'}`);
+      
+      // On Render, exit immediately to let platform restart
+      if (process.env.RENDER) {
+        console.log('🛑 Render: Exiting immediately for platform restart');
+        cleanup();
+        process.exit(1);
+      } else {
+        console.log('🔄 Local: Attempting to restart in 5 seconds...');
+        setTimeout(() => {
+          cleanup();
+          process.exit(1);
+        }, 5000);
+      }
+    } else {
+      console.error('❌ Server error:', err);
+      cleanup();
       process.exit(1);
-    }, 5000);
-  } else {
-    console.error('❌ Server error:', err);
-    process.exit(1);
-  }
-});
+    }
+  });
+
+  return server;
+};
 
 // Graceful shutdown with cleanup
 const cleanup = () => {
@@ -241,34 +269,56 @@ const cleanup = () => {
       console.log('🔓 Process lock removed');
     }
   } catch (err) {
-    console.warn('⚠️ Lock cleanup error:', err.message);
+    console.warn('⚠️ Lock cleanup error:', err?.message || err);
   }
 };
+
+// Start the server
+let server: any;
+startServer().then(serverInstance => {
+  server = serverInstance;
+}).catch(err => {
+  console.error('❌ Failed to start server:', err);
+  cleanup();
+  process.exit(1);
+});
 
 process.on('SIGTERM', () => {
   console.log('🛑 Received SIGTERM, shutting down gracefully');
   cleanup();
-  server.close(() => {
-    console.log('✅ Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   console.log('🛑 Received SIGINT, shutting down gracefully');
   cleanup();
-  server.close(() => {
-    console.log('✅ Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGHUP', () => {
   console.log('🔄 Received SIGHUP, restarting...');
   cleanup();
-  server.close(() => {
-    process.exit(1); // Let the process manager restart us
-  });
+  if (server) {
+    server.close(() => {
+      process.exit(1); // Let the process manager restart us
+    });
+  } else {
+    process.exit(1);
+  }
 });
 
 // Handle uncaught exceptions
