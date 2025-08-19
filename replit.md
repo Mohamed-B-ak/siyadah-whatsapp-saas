@@ -9,6 +9,7 @@ This is a comprehensive WhatsApp SaaS platform built on WPPConnect technology wi
 - Comprehensive deployment guide included
 - Webhook filtering optimized for incoming messages only
 - Production-ready MongoDB integration
+- **FIXED**: npm install command updated for render.com compatibility
 
 # User Preferences
 

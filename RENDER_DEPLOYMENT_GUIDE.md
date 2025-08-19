@@ -33,7 +33,7 @@
 1. Create new Web Service on render.com
 2. Select your repository
 3. Configure build settings:
-   - **Build Command**: `npm ci && npm run build`
+   - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
    - **Environment**: Node
    - **Plan**: Standard (required for browser dependencies)
@@ -71,6 +71,11 @@ The platform requires Chrome for WhatsApp Web automation. The `Dockerfile.render
 
 ### Troubleshooting
 
+**Package Installation Issues**:
+- **Error**: `npm ci` requires package-lock.json with lockfileVersion >= 1
+- **Solution**: Updated to use `npm install --omit=dev` instead of `npm ci --only=production`
+- **Alternative**: Use `npm install` if deployment still fails
+
 **Chrome Issues**:
 - Verify CHROME_BIN environment variable
 - Check build logs for Chrome installation errors
@@ -85,6 +90,12 @@ The platform requires Chrome for WhatsApp Web automation. The `Dockerfile.render
 - Upgrade to higher plan if needed
 - Monitor memory usage via dashboard
 - Optimize session cleanup intervals
+
+**Build Failures**:
+- Check Node.js version compatibility (requires Node 22+)
+- Verify all environment variables are set
+- Review build logs for specific error messages
+- Ensure package-lock.json is properly committed
 
 ### Performance Optimization
 
