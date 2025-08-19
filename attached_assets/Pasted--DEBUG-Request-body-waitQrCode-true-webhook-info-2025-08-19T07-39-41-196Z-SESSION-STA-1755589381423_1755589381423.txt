@@ -1,0 +1,45 @@
+[DEBUG] Request body: { waitQrCode: true, webhook: '' }
+info: 2025-08-19T07:39:41.196Z [SESSION-START] Initiating session 68a41e673426e514ef82f705_ooooooooooooooo with autoClose: 0
+info: 2025-08-19T07:39:41.197Z [SESSION-START] waitQrCode: true
+info: 2025-08-19T07:39:41.197Z [SESSION-START] Request body:
+info: 2025-08-19T07:39:41.197Z [SESSION-START] Getting session state for 68a41e673426e514ef82f705_ooooooooooooooo
+info: 2025-08-19T07:39:41.197Z [STATUS-CHECK] Checking status for session: 68a41e673426e514ef82f705_ooooooooooooooo
+info: 2025-08-19T07:39:41.197Z [STATUS-CHECK] Client found: false, Status: undefined
+info: 2025-08-19T07:39:41.197Z [STATUS-CHECK] No client found for session: 68a41e673426e514ef82f705_ooooooooooooooo
+info: 2025-08-19T07:39:41.198Z [SESSION-START] Session state retrieved, opening session data for 68a41e673426e514ef82f705_ooooooooooooooo
+info:     Checking for updates
+info:     You're up to date
+info:     [68a41e673426e514ef82f705_ooooooooooooooo:browser] Using browser folder '/app/tokens/68a41e673426e514ef82f705_ooooooooooooooo'
+info:     [68a41e673426e514ef82f705_ooooooooooooooo:browser] Initializing browser...
+error:    [68a41e673426e514ef82f705_ooooooooooooooo:browser] Error no open browser
+error:    [68a41e673426e514ef82f705_ooooooooooooooo:browser] Failed to launch the browser process!
+mkdir: cannot create directory '/home/appuser': Permission denied
+touch: cannot touch '/home/appuser/.local/share/applications/mimeapps.list': No such file or directory
+chrome_crashpad_handler: --database is required
+Try 'chrome_crashpad_handler --help' for more information.
+[100:100:0819/073942.984289:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:120] recvmsg: Connection reset by peer (104)
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+warn: 2025-08-19T07:39:43.140Z [68a41e673426e514ef82f705_ooooooooooooooo] Session initialization warning: Error: Failed to launch the browser process!
+mkdir: cannot create directory '/home/appuser': Permission denied
+touch: cannot touch '/home/appuser/.local/share/applications/mimeapps.list': No such file or directory
+chrome_crashpad_handler: --database is required
+Try 'chrome_crashpad_handler --help' for more information.
+[100:100:0819/073942.984289:ERROR:third_party/crashpad/crashpad/util/linux/socket.cc:120] recvmsg: Connection reset by peer (104)
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+info: 2025-08-19T07:39:43.140Z [68a41e673426e514ef82f705_ooooooooooooooo] Session error handled - marked as QRCODE ready
+info: 2025-08-19T07:39:43.140Z [SESSION-START] Session data opened successfully for 68a41e673426e514ef82f705_ooooooooooooooo
+info: 2025-08-19T07:39:43.140Z [SESSION-START] Session 68a41e673426e514ef82f705_ooooooooooooooo started successfully
+[QR-REQUEST] QR code requested for session: ooooooooooooooo
+[QR-REQUEST] No stored QR code found for session: ooooooooooooooo, attempting WhatsApp API
+[QR-REQUEST] Session not found: ooooooooooooooo
+Error getting QR code: TypeError: fetch failed
+    at node:internal/deps/undici/undici:13510:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async <anonymous> (/app/server/saas-whatsapp-bridge.ts:193:24) {
+  [cause]: AggregateError [ECONNREFUSED]: 
+      at internalConnectMultiple (node:net:1134:18)
+      at afterConnectMultiple (node:net:1715:7) {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
