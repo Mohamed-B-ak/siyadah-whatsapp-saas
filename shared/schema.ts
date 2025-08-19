@@ -12,6 +12,7 @@ export interface Company {
   planType: string;
   maxUsers: number;
   maxSessions: number;
+  monthlyPrice?: number;
   webhookUrl?: string;
   webhookToken?: string;
   isActive: boolean;

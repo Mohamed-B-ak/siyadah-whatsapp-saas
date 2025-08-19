@@ -77,14 +77,14 @@ function initializeProtectionState(sessionId: string): SessionProtectionState {
 
 function shouldAllowWebhook(sessionId: string, status: string, logger: any): boolean {
   const now = Date.now();
-
+  
   // Initialize if not exists
   if (!webhookRateLimits[sessionId]) {
     webhookRateLimits[sessionId] = initializeRateLimit(sessionId);
   }
-
+  
   const rateLimit = webhookRateLimits[sessionId];
-
+  
   // Reset hourly counters
   if (now >= rateLimit.hourlyResetTime) {
     rateLimit.webhookCount = 0;
@@ -92,13 +92,13 @@ function shouldAllowWebhook(sessionId: string, status: string, logger: any): boo
     rateLimit.duplicateCount = 0;
     logger.info(`[${sessionId}] 🔄 Webhook rate limit reset`);
   }
-
+  
   // Check cooldown period
   if (now < rateLimit.cooldownUntil) {
     logger.info(`[${sessionId}] 🚫 Webhook in cooldown until ${new Date(rateLimit.cooldownUntil).toLocaleTimeString()}`);
     return false;
   }
-
+  
   // Check duplicate status
   if (rateLimit.lastStatus === status) {
     rateLimit.duplicateCount++;
@@ -110,32 +110,32 @@ function shouldAllowWebhook(sessionId: string, status: string, logger: any): boo
   } else {
     rateLimit.duplicateCount = 0;
   }
-
+  
   // Check hourly limit
   if (rateLimit.webhookCount >= WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR) {
     logger.info(`[${sessionId}] 🚫 Webhook hourly limit reached (${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`);
     return false;
   }
-
+  
   // Update tracking
   rateLimit.lastWebhookTime = now;
   rateLimit.webhookCount++;
   rateLimit.lastStatus = status;
-
+  
   logger.info(`[${sessionId}] ✅ Webhook allowed (${rateLimit.webhookCount}/${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`);
   return true;
 }
 
 function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger: any): boolean {
   const now = Date.now();
-
+  
   // Initialize if not exists
   if (!protectionStates[sessionId]) {
     protectionStates[sessionId] = initializeProtectionState(sessionId);
   }
-
+  
   const protectionState = protectionStates[sessionId];
-
+  
   // Check if in cooldown
   if (protectionState.isInCooldown) {
     const timeSinceLastProtection = now - protectionState.lastProtectionTime;
@@ -149,7 +149,7 @@ function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger
       logger.info(`[${sessionId}] 🔄 Auto-protection cooldown ended`);
     }
   }
-
+  
   // Check if same status being protected repeatedly
   if (protectionState.originalStatus === statusFind) {
     protectionState.protectionCount++;
@@ -163,7 +163,7 @@ function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger
     protectionState.protectionCount = 1;
     protectionState.originalStatus = statusFind;
   }
-
+  
   protectionState.lastProtectionTime = now;
   return true;
 }
@@ -231,12 +231,12 @@ export default class CreateSessionUtil {
             waitForLogin: true, // Wait for manual QR scan
             logQR: true, // Enable comprehensive QR logging
             disableWelcome: true, // Skip welcome screen for faster loading
-
+            
             // Advanced session configuration
             createPathFileToken: false, // Don't create file tokens
             browserRevisionFallback: false, // Use exact browser version
             addBrowserArgs: [], // No additional args to avoid conflicts
-
+            
             // QR Code specific settings
             qrMaxRetries: 5, // Allow multiple QR generation attempts
             qrRefreshS: 30, // Refresh QR every 30 seconds
@@ -247,58 +247,53 @@ export default class CreateSessionUtil {
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: (() => {
-                // Environment detection for Chrome path configuration
-                if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
-                  const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome';
-                  console.log('[CHROME-CONFIG] Render Platform - Chrome path:', chromePath);
-                  return chromePath;
-                } else if (process.env.REPLIT_DEV_DOMAIN) {
-                  const chromePath = '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser';
-                  console.log('[CHROME-CONFIG] Replit Platform - Chrome path:', chromePath);
-                  return chromePath;
-                } else {
-                  const chromePath = process.env.CHROME_BIN || '/usr/bin/google-chrome';
-                  console.log('[CHROME-CONFIG] Default Platform - Chrome path:', chromePath);
-                  return chromePath;
-                }
-              })(),
-              args: (() => {
-                const baseArgs = [
-                  '--no-sandbox',
-                  '--disable-setuid-sandbox',
-                  '--disable-dev-shm-usage',
-                  '--disable-gpu',
-                  '--disable-web-security',
-                  '--disable-features=VizDisplayCompositor',
-                  '--remote-debugging-port=9222',
-                  '--remote-debugging-address=0.0.0.0',
-                  '--no-first-run',
-                  '--disable-default-apps',
-                  '--disable-extensions',
-                  '--disable-sync',
-                  '--disable-translate',
-                  '--disable-background-networking',
-                  '--memory-pressure-off',
-                  '--user-data-dir=/tmp/chrome-user-data',
-                  '--data-path=/tmp/chrome-data',
-                  '--disk-cache-dir=/tmp/chrome-cache'
-                ];
-
-                if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
-                  const renderArgs = [
-                    ...baseArgs,
-                    '--disable-accelerated-2d-canvas',
-                    '--disable-accelerated-video-decode',
-                    '--disable-background-mode'
-                  ];
-                  console.log('[CHROME-CONFIG] Render args:', renderArgs.join(' '));
-                  return renderArgs;
-                }
-
-                console.log('[CHROME-CONFIG] Default args:', baseArgs.join(' '));
-                return baseArgs;
-              })(),
+              executablePath: process.env.RENDER ? '/usr/bin/google-chrome' : 
+                             process.env.REPLIT_DEV_DOMAIN ? '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser' :
+                             '/usr/bin/google-chrome',
+              args: process.env.RENDER ? [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor',
+                '--remote-debugging-port=9222',
+                '--remote-debugging-address=0.0.0.0',
+                '--no-first-run',
+                '--disable-default-apps',
+                '--disable-extensions',
+                '--disable-sync',
+                '--disable-translate',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-renderer-backgrounding',
+                '--memory-pressure-off',
+                '--max_old_space_size=2048',
+                '--disable-crash-reporter',
+                '--disable-crashpad',
+                '--user-data-dir=/tmp/chrome-user-data',
+                '--data-path=/tmp/chrome-data',
+                '--homedir=/tmp',
+                '--disk-cache-dir=/tmp/chrome-cache',
+                '--no-default-browser-check',
+                '--disable-software-rasterizer',
+                '--disable-accelerated-2d-canvas',
+                '--disable-accelerated-video-decode',
+                '--disable-background-mode'
+              ] : [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--disable-web-security',
+                '--disable-features=VizDisplayCompositor',
+                '--remote-debugging-port=9222',
+                '--remote-debugging-address=0.0.0.0',
+                '--memory-pressure-off',
+                '--max_old_space_size=4096',
+                '--disable-crash-reporter'
+              ],
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
               ignoreDefaultArgs: ['--enable-automation'], // Hide automation detection
@@ -315,7 +310,7 @@ export default class CreateSessionUtil {
               req.logger.info(
                 `[${session}] QR Code generated - Attempt ${attempt}`
               );
-
+              
               // Store QR data for immediate access
               if (base64Qr && base64Qr.length > 100) {
                 client.qrcode = base64Qr;
@@ -340,19 +335,19 @@ export default class CreateSessionUtil {
                   client,
                   statusFind
                 );
-
+                
                 req.logger.info(`[${session}] Raw status received: ${statusFind}`);
-
+                
                 // RATE-LIMITED AUTO-CLOSE PROTECTION WITH LOOP PREVENTION
                 const blockedStatuses = [
                   'autocloseCalled', 'TIMEOUT', 'browserClose', 'CLOSE', 'CLOSED',
                   'timeout', 'close', 'disconnect', 'error', 'failed'
                 ];
-
+                
                 const shouldBlock = blockedStatuses.some(blocked => 
                   statusFind.toLowerCase().includes(blocked.toLowerCase())
                 );
-
+                
                 if (shouldBlock) {
                   // Check if auto-protection should be allowed (prevents loops)
                   if (!shouldAllowAutoProtection(session, statusFind, req.logger)) {
@@ -363,18 +358,18 @@ export default class CreateSessionUtil {
                     client.status = statusFind === 'CLOSED' ? 'QRCODE' : statusFind;
                     return;
                   }
-
+                  
                   req.logger.info(
                     `[${session}] 🛡️ AUTO-CLOSE PROTECTION: ${statusFind} - Session preserved for QR scanning`
                   );
-
+                  
                   // Override with QR ready state
                   client.status = 'QRCODE';
                   client.qrcode = client.qrcode || 'pending';
-
+                  
                   // Emit protected status
                   eventEmitter.emit(`status-${client.session}`, client, 'QRCODE');
-
+                  
                   // Rate-limited webhook call
                   if (shouldAllowWebhook(session, 'QRCODE', req.logger)) {
                     callWebHook(client, req, 'status-find', {
@@ -422,7 +417,7 @@ export default class CreateSessionUtil {
                     req.logger.info(`[${session}] OVERRIDING CLOSED STATUS - keeping as QRCODE`);
                   }
                 }
-
+                
                 // Rate-limited webhook call for normal status updates
                 if (shouldAllowWebhook(session, client.status, req.logger)) {
                   callWebHook(client, req, 'status-find', {
@@ -435,7 +430,7 @@ export default class CreateSessionUtil {
                     `[${session}] 🚫 Webhook blocked for status update (${client.status}) - rate limit exceeded`
                   );
                 }
-
+                
               } catch (error) {
                 req.logger.error(`[${session}] Error in statusFind: ${error}`);
               }
@@ -532,12 +527,12 @@ export default class CreateSessionUtil {
     res?: any
   ) {
     eventEmitter.emit(`qrcode-${client.session}`, qrCode, urlCode, client);
-
+    
     // Store the QR data immediately
     const fullQrDataUrl = qrCode.startsWith('data:image/png;base64,') 
       ? qrCode 
       : `data:image/png;base64,${qrCode}`;
-
+      
     Object.assign(client, {
       status: 'QRCODE',
       qrcode: fullQrDataUrl,
@@ -554,9 +549,9 @@ export default class CreateSessionUtil {
         const path = require('path');
         const mongodbPath = path.resolve(__dirname, '../../server/mongodb');
         const { storage } = require(mongodbPath);
-
+        
         req.logger.info(`[QR-CAPTURE] 🔍 Attempting to save QR code for session: ${client.session}`);
-
+        
         if (storage && typeof storage.updateSessionByName === 'function') {
           // Use updateSessionByName method for WPPConnect session names
           const updateResult = await storage.updateSessionByName(client.session, {
@@ -564,7 +559,7 @@ export default class CreateSessionUtil {
             qrCodeGeneratedAt: new Date(),
             status: 'qr_ready'
           });
-
+          
           if (updateResult) {
             req.logger.info(`[QR-CAPTURE] ✅ QR code automatically saved to database for session: ${client.session}`);
           } else {
@@ -594,7 +589,7 @@ export default class CreateSessionUtil {
       urlcode: urlCode,
       session: client.session,
     });
-
+    
     if (res && !res._headerSent)
       res.status(200).json({
         status: 'qrcode',

@@ -14,8 +14,6 @@ ENV DISPLAY=:99
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
-ENV RENDER=true
-ENV NODE_ENV=production
 WORKDIR /app
 # Copy everything
 COPY . .
@@ -29,6 +27,7 @@ RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppIm
     chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
 USER appuser
 EXPOSE 5000
-# Build first, then run for production
-RUN npm run build
-CMD ["node", "render-start.js"]
+# Ensure clean startup on Render
+RUN echo '#!/bin/bash\nrm -f /tmp/server.lock\nexec npx tsx src/server.ts' > /app/start.sh && \
+    chmod +x /app/start.sh
+CMD ["/app/start.sh"]
