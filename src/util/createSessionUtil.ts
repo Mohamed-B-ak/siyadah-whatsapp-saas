@@ -249,11 +249,15 @@ export default class CreateSessionUtil {
               headless: 'new', // Use new headless mode
               executablePath: await (async () => {
                 const { deploymentConfig } = await import('../../server/config/environment');
+                console.log('[CHROME-CONFIG] Platform:', deploymentConfig.platform);
+                console.log('[CHROME-CONFIG] Chrome path:', deploymentConfig.chromeExecutablePath);
                 return deploymentConfig.chromeExecutablePath;
               })(),
               args: await (async () => {
                 const { getBrowserArgs, deploymentConfig } = await import('../../server/config/environment');
-                return getBrowserArgs(deploymentConfig.platform);
+                const args = getBrowserArgs(deploymentConfig.platform);
+                console.log('[CHROME-CONFIG] Browser args:', args.join(' '));
+                return args;
               })(),
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport

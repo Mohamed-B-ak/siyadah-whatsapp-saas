@@ -19,10 +19,12 @@ WORKDIR /app
 COPY . .
 # Install dependencies
 RUN npm install --legacy-peer-deps
-# Create non-root user
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Create non-root user and set up directories
+RUN groupadd -r appuser && useradd -r -g appuser -m -d /tmp appuser
 RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages && \
-    chown -R appuser:appuser /app
+    mkdir -p /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
+    chmod 755 /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
+    chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
 USER appuser
 EXPOSE 5000
 # Run directly with tsx (no build needed)

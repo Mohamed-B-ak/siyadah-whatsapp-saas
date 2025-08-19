@@ -98,6 +98,14 @@ export const getBrowserArgs = (platform: 'replit' | 'render' | 'local'): string[
     '--disable-renderer-backgrounding',
     '--memory-pressure-off',
     '--max_old_space_size=4096',
+    '--disable-crash-reporter',
+    '--disable-crashpad',
+    '--user-data-dir=/tmp/chrome-user-data',
+    '--data-path=/tmp/chrome-data',
+    '--homedir=/tmp',
+    '--disk-cache-dir=/tmp/chrome-cache',
+    '--no-default-browser-check',
+    '--disable-software-rasterizer'
   ];
 
   const replicArgs = [
@@ -108,7 +116,13 @@ export const getBrowserArgs = (platform: 'replit' | 'render' | 'local'): string[
 
   switch (platform) {
     case 'render':
-      return [...baseArgs, ...cloudArgs];
+      return [
+        ...baseArgs, 
+        ...cloudArgs,
+        '--disable-accelerated-2d-canvas',
+        '--disable-accelerated-video-decode',
+        '--disable-background-mode'
+      ];
     case 'replit':
       return [...baseArgs, ...cloudArgs, ...replicArgs];
     case 'local':
