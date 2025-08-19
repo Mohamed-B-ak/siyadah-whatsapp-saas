@@ -1,0 +1,80 @@
+25.53 Processing triggers for systemd (252.38-1~deb12u1) ...
+#8 DONE 25.8s
+#9 [ 4/13] WORKDIR /app
+#9 DONE 0.0s
+#10 [ 5/13] COPY package*.json ./
+#10 DONE 0.0s
+#11 [ 6/13] RUN npm install --legacy-peer-deps --omit=dev --ignore-scripts
+#11 34.67 npm warn EBADENGINE Unsupported engine {
+#11 34.67 npm warn EBADENGINE   package: '@wppconnect/server@2.8.6',
+#11 34.67 npm warn EBADENGINE   required: { node: '22.16.0' },
+#11 34.67 npm warn EBADENGINE   current: { node: 'v22.18.0', npm: '10.9.3' }
+#11 34.67 npm warn EBADENGINE }
+#11 37.64 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#11 37.98 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 38.02 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#11 38.58 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#11 39.03 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 40.15 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+#11 40.44 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 40.53 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 40.62 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 45.67 
+#11 45.67 added 678 packages, and audited 679 packages in 45s
+#11 45.67 
+#11 45.67 72 packages are looking for funding
+#11 45.67   run `npm fund` for details
+#11 45.68 
+#11 45.68 4 moderate severity vulnerabilities
+#11 45.68 
+#11 45.68 Some issues need review, and may require choosing
+#11 45.68 a different dependency.
+#11 45.68 
+#11 45.68 Run `npm audit` for details.
+#11 45.68 npm notice
+#11 45.68 npm notice New major version of npm available! 10.9.3 -> 11.5.2
+#11 45.68 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+#11 45.68 npm notice To update run: npm install -g npm@11.5.2
+#11 45.68 npm notice
+#11 DONE 46.1s
+#12 [ 7/13] COPY tsconfig.json ./
+#12 DONE 0.7s
+#13 [ 8/13] COPY src/ ./src/
+#13 DONE 0.0s
+#14 [ 9/13] COPY shared/ ./shared/
+#14 DONE 0.0s
+#15 [10/13] COPY server/ ./server/
+#15 DONE 0.0s
+#16 [11/13] RUN npm run build
+#16 0.236 
+#16 0.236 > @wppconnect/server@2.8.6 build
+#16 0.236 > npm run build:types && npm run build:js
+#16 0.236 
+#16 0.410 
+#16 0.410 > @wppconnect/server@2.8.6 build:types
+#16 0.410 > tsc
+#16 0.410 
+#16 0.416 sh: 1: tsc: not found
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 127
+------
+ > [11/13] RUN npm run build:
+0.236 
+0.236 > @wppconnect/server@2.8.6 build
+0.236 > npm run build:types && npm run build:js
+0.236 
+0.410 
+0.410 > @wppconnect/server@2.8.6 build:types
+0.410 > tsc
+0.410 
+0.416 sh: 1: tsc: not found
+------
+Dockerfile:71
+--------------------
+  69 |     
+  70 |     # Build TypeScript to JavaScript
+  71 | >>> RUN npm run build
+  72 |     
+  73 |     # Create necessary directories with proper permissions
+--------------------
+error: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 127
+Need better ways to work with logs? Try theRe

@@ -12,6 +12,7 @@ This is a comprehensive WhatsApp SaaS platform built on WPPConnect technology wi
 - **FIXED**: npm install command updated for render.com compatibility
 - **FIXED**: TypeScript ESLint dependency conflicts resolved
 - **FIXED**: Husky Git hooks disabled in production environment
+- **FIXED**: TypeScript compiler availability during build process
 
 # User Preferences
 

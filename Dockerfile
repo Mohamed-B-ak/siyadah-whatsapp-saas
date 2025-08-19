@@ -58,8 +58,8 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies (skip prepare scripts to avoid Husky in production)
-RUN npm install --legacy-peer-deps --omit=dev --ignore-scripts
+# Install all dependencies including dev dependencies for build
+RUN npm install --legacy-peer-deps --ignore-scripts
 
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
@@ -69,6 +69,9 @@ COPY server/ ./server/
 
 # Build TypeScript to JavaScript
 RUN npm run build
+
+# Remove dev dependencies to reduce image size
+RUN npm prune --omit=dev
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/wppconnect_tokens
