@@ -1,15 +1,13 @@
 services:
   - type: web
     name: siyadah-whatsapp-platform
-    env: node
+    env: docker
     plan: standard
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 5000
       - key: CHROME_BIN
         value: /usr/bin/google-chrome-stable
       - key: PUPPETEER_EXECUTABLE_PATH
