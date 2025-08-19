@@ -178,5 +178,39 @@ app.get('/menu', (req, res) => {
 });
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
-app.listen(PORT, HOST, () => {
+
+// Check if port is already in use before starting
+const server = app.listen(PORT, HOST, () => {
+  console.log(`🚀 Server successfully started on ${HOST}:${PORT}`);
+});
+
+// Handle port already in use error
+server.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use. Please wait a moment and try again.`);
+    console.log('🔄 Attempting to restart in 5 seconds...');
+    setTimeout(() => {
+      process.exit(1);
+    }, 5000);
+  } else {
+    console.error('❌ Server error:', err);
+    process.exit(1);
+  }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('🛑 Received SIGTERM, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🛑 Received SIGINT, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });
