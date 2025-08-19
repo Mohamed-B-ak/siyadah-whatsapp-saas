@@ -481,15 +481,19 @@ router.post('/sessions', authenticateCompany, checkLimits, async (req: Authentic
     const session = await storage.createSession(validatedData);
     
     // Also create session in WPPConnect
-    try {
-      const wppResponse = await fetch(`http://localhost:5000/api/${sessionData.sessionName}/start-session`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${req.company.masterApiKey}`
-        },
-        body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
-      });
+       try {
+        const baseUrl = process.env.NODE_ENV === 'production' 
+          ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
+          : 'http://localhost:5000';
+
+        const wppResponse = await fetch(`${baseUrl}/api/${sessionData.sessionName}/start-session`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${req.company.masterApiKey}`
+          },
+          body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
+        });
       
       const wppData = await wppResponse.json();
       
