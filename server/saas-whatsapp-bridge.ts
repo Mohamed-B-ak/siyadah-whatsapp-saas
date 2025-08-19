@@ -18,9 +18,14 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       return res.status(401).json({ success: false, message: 'User authentication required' });
     }
 
+    // Create session with full session ID that matches WPPConnect format
+    const sessionId = `${companyId}_${sessionName}`;
+    console.log(`[SESSION-CREATE] Creating session in database: ${sessionId}`);
+    console.log(`[SESSION-CREATE] User: ${userId}, Company: ${companyId}, Name: ${sessionName}`);
+    
     // Create session in database
     const sessionData = await storage.createSession({
-      id: `${companyId}_${userId}_${sessionName}`,
+      id: sessionId,
       userId: userId,
       companyId: companyId,
       sessionName: sessionName,
@@ -33,6 +38,20 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
         authTimeoutMs: 0
       }
     });
+    
+    console.log(`[SESSION-CREATE] Session created successfully in database: ${sessionData.id}`);
+    
+    // Verify session was stored
+    const verifySession = await storage.getSessionByName(sessionId);
+    console.log(`[SESSION-VERIFY] Session verification: ${verifySession ? 'FOUND' : 'NOT FOUND'}`);
+    
+    if (!verifySession) {
+      console.error(`[SESSION-ERROR] Failed to verify session creation for: ${sessionId}`);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Session creation verification failed' 
+      });
+    }
 
     // Start actual WhatsApp session
     const { getBaseUrl } = await import('./config/environment');
@@ -50,10 +69,15 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     const whatsappResult = await whatsappResponse.json();
 
     // Update session with WhatsApp response
-    await storage.updateSession(sessionData.id, {
+    console.log(`[SESSION-UPDATE] Updating session ${sessionData.id} with QR code`);
+    console.log(`[SESSION-UPDATE] QR code present: ${!!whatsappResult.qrcode}`);
+    
+    const updatedSession = await storage.updateSession(sessionData.id, {
       status: 'qr_pending',
       qrCode: whatsappResult.qrcode || null
     });
+    
+    console.log(`[SESSION-UPDATE] Session update result: ${!!updatedSession}`);
 
     res.json({
       success: true,
@@ -134,13 +158,14 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
   try {
     const { sessionName } = req.params;
     const userId = req.user?.id;
+    const companyId = req.user?.companyId;
     
-    if (!userId) {
-      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    if (!userId || !companyId) {
+      return res.status(401).json({ success: false, message: 'User authentication required' });
     }
 
-    // Construct full session ID - if sessionName doesn't contain userId, add it
-    const fullSessionId = sessionName.includes('_') ? sessionName : `${userId}_${sessionName}`;
+    // Construct full session ID that matches creation format
+    const fullSessionId = `${companyId}_${sessionName}`;
     
     console.log(`[QR-REQUEST] QR code requested for session: ${sessionName} -> ${fullSessionId}`);
 
@@ -190,31 +215,6 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
       });
     } else {
       console.warn(`[QR-REQUEST] Session not found in database: ${fullSessionId}`);
-      console.log(`[QR-REQUEST] Attempting alternative lookup formats...`);
-      
-      // Try alternative session name formats
-      const alternatives = [
-        `${req.user?.companyId}_${sessionName}`,
-        `${req.user?.id}_${sessionName}`,
-        sessionName
-      ];
-      
-      for (const altSessionId of alternatives) {
-        if (altSessionId !== fullSessionId) {
-          console.log(`[QR-REQUEST] Trying alternative: ${altSessionId}`);
-          const altSessionData = await storage.getSessionByName(altSessionId);
-          if (altSessionData && altSessionData.qrCode) {
-            console.log(`[QR-REQUEST] Found session with alternative ID: ${altSessionId}`);
-            return res.json({
-              success: true,
-              qrCode: altSessionData.qrCode,
-              status: altSessionData.status,
-              source: 'database_alt',
-              generatedAt: altSessionData.qrCodeGeneratedAt
-            });
-          }
-        }
-      }
     }
 
     console.log(`[QR-REQUEST] No stored QR code found for session: ${fullSessionId}, attempting WhatsApp API`);
