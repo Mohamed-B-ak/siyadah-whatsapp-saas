@@ -1,31 +1,37 @@
+# Use Node.js 22 slim as base image
 FROM node:22-slim
 
-# Install Chrome and dependencies for Render deployment
-RUN apt-get update && \
-    apt-get install -y wget gnupg2 curl xvfb && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set Chrome environment variables for deployment
-ENV DISPLAY=:99
-ENV CHROME_BIN=/usr/bin/google-chrome
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
+# Set working directory
 WORKDIR /app
-# Copy everything
-COPY . .
+
+# Copy package files first for better caching
+COPY package*.json ./
+
 # Install dependencies
-RUN npm install --legacy-peer-deps
-# Create non-root user and set up directories
-RUN groupadd -r appuser && useradd -r -g appuser -m -d /tmp appuser
-RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages && \
-    mkdir -p /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
-    chmod 755 /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache && \
-    chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
+RUN npm ci --only=production
+
+# Copy all source files
+COPY . .
+
+# Build TypeScript to JavaScript
+RUN npm run build
+
+# Create non-root user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/wppconnect_tokens && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
 USER appuser
+
+# Expose port 5000
 EXPOSE 5000
-# Run directly with tsx (no build needed)
-CMD ["npx", "tsx", "src/server.ts"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:5000/api/health || exit 1
+
+# Start the application
+CMD ["npm", "start"]

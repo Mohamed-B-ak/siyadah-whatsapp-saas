@@ -10,11 +10,7 @@ export class WhatsAppService {
   private sessions: Map<string, any> = new Map();
 
   constructor() {
-    if (process.env.NODE_ENV === 'production') {
-      this.baseUrl = `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`;
-    } else {
-      this.baseUrl = `http://localhost:${process.env.PORT || 5000}`;
-    }
+    this.baseUrl = `http://localhost:${process.env.PORT || 5000}`;
   }
 
   async createSession(sessionName: string, userId: string, companyId: string): Promise<any> {

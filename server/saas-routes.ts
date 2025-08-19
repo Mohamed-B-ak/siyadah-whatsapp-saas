@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { storage } from './storage';
-import type { IStorage } from './storage';
+import type { ISaasStorage } from './storage';
 import { 
   authenticateCompany, 
   authenticateUser, 
@@ -481,18 +481,15 @@ router.post('/sessions', authenticateCompany, checkLimits, async (req: Authentic
     const session = await storage.createSession(validatedData);
     
     // Also create session in WPPConnect
-       try {
-        const { getBaseUrl } = await import('./config/environment');
-        const baseUrl = getBaseUrl();
-
-        const wppResponse = await fetch(`${baseUrl}/api/${sessionData.sessionName}/start-session`, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${req.company?.masterApiKey || ''}`
-          },
-          body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
-        });
+    try {
+      const wppResponse = await fetch(`http://localhost:5000/api/${sessionData.sessionName}/start-session`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${req.company.masterApiKey}`
+        },
+        body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
+      });
       
       const wppData = await wppResponse.json();
       
@@ -558,9 +555,7 @@ router.delete('/sessions/:sessionName', authenticateCompany, async (req: Authent
 
     // Close WhatsApp session first
     try {
-      const { getBaseUrl } = await import('./config/environment');
-      const baseUrl = getBaseUrl();
-      const closeResponse = await fetch(`${baseUrl}/api/${fullSessionName}/logout-session`, {
+      const closeResponse = await fetch(`http://localhost:5000/api/${fullSessionName}/logout-session`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
