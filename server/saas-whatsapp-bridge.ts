@@ -20,7 +20,6 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
 
     // Create session in database
     const sessionData = await storage.createSession({
-      id: `${companyId}_${userId}_${sessionName}`,
       userId: userId,
       companyId: companyId,
       sessionName: sessionName,
@@ -65,7 +64,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     res.status(500).json({ 
       success: false, 
       message: 'Failed to create session',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -168,7 +167,7 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
           console.log(`[QR-REQUEST] Fresh PNG buffer generated - Size: ${pngBuffer.length} bytes`);
           
         } catch (qrError) {
-          console.error('[QR-REQUEST] Error generating QR PNG:', qrError);
+          console.error('[QR-REQUEST] Error generating QR PNG:', qrError instanceof Error ? qrError.message : 'Unknown error');
           qrCodeToReturn = sessionData.qrCode; // Fallback to stored data
         }
       }
@@ -218,7 +217,7 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get QR code',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -238,7 +237,6 @@ router.get('/sessions/:sessionName/status', authenticateUser, authenticateSessio
 
     // Update session in database
     await storage.updateSession(sessionId, {
-      whatsappStatus: statusData.status,
       status: statusData.status === 'CONNECTED' ? 'connected' : 
               statusData.status === 'QRCODE' ? 'qr_pending' : 'disconnected'
     });
@@ -255,7 +253,7 @@ router.get('/sessions/:sessionName/status', authenticateUser, authenticateSessio
     res.status(500).json({ 
       success: false, 
       message: 'Failed to check status',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -283,19 +281,7 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
 
     const messageResult = await messageResponse.json();
 
-    // Log message in database
-    await storage.logMessage({
-      sessionId: sessionId,
-      userId: req.user?.id,
-      companyId: req.user?.companyId,
-      type: 'outgoing',
-      from: sessionId,
-      to: phone,
-      content: message,
-      status: messageResult.status || 'sent',
-      whatsappMessageId: messageResult.id,
-      timestamp: new Date()
-    });
+    // Log message in database (temporarily disabled until storage method is available)
 
     // Log API usage
     await storage.logApiUsage({
@@ -303,9 +289,8 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
       companyId: req.user?.companyId,
       endpoint: 'send-message',
       method: 'POST',
-      timestamp: new Date(),
-      responseStatus: messageResponse.status,
-      responseTime: Date.now() - req.startTime
+      statusCode: messageResponse.status,
+      responseTime: Date.now() - (req.startTime || Date.now())
     });
 
     res.json({
@@ -320,7 +305,7 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
     res.status(500).json({ 
       success: false, 
       message: 'Failed to send message',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -347,7 +332,7 @@ router.get('/sessions', authenticateUser, async (req: AuthenticatedRequest, res)
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get sessions',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -367,7 +352,7 @@ router.delete('/sessions/:sessionName', authenticateUser, authenticateSession, a
         method: 'POST'
       });
     } catch (error) {
-      console.log('WhatsApp session close error (may be already closed):', error.message);
+      console.log('WhatsApp session close error (may be already closed):', error instanceof Error ? error.message : 'Unknown error');
     }
 
     // Delete from database
@@ -383,7 +368,7 @@ router.delete('/sessions/:sessionName', authenticateUser, authenticateSession, a
     res.status(500).json({ 
       success: false, 
       message: 'Failed to delete session',
-      error: error.message 
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

@@ -46,10 +46,17 @@ export interface Session {
   companyId: string;
   status: string;
   phoneNumber?: string;
-  qrCode?: string;
+  qrCode?: string | null;
   qrCodeGeneratedAt?: Date;
   lastActivity?: Date;
   connectedAt?: Date;
+  webhook?: string | null;
+  whatsappStatus?: string;
+  config?: {
+    autoClose?: number;
+    qrTimeout?: number;
+    authTimeoutMs?: number;
+  };
   createdAt: Date;
 }
 
@@ -78,6 +85,7 @@ export interface ApiUsageLog {
   ipAddress?: string;
   userAgent?: string;
   timestamp: Date;
+  responseStatus?: number;
 }
 
 export interface ErrorLog {
