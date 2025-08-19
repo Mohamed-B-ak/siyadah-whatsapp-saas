@@ -79,7 +79,7 @@ export interface ApiUsageLog {
   responseTime?: number; // in milliseconds
   ipAddress?: string;
   userAgent?: string;
-  timestamp: Date;
+  createdAt: Date;
 }
 
 export interface ErrorLog {

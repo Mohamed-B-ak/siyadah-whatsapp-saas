@@ -44,10 +44,19 @@ export default {
     logger: ['console', 'file'],
   },
   createOptions: {
-    // Force Replit Chromium path regardless of environment detection issues
-    executablePath: process.env.REPLIT_DEV_DOMAIN ? 
-      '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser' :
-      (process.env.CHROME_BIN || '/usr/bin/google-chrome'),
+    // Multi-platform Chrome configuration for deployment flexibility
+    executablePath: (() => {
+      // Replit environment detection
+      if (process.env.REPLIT_DEV_DOMAIN) {
+        return '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser';
+      }
+      // Render.com environment detection  
+      if (process.env.RENDER || process.env.RENDER_EXTERNAL_URL) {
+        return process.env.CHROME_BIN || '/usr/bin/google-chrome';
+      }
+      // Default fallback
+      return process.env.CHROME_BIN || '/usr/bin/google-chrome';
+    })(),
     // Fixed QR behavior - generate once and wait for connection
     autoClose: 300000, // 5 minutes timeout - proper session management
     disableSpins: true,
