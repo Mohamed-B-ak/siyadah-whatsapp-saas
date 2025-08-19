@@ -6,7 +6,6 @@ export interface Company {
   id: string;
   name: string;
   email: string;
-  passwordHash?: string;
   masterApiKey: string;
   messagingApiKey?: string;
   planType: string;
@@ -51,7 +50,6 @@ export interface Session {
   qrCodeGeneratedAt?: Date;
   lastActivity?: Date;
   connectedAt?: Date;
-  webhook?: string;
   createdAt: Date;
 }
 
@@ -79,7 +77,7 @@ export interface ApiUsageLog {
   responseTime?: number; // in milliseconds
   ipAddress?: string;
   userAgent?: string;
-  createdAt: Date;
+  timestamp: Date;
 }
 
 export interface ErrorLog {

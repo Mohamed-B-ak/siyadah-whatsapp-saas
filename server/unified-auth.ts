@@ -96,7 +96,6 @@ router.post('/register', async (req: Request, res: Response) => {
         companyId,
         apiKey,
         role: 'user',
-        status: 'active',
         permissions: ['read', 'write'],
         isActive: true
       });
@@ -151,8 +150,8 @@ router.post('/login', async (req: Request, res: Response) => {
       }
 
       console.log(`[UNIFIED-AUTH] Company found: ${company.name}`);
-      // Check password hash field
-      const passwordField = company.passwordHash;
+      // Check both password fields for compatibility
+      const passwordField = company.password || company.passwordHash;
       console.log(`[UNIFIED-AUTH] Password field exists: ${!!passwordField}`);
       
       if (!passwordField) {

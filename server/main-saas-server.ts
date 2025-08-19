@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'express';
 import saasRoutes from './saas-routes';
-// import whatsappSaasRoutes from './whatsapp-saas'; // File doesn't exist
+import whatsappSaasRoutes from './whatsapp-saas';
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.use(urlencoded({ extended: true, limit: '50mb' }));
 
 // مسارات SaaS الجديدة
 app.use('/api/v2/saas', saasRoutes);
-// app.use('/api/v2/whatsapp', whatsappSaasRoutes); // File doesn't exist
+app.use('/api/v2/whatsapp', whatsappSaasRoutes);
 
 // لوحة تحكم SaaS
 app.get('/saas', (req, res) => {

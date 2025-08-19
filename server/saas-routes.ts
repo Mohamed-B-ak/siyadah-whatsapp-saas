@@ -204,12 +204,6 @@ router.put('/companies/profile', authenticateCompany, async (req: AuthenticatedR
     delete updateData.masterApiKey; // منع تحديث المفتاح الرئيسي
     
     const updatedCompany = await storage.updateCompany(req.company.id, updateData);
-    if (!updatedCompany) {
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to update company profile'
-      });
-    }
     const { masterApiKey, ...companyData } = updatedCompany;
     
     res.json({
@@ -345,12 +339,6 @@ router.put('/users/:userId', authenticateCompany, async (req: AuthenticatedReque
     delete updateData.companyId; // منع تغيير الشركة
     
     const updatedUser = await storage.updateUser(userId, updateData);
-    if (!updatedUser) {
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to update user'
-      });
-    }
     const { apiKey, ...safeUser } = updatedUser;
     
     res.json({

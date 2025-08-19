@@ -18,33 +18,21 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       return res.status(401).json({ success: false, message: 'User authentication required' });
     }
 
-    // Create session with full session ID that matches WPPConnect format
-    const sessionId = `${companyId}_${sessionName}`;
-    console.log(`[SESSION-CREATE] Creating session in database: ${sessionId}`);
-    console.log(`[SESSION-CREATE] User: ${userId}, Company: ${companyId}, Name: ${sessionName}`);
-    
     // Create session in database
     const sessionData = await storage.createSession({
-      sessionName: sessionName,
+      id: `${companyId}_${userId}_${sessionName}`,
       userId: userId,
       companyId: companyId,
+      sessionName: sessionName,
       status: 'initializing',
-      webhook: req.body.webhook
+      qrCode: null as string | null,
+      webhook: req.body.webhook || null,
+      config: {
+        autoClose: 0,
+        qrTimeout: 0,
+        authTimeoutMs: 0
+      }
     });
-    
-    console.log(`[SESSION-CREATE] Session created successfully in database: ${sessionData.id}`);
-    
-    // Verify session was stored
-    const verifySession = await storage.getSessionByName(sessionId);
-    console.log(`[SESSION-VERIFY] Session verification: ${verifySession ? 'FOUND' : 'NOT FOUND'}`);
-    
-    if (!verifySession) {
-      console.error(`[SESSION-ERROR] Failed to verify session creation for: ${sessionId}`);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Session creation verification failed' 
-      });
-    }
 
     // Start actual WhatsApp session
     const { getBaseUrl } = await import('./config/environment');
@@ -61,17 +49,11 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
 
     const whatsappResult = await whatsappResponse.json();
 
-    // Update session with WhatsApp response - ensure QR code is properly stored
-    console.log(`[SESSION-UPDATE] Updating session ${sessionData.id} with QR code`);
-    console.log(`[SESSION-UPDATE] QR code present: ${!!whatsappResult.qrcode}`);
-    console.log(`[SESSION-UPDATE] QR code length: ${whatsappResult.qrcode ? whatsappResult.qrcode.length : 0}`);
-    
-    const updatedSession = await storage.updateSession(sessionData.id, {
+    // Update session with WhatsApp response
+    await storage.updateSession(sessionData.id, {
       status: 'qr_pending',
-      qrCode: whatsappResult.qrcode || undefined
+      qrCode: whatsappResult.qrcode || null
     });
-    
-    console.log(`[SESSION-UPDATE] Session update result: ${!!updatedSession}`);
 
     res.json({
       success: true,
@@ -80,7 +62,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
       message: 'Session created successfully'
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating session:', error);
     res.status(500).json({ 
       success: false, 
@@ -152,14 +134,13 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
   try {
     const { sessionName } = req.params;
     const userId = req.user?.id;
-    const companyId = req.user?.companyId;
     
-    if (!userId || !companyId) {
-      return res.status(401).json({ success: false, message: 'User authentication required' });
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
-    // Fix session ID construction - sessionName already includes companyId format
-    const fullSessionId = sessionName.includes(companyId) ? sessionName : `${companyId}_${sessionName}`;
+    // Construct full session ID - if sessionName doesn't contain userId, add it
+    const fullSessionId = sessionName.includes('_') ? sessionName : `${userId}_${sessionName}`;
     
     console.log(`[QR-REQUEST] QR code requested for session: ${sessionName} -> ${fullSessionId}`);
 
@@ -171,46 +152,68 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
       console.log(`[QR-REQUEST] urlcode present: ${!!sessionData.qrCode.includes('2@')}`);
       console.log(`[QR-REQUEST] qrcode present: ${!!sessionData.qrCode}`);
       console.log(`[QR-REQUEST] Client status: ${sessionData.status || 'unknown'}`);
-      console.log(`[QR-REQUEST] QR code length: ${sessionData.qrCode.length}`);
-      console.log(`[QR-REQUEST] QR code format: ${sessionData.qrCode.substring(0, 50)}...`);
       
-      // Validate QR code data integrity
-      if (sessionData.qrCode.length < 50) {
-        console.error(`[QR-REQUEST] QR code too short (${sessionData.qrCode.length} chars), fetching fresh QR`);
-        // Fall through to API fetch
-      } else {
-        let qrCodeToReturn = sessionData.qrCode;
-        
-        // If we have urlcode, convert it to QR image
-        if (sessionData.qrCode.includes('2@') && !sessionData.qrCode.startsWith('data:')) {
-          try {
-            const QRCode = require('qrcode');
-            const pngBuffer = await QRCode.toBuffer(sessionData.qrCode, {
-              type: 'png',
-              quality: 0.92,
-              margin: 1,
-              color: {
-                dark: '#000000',
-                light: '#FFFFFF'
-              }
+      let qrCodeToReturn = sessionData.qrCode;
+      
+      // If we have urlcode, convert it to QR image
+      if (sessionData.qrCode.includes('2@') && !sessionData.qrCode.startsWith('data:')) {
+        try {
+          const QRCode = require('qrcode');
+          const pngBuffer = await QRCode.toBuffer(sessionData.qrCode, {
+            type: 'png',
+            quality: 0.92,
+            margin: 1,
+            color: {
+              dark: '#000000',
+              light: '#FFFFFF'
+            }
+          });
+          
+          qrCodeToReturn = `data:image/png;base64,${pngBuffer.toString('base64')}`;
+          console.log(`[QR-REQUEST] Fresh PNG buffer generated - Size: ${pngBuffer.length} bytes`);
+          
+        } catch (qrError) {
+          console.error('[QR-REQUEST] Error generating QR PNG:', qrError);
+          qrCodeToReturn = sessionData.qrCode; // Fallback to stored data
+        }
+      }
+      
+      console.log(`[QR-REQUEST] QR code length: ${qrCodeToReturn.length}`);
+      console.log(`[QR-REQUEST] QR code format: ${qrCodeToReturn.substring(0, 30)}...`);
+      
+      return res.json({
+        success: true,
+        qrCode: qrCodeToReturn,
+        status: sessionData.status,
+        source: 'database',
+        generatedAt: sessionData.qrCodeGeneratedAt
+      });
+    } else {
+      console.warn(`[QR-REQUEST] Session not found in database: ${fullSessionId}`);
+      console.log(`[QR-REQUEST] Attempting alternative lookup formats...`);
+      
+      // Try alternative session name formats
+      const alternatives = [
+        `${req.user?.companyId}_${sessionName}`,
+        `${req.user?.id}_${sessionName}`,
+        sessionName
+      ];
+      
+      for (const altSessionId of alternatives) {
+        if (altSessionId !== fullSessionId) {
+          console.log(`[QR-REQUEST] Trying alternative: ${altSessionId}`);
+          const altSessionData = await storage.getSessionByName(altSessionId);
+          if (altSessionData && altSessionData.qrCode) {
+            console.log(`[QR-REQUEST] Found session with alternative ID: ${altSessionId}`);
+            return res.json({
+              success: true,
+              qrCode: altSessionData.qrCode,
+              status: altSessionData.status,
+              source: 'database_alt',
+              generatedAt: altSessionData.qrCodeGeneratedAt
             });
-            
-            qrCodeToReturn = `data:image/png;base64,${pngBuffer.toString('base64')}`;
-            console.log(`[QR-REQUEST] Fresh PNG buffer generated - Size: ${pngBuffer.length} bytes`);
-            
-          } catch (qrError: any) {
-            console.error('[QR-REQUEST] Buffer generation failed:', qrError.message);
-            console.log(`[QR-REQUEST] Fallback PNG created - Size: ${sessionData.qrCode.length} bytes`);
-            qrCodeToReturn = sessionData.qrCode; // Fallback to stored data
           }
         }
-        
-        return res.json({
-          success: true,
-          qrCode: qrCodeToReturn,
-          status: sessionData.status,
-          source: 'database'
-        });
       }
     }
 

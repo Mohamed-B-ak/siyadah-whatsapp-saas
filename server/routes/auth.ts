@@ -33,11 +33,9 @@ router.post('/register', async (req, res) => {
       const company = await storage.createCompany({
         name,
         email,
-        passwordHash: hashedPassword,
+        password: hashedPassword,
         planType: planType || 'basic',
         masterApiKey,
-        maxUsers: 10,
-        maxSessions: 5,
         isActive: true
       });
 
@@ -96,10 +94,10 @@ router.post('/login', async (req, res) => {
 
       console.log(`[AUTH] Company retrieved: ${company.name}`);
       console.log(`[AUTH] Company ID: ${company.id}`);
-      console.log(`[AUTH] Password hash exists: ${!!company.passwordHash}`);
+      console.log(`[AUTH] Password hash exists: ${!!company.password}`);
       console.log(`[AUTH] Company active: ${company.isActive}`);
       
-      if (!company.passwordHash) {
+      if (!company.password) {
         console.log(`[AUTH] ERROR: No password hash found for ${email}`);
         return res.status(401).json({
           success: false,
@@ -108,7 +106,7 @@ router.post('/login', async (req, res) => {
       }
       
       console.log(`[AUTH] Starting password verification...`);
-      const isValidPassword = await bcrypt.compare(password, company.passwordHash || '');
+      const isValidPassword = await bcrypt.compare(password, company.password);
       console.log(`[AUTH] Password verification result: ${isValidPassword}`);
       
       if (!isValidPassword) {
