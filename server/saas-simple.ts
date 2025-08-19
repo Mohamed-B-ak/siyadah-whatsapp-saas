@@ -20,6 +20,7 @@ router.post('/companies/register', async (req, res) => {
       name,
       email,
       planType,
+      masterApiKey: `comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       maxUsers: planType === 'premium' ? 20 : 5,
       maxSessions: planType === 'premium' ? 50 : 10,
       isActive: true
@@ -74,6 +75,9 @@ router.post('/users', async (req, res) => {
       name,
       email,
       role,
+      apiKey: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      permissions: ['read', 'write'],
+      status: 'active',
       isActive: true
     });
     

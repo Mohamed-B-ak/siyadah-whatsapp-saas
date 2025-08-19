@@ -1,0 +1,217 @@
+
+Search
+
+Live tail
+GMT+1
+
+Menu
+
+#8 26.69 Setting up libnss3:amd64 (2:3.87.1-1+deb12u1) ...
+#8 26.69 Setting up libxcb-present0:amd64 (1.15-1) ...
+#8 26.70 Setting up libz3-4:amd64 (4.8.12-3.1) ...
+#8 26.70 Setting up libxcb-sync1:amd64 (1.15-1) ...
+#8 26.70 Setting up libvulkan1:amd64 (1.3.239.0-1) ...
+#8 26.70 Setting up libxshmfence1:amd64 (1.3-1) ...
+#8 26.71 Setting up libxcb-randr0:amd64 (1.15-1) ...
+#8 26.71 Setting up libllvm15:amd64 (1:15.0.6-4+b1) ...
+#8 26.71 Setting up fonts-liberation (1:1.07.4-11) ...
+#8 26.71 Setting up libdrm-common (2.4.114-1) ...
+#8 26.72 Setting up libelf1:amd64 (0.188-2.1) ...
+#8 26.72 Setting up libtirpc3:amd64 (1.3.3+ds-1) ...
+#8 26.72 Setting up libdrm2:amd64 (2.4.114-1+b1) ...
+#8 26.73 Setting up libnsl2:amd64 (1.3.0-2) ...
+#8 26.73 Setting up libdrm-amdgpu1:amd64 (2.4.114-1+b1) ...
+#8 26.73 Setting up mesa-vulkan-drivers:amd64 (22.3.6-1+deb12u1) ...
+#8 26.73 Setting up libgbm1:amd64 (22.3.6-1+deb12u1) ...
+#8 26.74 Setting up libpython3.11-stdlib:amd64 (3.11.2-6+deb12u6) ...
+#8 26.74 Setting up libpython3-stdlib:amd64 (3.11.2-1+b1) ...
+#8 26.74 Setting up python3.11 (3.11.2-6+deb12u6) ...
+#8 27.91 Setting up google-chrome-stable (139.0.7258.127-1) ...
+#8 28.13 update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/x-www-browser (x-www-browser) in auto mode
+#8 28.14 update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/gnome-www-browser (gnome-www-browser) in auto mode
+#8 28.14 update-alternatives: using /usr/bin/google-chrome-stable to provide /usr/bin/google-chrome (google-chrome) in auto mode
+#8 28.15 Setting up python3 (3.11.2-1+b1) ...
+#8 28.16 running python rtupdate hooks for python3.11...
+#8 28.16 running python post-rtupdate hooks for python3.11...
+#8 28.29 Processing triggers for fontconfig (2.14.1-4) ...
+#8 28.32 Processing triggers for libc-bin (2.36-9+deb12u10) ...
+#8 28.35 Processing triggers for systemd (252.38-1~deb12u1) ...
+#8 DONE 29.1s
+#9 [ 4/14] WORKDIR /app
+#9 DONE 0.0s
+#10 [ 5/14] COPY package*.json ./
+#10 DONE 0.0s
+#11 [ 6/14] RUN npm install --legacy-peer-deps --ignore-scripts
+#11 35.74 npm warn EBADENGINE Unsupported engine {
+#11 35.74 npm warn EBADENGINE   package: '@wppconnect/server@2.8.6',
+#11 35.74 npm warn EBADENGINE   required: { node: '22.16.0' },
+#11 35.74 npm warn EBADENGINE   current: { node: 'v22.18.0', npm: '10.9.3' }
+#11 35.74 npm warn EBADENGINE }
+#11 41.39 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#11 42.08 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#11 42.92 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 44.10 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#11 44.16 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#11 44.69 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#11 46.94 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 48.34 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+#11 49.89 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 50.57 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 50.57 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 51.70 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 57.11 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#11 61.55 
+#11 61.55 added 1726 packages, and audited 1727 packages in 1m
+#11 61.55 
+#11 61.55 306 packages are looking for funding
+#11 61.55   run `npm fund` for details
+#11 61.57 
+#11 61.57 12 vulnerabilities (5 low, 7 moderate)
+#11 61.57 
+#11 61.57 To address all issues possible (including breaking changes), run:
+#11 61.57   npm audit fix --force
+#11 61.57 
+#11 61.57 Some issues need review, and may require choosing
+#11 61.57 a different dependency.
+#11 61.57 
+#11 61.57 Run `npm audit` for details.
+#11 61.58 npm notice
+#11 61.58 npm notice New major version of npm available! 10.9.3 -> 11.5.2
+#11 61.58 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+#11 61.58 npm notice To update run: npm install -g npm@11.5.2
+#11 61.58 npm notice
+#11 DONE 62.3s
+#12 [ 7/14] COPY tsconfig.json ./
+#12 DONE 1.3s
+#13 [ 8/14] COPY src/ ./src/
+#13 DONE 0.0s
+#14 [ 9/14] COPY shared/ ./shared/
+#14 DONE 0.0s
+#15 [10/14] COPY server/ ./server/
+#15 DONE 0.0s
+#16 [11/14] RUN npm run build
+#16 0.248 
+#16 0.248 > @wppconnect/server@2.8.6 build
+#16 0.248 > npm run build:types && npm run build:js
+#16 0.248 
+#16 0.437 
+#16 0.437 > @wppconnect/server@2.8.6 build:types
+#16 0.437 > tsc
+#16 0.437 
+#16 9.623 server/advanced-analytics.ts(115,27): error TS2345: Argument of type '{ month: string; revenue: number; companies: number; arpu: number; }' is not assignable to parameter of type 'never'.
+#16 9.623 server/advanced-analytics.ts(123,88): error TS2339: Property 'revenue' does not exist on type 'never'.
+#16 9.623 server/advanced-analytics.ts(123,148): error TS2339: Property 'revenue' does not exist on type 'never'.
+#16 9.623 server/advanced-analytics.ts(124,28): error TS2345: Argument of type '{ month: string; growth: number; }' is not assignable to parameter of type 'never'.
+#16 9.623 server/advanced-analytics.ts(132,64): error TS2339: Property 'growth' does not exist on type 'never'.
+#16 9.623 server/advanced-analytics.ts(341,43): error TS2345: Argument of type '"متوسط زمن الاستجابة مرتفع"' is not assignable to parameter of type 'never'.
+#16 9.623 server/advanced-analytics.ts(342,39): error TS2345: Argument of type '"معدل الأخطاء مرتفع"' is not assignable to parameter of type 'never'.
+#16 9.624 server/advanced-analytics.ts(343,51): error TS2345: Argument of type '"مستوى التوفر أقل من المطلوب"' is not assignable to parameter of type 'never'.
+#16 9.624 server/advanced-analytics.ts(347,20): error TS2454: Variable 'interval' is used before being assigned.
+#16 9.624 server/advanced-analytics.ts(413,65): error TS2339: Property 'monthlyPrice' does not exist on type 'Company'.
+#16 9.624 server/backup-system.ts(278,15): error TS2339: Property 'completedAt' does not exist on type '{ id: string; backupId: string; status: string; startedAt: Date; targetEnvironment: any; progress: { stage: string; percentage: number; currentOperation: string; }; estimatedCompletion: Date; }'.
+#16 9.624 server/company-api-routes.ts(44,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/company-api-routes.ts(91,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/company-api-routes.ts(137,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/database-routes.ts(30,55): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/database-routes.ts(59,51): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/database-routes.ts(93,51): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/database-routes.ts(110,45): error TS18046: 'error' is of type 'unknown'.
+#16 9.624 server/enterprise-features.ts(214,32): error TS2345: Argument of type '"اقتراب من حد الطلبات في الدقيقة"' is not assignable to parameter of type 'never'.
+#16 9.625 server/enterprise-features.ts(217,32): error TS2345: Argument of type '"اقتراب من حد الطلبات اليومية"' is not assignable to parameter of type 'never'.
+#16 9.625 server/migrate-to-mongodb.ts(10,39): error TS18046: 'error' is of type 'unknown'.
+#16 9.625 server/mongodb.ts(360,47): error TS2322: Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625 server/mongodb.ts(372,15): error TS2322: Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625 server/mongodb.ts(470,9): error TS2769: No overload matches this call.
+#16 9.625   Overload 1 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions & { ...; }): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625   Overload 2 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions & { ...; }): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625   Overload 3 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625 server/mongodb.ts(486,9): error TS2769: No overload matches this call.
+#16 9.625   Overload 1 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions & { ...; }): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625   Overload 2 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions & { ...; }): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625   Overload 3 of 4, '(filter: Filter<Document>, update: Document[] | UpdateFilter<Document>, options: FindOneAndUpdateOptions): Promise<...>', gave the following error.
+#16 9.625     Type 'string' is not assignable to type 'Condition<ObjectId> | undefined'.
+#16 9.625 server/routes/auth.ts(36,9): error TS2353: Object literal may only specify known properties, and 'password' does not exist in type 'Omit<Company, "id" | "createdAt" | "updatedAt">'.
+#16 9.625 server/routes/auth.ts(97,61): error TS2339: Property 'password' does not exist on type 'Company'.
+#16 9.625 server/routes/auth.ts(100,20): error TS2339: Property 'password' does not exist on type 'Company'.
+#16 9.625 server/routes/auth.ts(109,70): error TS2339: Property 'password' does not exist on type 'Company'.
+#16 9.625 server/routes/companies.ts(89,43): error TS2345: Argument of type '{ name: any; email: any; companyId: any; role: any; apiKey: string; isActive: true; }' is not assignable to parameter of type 'Omit<User, "id" | "createdAt" | "updatedAt">'.
+#16 9.625   Type '{ name: any; email: any; companyId: any; role: any; apiKey: string; isActive: true; }' is missing the following properties from type 'Omit<User, "id" | "createdAt" | "updatedAt">': permissions, status
+#16 9.625 server/routes/whatsapp.ts(90,33): error TS2345: Argument of type '{ sessionId: any; companyId: any; from: string; to: any; body: any; type: string; status: string; }' is not assignable to parameter of type 'Omit<Message, "id" | "timestamp">'.
+#16 9.625   Type '{ sessionId: any; companyId: any; from: string; to: any; body: any; type: string; status: string; }' is missing the following properties from type 'Omit<Message, "id" | "timestamp">': message, phone, userId, direction
+#16 9.625 server/saas-auth.ts(92,10): error TS18047: 'user' is possibly 'null'.
+#16 9.625 server/saas-auth.ts(101,11): error TS18047: 'user' is possibly 'null'.
+#16 9.625 server/saas-auth.ts(164,18): error TS2339: Property 'isActive' does not exist on type 'Session'.
+#16 9.625 server/saas-auth.ts(206,11): error TS2353: Object literal may only specify known properties, and 'sessionId' does not exist in type 'Omit<ApiUsageLog, "id" | "timestamp">'.
+#16 9.625 server/saas-routes.ts(3,15): error TS2724: '"./storage"' has no exported member named 'ISaasStorage'. Did you mean 'IStorage'?
+#16 9.625 server/saas-routes.ts(207,13): error TS2339: Property 'masterApiKey' does not exist on type 'Company | null'.
+#16 9.625 server/saas-routes.ts(342,13): error TS2339: Property 'apiKey' does not exist on type 'User | null'.
+#16 9.625 server/saas-simple.ts(19,49): error TS2345: Argument of type '{ name: any; email: any; planType: any; maxUsers: number; maxSessions: number; isActive: true; }' is not assignable to parameter of type 'Omit<Company, "id" | "createdAt" | "updatedAt">'.
+#16 9.625   Property 'masterApiKey' is missing in type '{ name: any; email: any; planType: any; maxUsers: number; maxSessions: number; isActive: true; }' but required in type 'Omit<Company, "id" | "createdAt" | "updatedAt">'.
+#16 9.626 server/saas-simple.ts(72,43): error TS2345: Argument of type '{ companyId: string; name: any; email: any; role: any; isActive: true; }' is not assignable to parameter of type 'Omit<User, "id" | "createdAt" | "updatedAt">'.
+#16 9.626   Type '{ companyId: string; name: any; email: any; role: any; isActive: true; }' is missing the following properties from type 'Omit<User, "id" | "createdAt" | "updatedAt">': apiKey, permissions, status
+#16 9.626 server/saas-simple.ts(129,7): error TS2353: Object literal may only specify known properties, and 'isActive' does not exist in type 'Omit<Session, "id" | "createdAt">'.
+#16 9.626 server/saas-whatsapp-bridge.ts(121,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.626 server/storage-factory.ts(1,10): error TS2305: Module '"./storage"' has no exported member 'DatabaseStorage'.
+#16 9.626 server/storage-factory.ts(24,15): error TS2531: Object is possibly 'null'.
+#16 9.626 server/storage-factory.ts(28,7): error TS2322: Type 'IStorage | null' is not assignable to type 'IStorage'.
+#16 9.626   Type 'null' is not assignable to type 'IStorage'.
+#16 9.626 server/subclient-api.ts(113,46): error TS2345: Argument of type '{ name: string; firstName: any; lastName: any; email: any; companyId: string; permissions: { level: any; actions: string[]; }; role: string; }' is not assignable to parameter of type 'Omit<User, "id" | "createdAt" | "updatedAt">'.
+#16 9.626   Type '{ name: string; firstName: any; lastName: any; email: any; companyId: string; permissions: { level: any; actions: string[]; }; role: string; }' is missing the following properties from type 'Omit<User, "id" | "createdAt" | "updatedAt">': isActive, apiKey, status
+#16 9.626 server/subclient-api.ts(121,9): error TS2353: Object literal may only specify known properties, and 'timestamp' does not exist in type 'Omit<ApiUsageLog, "id" | "timestamp">'.
+#16 9.626 server/subclient-api.ts(126,48): error TS18046: 'logError' is of type 'unknown'.
+#16 9.626 server/subclient-api.ts(149,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.626 server/subclient-api.ts(196,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.626 server/subclient-api.ts(253,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.626 server/subclient-api.ts(306,13): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(307,20): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(308,19): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(309,16): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(310,16): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(311,22): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(312,17): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(313,20): error TS18047: 'updatedUser' is possibly 'null'.
+#16 9.626 server/subclient-api.ts(323,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.627 server/subclient-api.ts(371,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.627 server/unified-auth.ts(53,9): error TS2353: Object literal may only specify known properties, and 'passwordHash' does not exist in type 'Omit<Company, "id" | "createdAt" | "updatedAt">'.
+#16 9.627 server/unified-auth.ts(92,45): error TS2345: Argument of type '{ name: string; email: string; passwordHash: string; companyId: string; apiKey: string; role: string; permissions: string[]; isActive: true; }' is not assignable to parameter of type 'Omit<User, "id" | "createdAt" | "updatedAt">'.
+#16 9.627   Property 'status' is missing in type '{ name: string; email: string; passwordHash: string; companyId: string; apiKey: string; role: string; permissions: string[]; isActive: true; }' but required in type 'Omit<User, "id" | "createdAt" | "updatedAt">'.
+#16 9.627 server/unified-auth.ts(154,37): error TS2339: Property 'password' does not exist on type 'Company'.
+#16 9.627 server/unified-auth.ts(154,57): error TS2339: Property 'passwordHash' does not exist on type 'Company'.
+#16 9.627 server/utils/crypto.ts(18,25): error TS2551: Property 'createCipherGCM' does not exist on type 'typeof import("crypto")'. Did you mean 'createCipheriv'?
+#16 9.627 server/utils/crypto.ts(34,27): error TS2551: Property 'createDecipherGCM' does not exist on type 'typeof import("crypto")'. Did you mean 'createDecipheriv'?
+#16 9.627 server/webhook-handler.ts(25,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+#16 9.627 server/webhook-handler.ts(29,23): error TS2339: Property 'logMessage' does not exist on type 'MongoStorage'.
+#16 9.627 server/webhook-handler.ts(50,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+#16 9.627 server/webhook-handler.ts(64,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+#16 9.627 server/webhook-handler.ts(86,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.627 server/webhook-handler.ts(116,14): error TS18046: 'error' is of type 'unknown'.
+#16 9.627 src/index.ts(133,47): error TS18046: 'error' is of type 'unknown'.
+#16 9.627 src/routes/index.ts(64,14): error TS18046: 'error' is of type 'unknown'.
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [11/14] RUN npm run build:
+9.627 server/utils/crypto.ts(18,25): error TS2551: Property 'createCipherGCM' does not exist on type 'typeof import("crypto")'. Did you mean 'createCipheriv'?
+9.627 server/utils/crypto.ts(34,27): error TS2551: Property 'createDecipherGCM' does not exist on type 'typeof import("crypto")'. Did you mean 'createDecipheriv'?
+9.627 server/webhook-handler.ts(25,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+9.627 server/webhook-handler.ts(29,23): error TS2339: Property 'logMessage' does not exist on type 'MongoStorage'.
+9.627 server/webhook-handler.ts(50,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+9.627 server/webhook-handler.ts(64,41): error TS2339: Property 'getSession' does not exist on type 'MongoStorage'.
+9.627 server/webhook-handler.ts(86,14): error TS18046: 'error' is of type 'unknown'.
+9.627 server/webhook-handler.ts(116,14): error TS18046: 'error' is of type 'unknown'.
+9.627 src/index.ts(133,47): error TS18046: 'error' is of type 'unknown'.
+9.627 src/routes/index.ts(64,14): error TS18046: 'error' is of type 'unknown'.
+------
+Dockerfile:71
+--------------------
+  69 |     
+  70 |     # Build TypeScript to JavaScript
+  71 | >>> RUN npm run build
+  72 |     
+  73 |     # Remove dev dependencies to reduce image size
+--------------------
+error: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1

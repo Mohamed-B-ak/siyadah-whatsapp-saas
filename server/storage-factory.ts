@@ -1,4 +1,4 @@
-import { DatabaseStorage } from './storage';
+// import { DatabaseStorage } from './storage';
 import { MongoStorage } from './mongodb';
 import type { IStorage } from './storage';
 
@@ -20,12 +20,11 @@ export class StorageFactory {
         console.log('✅ MongoDB storage initialized successfully');
       } else {
         console.log('🐘 Initializing PostgreSQL storage (deprecated)...');
-        this.instance = new DatabaseStorage();
-        await this.instance.healthCheck();
+        throw new Error('PostgreSQL storage is deprecated');
         console.log('✅ PostgreSQL storage initialized successfully');
       }
 
-      return this.instance;
+      return this.instance!;
     } catch (error) {
       console.error(`❌ Failed to initialize ${type} storage:`, error);
       

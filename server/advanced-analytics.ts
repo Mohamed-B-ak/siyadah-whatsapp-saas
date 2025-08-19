@@ -102,8 +102,8 @@ router.get('/revenue-analytics', async (req, res) => {
     }, {} as Record<string, number>);
 
     // Generate historical data (last 12 months)
-    const monthlyRevenue = [];
-    const monthlyGrowth = [];
+    const monthlyRevenue: Array<{month: string; revenue: number; companies: number; arpu: number}> = [];
+    const monthlyGrowth: Array<{month: string; growth: number}> = [];
     
     for (let i = 11; i >= 0; i--) {
       const date = new Date();
@@ -337,14 +337,24 @@ router.get('/performance-metrics', async (req, res) => {
     };
 
     // Alert thresholds
-    const alerts = [];
+    const alerts: string[] = [];
     if (avgResponseTime > 80) alerts.push('متوسط زمن الاستجابة مرتفع');
     if (avgErrorRate > 1) alerts.push('معدل الأخطاء مرتفع');
     if (slaMetrics.availability < 99) alerts.push('مستوى التوفر أقل من المطلوب');
 
+    // Set interval based on timeframe
+    let dataInterval: number;
+    switch (timeframe) {
+      case '1h': dataInterval = 5; break;
+      case '6h': dataInterval = 15; break;
+      case '24h': dataInterval = 60; break;
+      case '7d': dataInterval = 360; break;
+      default: dataInterval = 60;
+    }
+
     const performance = {
       timeframe,
-      interval: `${interval} دقيقة`,
+      interval: `${dataInterval} دقيقة`,
       dataPoints,
       summary: {
         avgResponseTime: Math.round(avgResponseTime),

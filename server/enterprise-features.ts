@@ -206,7 +206,7 @@ router.get('/rate-limits/:companyId', async (req, res) => {
         hour: new Date(Math.ceil(Date.now() / 3600000) * 3600000),
         day: new Date(new Date().setHours(24, 0, 0, 0))
       },
-      warnings: []
+      warnings: [] as string[]
     };
 
     // Add warnings for high usage

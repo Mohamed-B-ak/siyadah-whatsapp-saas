@@ -15,7 +15,7 @@ export function hashApiKey(apiKey: string): string {
 
 export function encrypt(text: string): { encrypted: string; iv: string; tag: string } {
   const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipherGCM(ALGORITHM, Buffer.from(SECRET_KEY.slice(0, 32)));
+  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY.slice(0, 32)), Buffer.from(SECRET_KEY.slice(32, 48)));
   cipher.setAAD(Buffer.from('whatsapp-saas', 'utf8'));
   
   let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -31,7 +31,7 @@ export function encrypt(text: string): { encrypted: string; iv: string; tag: str
 }
 
 export function decrypt(encrypted: string, iv: string, tag: string): string {
-  const decipher = crypto.createDecipherGCM(ALGORITHM, Buffer.from(SECRET_KEY.slice(0, 32)));
+  const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(SECRET_KEY.slice(0, 32)), Buffer.from(SECRET_KEY.slice(32, 48)));
   decipher.setAAD(Buffer.from('whatsapp-saas', 'utf8'));
   decipher.setAuthTag(Buffer.from(tag, 'hex'));
   

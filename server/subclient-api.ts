@@ -106,8 +106,11 @@ router.post('/subclients', async (req, res) => {
       lastName,
       email,
       companyId: company.id,
-      permissions: { level: permissions || 'read', actions: ['send_messages'] },
-      role: 'user'
+      permissions: ['read', 'write'],
+      status: 'active',
+      apiKey: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      role: 'user',
+      isActive: true
     };
 
     const newUser = await storage.createUser(userData);
@@ -118,12 +121,11 @@ router.post('/subclients', async (req, res) => {
         companyId: company.id,
         endpoint: 'create-subclient',
         method: 'POST',
-        timestamp: new Date(),
-        responseStatus: 201,
+        statusCode: 201,
         responseTime: Date.now()
       });
     } catch (logError) {
-      console.warn('Failed to log API usage:', logError.message);
+      console.warn('Failed to log API usage:', (logError as Error).message);
     }
 
     res.status(201).json({

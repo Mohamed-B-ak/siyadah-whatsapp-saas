@@ -41,7 +41,7 @@ router.post('/companies/register', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Registration failed',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -88,7 +88,7 @@ router.get('/companies/api-keys', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch API keys',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -134,7 +134,7 @@ router.post('/companies/api-keys', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to create API key',
-      error: error.message
+      error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

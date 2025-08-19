@@ -80,10 +80,10 @@ router.post('/sessions/:sessionName/send', authenticateCompany, async (req: any,
     const messageData = {
       sessionId: sessionName,
       companyId: company.id,
-      from: 'system',
-      to: phone,
-      body: message,
-      type: 'text',
+      userId: company.id,
+      phone: phone,
+      message: message,
+      direction: 'outbound',
       status: 'sent'
     };
 

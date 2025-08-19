@@ -36,6 +36,8 @@ router.post('/register', async (req, res) => {
         password: hashedPassword,
         planType: planType || 'basic',
         masterApiKey,
+        maxUsers: 10,
+        maxSessions: 5,
         isActive: true
       });
 

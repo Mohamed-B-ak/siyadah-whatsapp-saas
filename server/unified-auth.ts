@@ -50,7 +50,7 @@ router.post('/register', async (req: Request, res: Response) => {
       const company = await storage.createCompany({
         name,
         email,
-        passwordHash: hashedPassword,
+        password: hashedPassword,
         masterApiKey,
         planType: planType || 'basic',
         maxUsers: planType === 'enterprise' ? 100 : planType === 'premium' ? 50 : 10,
@@ -92,7 +92,7 @@ router.post('/register', async (req: Request, res: Response) => {
       const user = await storage.createUser({
         name,
         email,
-        passwordHash: hashedPassword,
+        password: hashedPassword,
         companyId,
         apiKey,
         role: 'user',

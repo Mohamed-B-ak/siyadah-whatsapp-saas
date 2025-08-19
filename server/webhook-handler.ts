@@ -22,15 +22,15 @@ router.post('/webhook-handler', async (req, res) => {
       } = webhookData;
       
       // Find session by WhatsApp session name
-      const sessionData = await storage.getSession(session);
+      const sessionData = await storage.getSessionByName(session);
       
       if (sessionData) {
         // Log incoming message
-        await storage.logMessage({
+        await storage.createMessage({
           sessionId: sessionData.id,
           userId: sessionData.userId,
           companyId: sessionData.companyId,
-          type: 'incoming',
+          // type: 'incoming', // Removed - not in schema
           from: from,
           to: to,
           content: body,
@@ -47,7 +47,7 @@ router.post('/webhook-handler', async (req, res) => {
       console.log(`QR code generated for session ${session}`);
       
       // Update session with QR code
-      const sessionData = await storage.getSession(session);
+      const sessionData = await storage.getSessionByName(session);
       if (sessionData) {
         await storage.updateSession(sessionData.id, {
           qrCode: qrcode,
@@ -61,7 +61,7 @@ router.post('/webhook-handler', async (req, res) => {
       console.log(`Session ${session} state changed to: ${state}`);
       
       // Update session status
-      const sessionData = await storage.getSession(session);
+      const sessionData = await storage.getSessionByName(session);
       if (sessionData) {
         await storage.updateSession(sessionData.id, {
           whatsappStatus: state,
@@ -83,7 +83,7 @@ router.post('/webhook-handler', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Webhook processing failed',
-      error: error.message 
+      error: (error as Error).message 
     });
   }
 });
@@ -113,7 +113,7 @@ router.get('/webhook-logs/:sessionId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to get webhook logs',
-      error: error.message
+      error: (error as Error).message
     });
   }
 });

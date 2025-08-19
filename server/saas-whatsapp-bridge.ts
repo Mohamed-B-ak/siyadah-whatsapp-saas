@@ -118,7 +118,7 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get QR code',
-      error: error.message 
+      error: (error as Error).message 
     });
   }
 });

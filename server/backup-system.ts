@@ -275,7 +275,7 @@ router.post('/:backupId/restore', async (req, res) => {
         percentage: 100,
         currentOperation: 'تم الانتهاء'
       };
-      restore.completedAt = new Date();
+      (restore as any).completedAt = new Date();
       console.log(`✅ [RESTORE] Completed: ${restoreId}`);
     }, 5000);
     

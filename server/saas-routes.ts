@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { storage } from './storage';
-import type { ISaasStorage } from './storage';
+import type { IStorage } from './storage';
 import { 
   authenticateCompany, 
   authenticateUser, 
@@ -9,10 +9,10 @@ import {
   checkLimits,
   type AuthenticatedRequest
 } from './saas-auth';
-import { 
-  type InsertCompany, 
-  type InsertUser, 
-  type InsertSession
+import type { 
+  Company, 
+  User, 
+  Session
 } from '../shared/schema';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
@@ -204,7 +204,7 @@ router.put('/companies/profile', authenticateCompany, async (req: AuthenticatedR
     delete updateData.masterApiKey; // منع تحديث المفتاح الرئيسي
     
     const updatedCompany = await storage.updateCompany(req.company.id, updateData);
-    const { masterApiKey, ...companyData } = updatedCompany;
+    const { masterApiKey, ...companyData } = updatedCompany || {};
     
     res.json({
       success: true,
@@ -339,7 +339,7 @@ router.put('/users/:userId', authenticateCompany, async (req: AuthenticatedReque
     delete updateData.companyId; // منع تغيير الشركة
     
     const updatedUser = await storage.updateUser(userId, updateData);
-    const { apiKey, ...safeUser } = updatedUser;
+    const { apiKey, ...safeUser } = updatedUser || {};
     
     res.json({
       success: true,
@@ -477,7 +477,7 @@ router.post('/sessions', authenticateCompany, checkLimits, async (req: Authentic
       webhook: webhook || ''
     };
     
-    const validatedData = sessionData as InsertSession;
+    const validatedData = sessionData as any;
     const session = await storage.createSession(validatedData);
     
     // Also create session in WPPConnect

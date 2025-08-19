@@ -6,11 +6,13 @@ export interface Company {
   id: string;
   name: string;
   email: string;
+  password?: string;
   masterApiKey: string;
   messagingApiKey?: string;
   planType: string;
   maxUsers: number;
   maxSessions: number;
+  monthlyPrice?: number;
   webhookUrl?: string;
   webhookToken?: string;
   isActive: boolean;
@@ -52,6 +54,7 @@ export interface Session {
   connectedAt?: Date;
   webhook?: string | null;
   whatsappStatus?: string;
+  isActive?: boolean;
   config?: {
     autoClose?: number;
     qrTimeout?: number;
@@ -78,6 +81,7 @@ export interface ApiUsageLog {
   id: string;
   companyId?: string;
   userId?: string;
+  sessionId?: string;
   endpoint: string;
   method: string;
   statusCode: number;
