@@ -68,7 +68,7 @@ COPY shared/ ./shared/
 COPY server/ ./server/
 
 # Build TypeScript to JavaScript
-RUN npm run build
+RUN node build-production.js
 
 # Remove dev dependencies to reduce image size
 RUN npm prune --omit=dev

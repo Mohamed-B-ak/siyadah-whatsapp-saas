@@ -16,7 +16,7 @@
 
 import { Request, Response } from 'express';
 
-export async function addNewLabel(req: Request, res: Response) {
+export async function addNewLabel(req, res) {
   /**
      #swagger.tags = ["Labels"]
      #swagger.autoBody=false
@@ -73,7 +73,7 @@ export async function addNewLabel(req: Request, res: Response) {
   }
 }
 
-export async function addOrRemoveLabels(req: Request, res: Response) {
+export async function addOrRemoveLabels(req, res) {
   /**
      #swagger.tags = ["Labels"]
      #swagger.autoBody=false
@@ -142,7 +142,7 @@ export async function addOrRemoveLabels(req: Request, res: Response) {
   }
 }
 
-export async function getAllLabels(req: Request, res: Response) {
+export async function getAllLabels(req, res) {
   /**
      #swagger.tags = ["Labels"]
      #swagger.autoBody=false
@@ -165,7 +165,7 @@ export async function getAllLabels(req: Request, res: Response) {
   }
 }
 
-export async function deleteAllLabels(req: Request, res: Response) {
+export async function deleteAllLabels(req, res) {
   /**
      #swagger.tags = ["Labels"]
      #swagger.autoBody=false
@@ -188,7 +188,7 @@ export async function deleteAllLabels(req: Request, res: Response) {
   }
 }
 
-export async function deleteLabel(req: Request, res: Response) {
+export async function deleteLabel(req, res) {
   /**
      #swagger.tags = ["Labels"]
      #swagger.autoBody=false

@@ -44,7 +44,7 @@ function returnError(req: Request, res: Response, session: any, error: any) {
   });
 }
 
-export async function setProfileName(req: Request, res: Response) {
+export async function setProfileName(req, res) {
   /**
    * #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -95,7 +95,7 @@ export async function setProfileName(req: Request, res: Response) {
   }
 }
 
-export async function showAllContacts(req: Request, res: Response) {
+export async function showAllContacts(req, res) {
   /**
    * #swagger.tags = ["Contacts"]
      #swagger.autoBody=false
@@ -119,7 +119,7 @@ export async function showAllContacts(req: Request, res: Response) {
   }
 }
 
-export async function getAllChats(req: Request, res: Response) {
+export async function getAllChats(req, res) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Deprecated in favor of 'list-chats'
@@ -145,7 +145,7 @@ export async function getAllChats(req: Request, res: Response) {
   }
 }
 
-export async function listChats(req: Request, res: Response) {
+export async function listChats(req, res) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Retrieve a list of chats'
@@ -240,7 +240,7 @@ export async function listChats(req: Request, res: Response) {
   }
 }
 
-export async function getAllChatsWithMessages(req: Request, res: Response) {
+export async function getAllChatsWithMessages(req, res) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Deprecated in favor of list-chats'
@@ -268,7 +268,7 @@ export async function getAllChatsWithMessages(req: Request, res: Response) {
 /**
  * Depreciado em favor de getMessages
  */
-export async function getAllMessagesInChat(req: Request, res: Response) {
+export async function getAllMessagesInChat(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -300,11 +300,11 @@ export async function getAllMessagesInChat(req: Request, res: Response) {
     } = req.query;
 
     let response;
-    for (const contato of contactToArray(phone, isGroup as boolean)) {
+    for (const contato of contactToArray(phone, isGroup)) {
       response = await req.client.getAllMessagesInChat(
         contato,
-        includeMe as boolean,
-        includeNotifications as boolean
+        includeMe,
+        includeNotifications
       );
     }
 
@@ -319,7 +319,7 @@ export async function getAllMessagesInChat(req: Request, res: Response) {
   }
 }
 
-export async function getAllNewMessages(req: Request, res: Response) {
+export async function getAllNewMessages(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -343,7 +343,7 @@ export async function getAllNewMessages(req: Request, res: Response) {
   }
 }
 
-export async function getAllUnreadMessages(req: Request, res: Response) {
+export async function getAllUnreadMessages(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -367,7 +367,7 @@ export async function getAllUnreadMessages(req: Request, res: Response) {
   }
 }
 
-export async function getChatById(req: Request, res: Response) {
+export async function getChatById(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -406,7 +406,7 @@ export async function getChatById(req: Request, res: Response) {
   }
 }
 
-export async function getMessageById(req: Request, res: Response) {
+export async function getMessageById(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -427,13 +427,13 @@ export async function getMessageById(req: Request, res: Response) {
   try {
     const result = await req.client.getMessageById(messageId);
 
-    returnSucess(res, session, (result as any).chatId.user, result);
+    returnSucess(res, session, (result).chatId.user, result);
   } catch (error) {
     returnError(req, res, session, error);
   }
 }
 
-export async function getBatteryLevel(req: Request, res: Response) {
+export async function getBatteryLevel(req, res) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -457,7 +457,7 @@ export async function getBatteryLevel(req: Request, res: Response) {
   }
 }
 
-export async function getHostDevice(req: Request, res: Response) {
+export async function getHostDevice(req, res) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -486,7 +486,7 @@ export async function getHostDevice(req: Request, res: Response) {
   }
 }
 
-export async function getPhoneNumber(req: Request, res: Response) {
+export async function getPhoneNumber(req, res) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -512,7 +512,7 @@ export async function getPhoneNumber(req: Request, res: Response) {
   }
 }
 
-export async function getBlockList(req: Request, res: Response) {
+export async function getBlockList(req, res) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -541,7 +541,7 @@ export async function getBlockList(req: Request, res: Response) {
   }
 }
 
-export async function deleteChat(req: Request, res: Response) {
+export async function deleteChat(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -587,7 +587,7 @@ export async function deleteChat(req: Request, res: Response) {
     returnError(req, res, session, error);
   }
 }
-export async function deleteAllChats(req: Request, res: Response) {
+export async function deleteAllChats(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -601,7 +601,7 @@ export async function deleteAllChats(req: Request, res: Response) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.deleteChat((chat as any).chatId);
+      await req.client.deleteChat((chat).chatId);
     }
     res.status(200).json({ status: 'success' });
   } catch (error) {
@@ -614,7 +614,7 @@ export async function deleteAllChats(req: Request, res: Response) {
   }
 }
 
-export async function clearChat(req: Request, res: Response) {
+export async function clearChat(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -662,7 +662,7 @@ export async function clearChat(req: Request, res: Response) {
   }
 }
 
-export async function clearAllChats(req: Request, res: Response) {
+export async function clearAllChats(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -676,7 +676,7 @@ export async function clearAllChats(req: Request, res: Response) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.clearChat(`${(chat as any).chatId}`);
+      await req.client.clearChat(`${(chat).chatId}`);
     }
     res.status(201).json({ status: 'success' });
   } catch (e) {
@@ -687,7 +687,7 @@ export async function clearAllChats(req: Request, res: Response) {
   }
 }
 
-export async function archiveChat(req: Request, res: Response) {
+export async function archiveChat(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -736,7 +736,7 @@ export async function archiveChat(req: Request, res: Response) {
   }
 }
 
-export async function archiveAllChats(req: Request, res: Response) {
+export async function archiveAllChats(req, res) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -750,7 +750,7 @@ export async function archiveAllChats(req: Request, res: Response) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.archiveChat(`${(chat as any).chatId}`, true);
+      await req.client.archiveChat(`${(chat).chatId}`, true);
     }
     res.status(201).json({ status: 'success' });
   } catch (e) {
@@ -763,7 +763,7 @@ export async function archiveAllChats(req: Request, res: Response) {
   }
 }
 
-export async function getAllChatsArchiveds(req: Request, res: Response) {
+export async function getAllChatsArchiveds(req, res) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.description = 'Retrieves all archived chats.'
@@ -777,7 +777,7 @@ export async function getAllChatsArchiveds(req: Request, res: Response) {
    */
   try {
     const chats = await req.client.getAllChats();
-    const archived = [] as any;
+    const archived = [];
     for (const chat of chats) {
       if (chat.archive === true) {
         archived.push(chat);
@@ -793,7 +793,7 @@ export async function getAllChatsArchiveds(req: Request, res: Response) {
     });
   }
 }
-export async function deleteMessage(req: Request, res: Response) {
+export async function deleteMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -864,7 +864,7 @@ export async function deleteMessage(req: Request, res: Response) {
       .json({ status: 'error', message: 'Error on delete message', error: e });
   }
 }
-export async function reactMessage(req: Request, res: Response) {
+export async function reactMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -915,7 +915,7 @@ export async function reactMessage(req: Request, res: Response) {
   }
 }
 
-export async function reply(req: Request, res: Response) {
+export async function reply(req, res) {
   /**
    * #swagger.deprecated=true
      #swagger.tags = ["Messages"]
@@ -966,7 +966,7 @@ export async function reply(req: Request, res: Response) {
   }
 }
 
-export async function forwardMessages(req: Request, res: Response) {
+export async function forwardMessages(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1021,7 +1021,7 @@ export async function forwardMessages(req: Request, res: Response) {
   }
 }
 
-export async function markUnseenMessage(req: Request, res: Response) {
+export async function markUnseenMessage(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1069,7 +1069,7 @@ export async function markUnseenMessage(req: Request, res: Response) {
   }
 }
 
-export async function blockContact(req: Request, res: Response) {
+export async function blockContact(req, res) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1117,7 +1117,7 @@ export async function blockContact(req: Request, res: Response) {
   }
 }
 
-export async function unblockContact(req: Request, res: Response) {
+export async function unblockContact(req, res) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1165,7 +1165,7 @@ export async function unblockContact(req: Request, res: Response) {
   }
 }
 
-export async function pinChat(req: Request, res: Response) {
+export async function pinChat(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1227,7 +1227,7 @@ export async function pinChat(req: Request, res: Response) {
   }
 }
 
-export async function setProfilePic(req: Request, res: Response) {
+export async function setProfilePic(req, res) {
   /**
      #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -1250,7 +1250,7 @@ export async function setProfilePic(req: Request, res: Response) {
       .json({ status: 'Error', message: 'File parameter is required!' });
 
   try {
-    const { path: pathFile } = req.file as any;
+    const { path: pathFile } = req.file;
 
     await req.client.setProfilePic(pathFile);
     await unlinkAsync(pathFile);
@@ -1269,7 +1269,7 @@ export async function setProfilePic(req: Request, res: Response) {
   }
 }
 
-export async function getUnreadMessages(req: Request, res: Response) {
+export async function getUnreadMessages(req, res) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Messages"]
@@ -1292,7 +1292,7 @@ export async function getUnreadMessages(req: Request, res: Response) {
   }
 }
 
-export async function getChatIsOnline(req: Request, res: Response) {
+export async function getChatIsOnline(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1320,7 +1320,7 @@ export async function getChatIsOnline(req: Request, res: Response) {
   }
 }
 
-export async function getLastSeen(req: Request, res: Response) {
+export async function getLastSeen(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1349,7 +1349,7 @@ export async function getLastSeen(req: Request, res: Response) {
   }
 }
 
-export async function getListMutes(req: Request, res: Response) {
+export async function getListMutes(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1378,7 +1378,7 @@ export async function getListMutes(req: Request, res: Response) {
   }
 }
 
-export async function loadAndGetAllMessagesInChat(req: Request, res: Response) {
+export async function loadAndGetAllMessagesInChat(req, res) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1403,8 +1403,8 @@ export async function loadAndGetAllMessagesInChat(req: Request, res: Response) {
   try {
     const response = await req.client.loadAndGetAllMessagesInChat(
       `${phone}@c.us`,
-      includeMe as boolean,
-      includeNotifications as boolean
+      includeMe,
+      includeNotifications
     );
 
     res.status(200).json({ status: 'success', response: response });
@@ -1415,7 +1415,7 @@ export async function loadAndGetAllMessagesInChat(req: Request, res: Response) {
       .json({ status: 'error', response: 'Error on open list', error: error });
   }
 }
-export async function getMessages(req: Request, res: Response) {
+export async function getMessages(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1442,9 +1442,9 @@ export async function getMessages(req: Request, res: Response) {
   const { count = 20, direction = 'before', id = null } = req.query;
   try {
     const response = await req.client.getMessages(`${phone}`, {
-      count: parseInt(count as string),
-      direction: direction.toString() as any,
-      id: id as string,
+      count: parseInt(count),
+      direction: direction.toString(),
+      id: id,
     });
     res.status(200).json({ status: 'success', response: response });
   } catch (e) {
@@ -1455,7 +1455,7 @@ export async function getMessages(req: Request, res: Response) {
   }
 }
 
-export async function sendContactVcard(req: Request, res: Response) {
+export async function sendContactVcard(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1514,7 +1514,7 @@ export async function sendContactVcard(req: Request, res: Response) {
   }
 }
 
-export async function sendMute(req: Request, res: Response) {
+export async function sendMute(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1568,7 +1568,7 @@ export async function sendMute(req: Request, res: Response) {
   }
 }
 
-export async function sendSeen(req: Request, res: Response) {
+export async function sendSeen(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1615,7 +1615,7 @@ export async function sendSeen(req: Request, res: Response) {
   }
 }
 
-export async function setChatState(req: Request, res: Response) {
+export async function setChatState(req, res) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1670,7 +1670,7 @@ export async function setChatState(req: Request, res: Response) {
   }
 }
 
-export async function setTemporaryMessages(req: Request, res: Response) {
+export async function setTemporaryMessages(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1724,7 +1724,7 @@ export async function setTemporaryMessages(req: Request, res: Response) {
   }
 }
 
-export async function setTyping(req: Request, res: Response) {
+export async function setTyping(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1776,7 +1776,7 @@ export async function setTyping(req: Request, res: Response) {
   }
 }
 
-export async function setRecording(req: Request, res: Response) {
+export async function setRecording(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1833,7 +1833,7 @@ export async function setRecording(req: Request, res: Response) {
   }
 }
 
-export async function checkNumberStatus(req: Request, res: Response) {
+export async function checkNumberStatus(req, res) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1865,7 +1865,7 @@ export async function checkNumberStatus(req: Request, res: Response) {
   }
 }
 
-export async function getContact(req: Request, res: Response) {
+export async function getContact(req, res) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1882,7 +1882,7 @@ export async function getContact(req: Request, res: Response) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone as string, false)) {
+    for (const contato of contactToArray(phone, false)) {
       response = await req.client.getContact(contato);
     }
 
@@ -1895,7 +1895,7 @@ export async function getContact(req: Request, res: Response) {
   }
 }
 
-export async function getAllContacts(req: Request, res: Response) {
+export async function getAllContacts(req, res) {
   /**
    * #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -1920,7 +1920,7 @@ export async function getAllContacts(req: Request, res: Response) {
   }
 }
 
-export async function getNumberProfile(req: Request, res: Response) {
+export async function getNumberProfile(req, res) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1938,7 +1938,7 @@ export async function getNumberProfile(req: Request, res: Response) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone as string, false)) {
+    for (const contato of contactToArray(phone, false)) {
       response = await req.client.getNumberProfile(contato);
     }
 
@@ -1953,7 +1953,7 @@ export async function getNumberProfile(req: Request, res: Response) {
   }
 }
 
-export async function getProfilePicFromServer(req: Request, res: Response) {
+export async function getProfilePicFromServer(req, res) {
   /**
      #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -1971,7 +1971,7 @@ export async function getProfilePicFromServer(req: Request, res: Response) {
   const { isGroup = false } = req.query;
   try {
     let response;
-    for (const contato of contactToArray(phone as string, isGroup as boolean)) {
+    for (const contato of contactToArray(phone, isGroup)) {
       response = await req.client.getProfilePicFromServer(contato);
     }
 
@@ -1986,7 +1986,7 @@ export async function getProfilePicFromServer(req: Request, res: Response) {
   }
 }
 
-export async function getStatus(req: Request, res: Response) {
+export async function getStatus(req, res) {
   /**
      #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -2003,7 +2003,7 @@ export async function getStatus(req: Request, res: Response) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone as string, false)) {
+    for (const contato of contactToArray(phone, false)) {
       response = await req.client.getStatus(contato);
     }
     res.status(200).json({ status: 'success', response: response });
@@ -2015,7 +2015,7 @@ export async function getStatus(req: Request, res: Response) {
   }
 }
 
-export async function setProfileStatus(req: Request, res: Response) {
+export async function setProfileStatus(req, res) {
   /**
      #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -2065,7 +2065,7 @@ export async function setProfileStatus(req: Request, res: Response) {
       .json({ status: 'error', message: 'Error on set profile status' });
   }
 }
-export async function rejectCall(req: Request, res: Response) {
+export async function rejectCall(req, res) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -2110,7 +2110,7 @@ export async function rejectCall(req: Request, res: Response) {
   }
 }
 
-export async function starMessage(req: Request, res: Response) {
+export async function starMessage(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2158,7 +2158,7 @@ export async function starMessage(req: Request, res: Response) {
   }
 }
 
-export async function getReactions(req: Request, res: Response) {
+export async function getReactions(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2187,7 +2187,7 @@ export async function getReactions(req: Request, res: Response) {
   }
 }
 
-export async function getVotes(req: Request, res: Response) {
+export async function getVotes(req, res) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2213,7 +2213,7 @@ export async function getVotes(req: Request, res: Response) {
       .json({ status: 'error', message: 'Error on get votes', error: error });
   }
 }
-export async function chatWoot(req: Request, res: Response): Promise<any> {
+export async function chatWoot(req, res): Promise<any> {
   /**
      #swagger.tags = ["Misc"]
      #swagger.description = 'You can point your Chatwoot to this route so that it can perform functions.'
@@ -2394,7 +2394,7 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
     });
   }
 }
-export async function getPlatformFromMessage(req: Request, res: Response) {
+export async function getPlatformFromMessage(req, res) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false

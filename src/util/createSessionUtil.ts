@@ -185,7 +185,7 @@ export default class CreateSessionUtil {
     res?: any
   ) {
     try {
-      let client = this.getClient(session) as any;
+      let client = this.getClient(session);
       if (client.status != null && client.status !== 'CLOSED') return;
       client.status = 'INITIALIZING';
       client.config = req.body;
@@ -468,14 +468,14 @@ export default class CreateSessionUtil {
     } catch (e) {
       req.logger.warn(`[${session}] Session initialization warning: ${e}`);
       if (e instanceof Error && e.name == 'TimeoutError') {
-        const client = this.getClient(session) as any;
+        const client = this.getClient(session);
         // Don't close session on timeout - keep it alive for QR scanning
         req.logger.info(`[${session}] Timeout during initialization - keeping session alive for QR scanning`);
         client.status = 'QRCODE'; // Keep session alive and ready for QR
         client.qrcode = 'pending'; // Mark as QR ready
       } else {
         // For other errors, also try to keep session alive
-        const client = this.getClient(session) as any;
+        const client = this.getClient(session);
         if (client) {
           client.status = 'QRCODE';
           req.logger.info(`[${session}] Session error handled - marked as QRCODE ready`);
@@ -754,7 +754,7 @@ export default class CreateSessionUtil {
       client = clientsArray[session] = {
         status: null,
         session: session,
-      } as any;
+      };
     return client;
   }
 }

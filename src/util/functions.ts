@@ -118,11 +118,11 @@ export function contactToArray(
         ? (contact = contact.split('@')[0])
         : (contact = contact.split('@')[0]?.replace(/[^\w ]/g, ''));
       if (contact !== '')
-        if (isGroup) (localArr as any).push(`${contact}@g.us`);
-        else if (isNewsletter) (localArr as any).push(`${contact}@newsletter`);
+        if (isGroup) (localArr).push(`${contact}@g.us`);
+        else if (isNewsletter) (localArr).push(`${contact}@newsletter`);
         else if (isLid || contact.length > 14)
-          (localArr as any).push(`${contact}@lid`);
-        else (localArr as any).push(`${contact}@c.us`);
+          (localArr).push(`${contact}@lid`);
+        else (localArr).push(`${contact}@c.us`);
     }
   } else {
     const arrContacts = number.split(/\s*[,;]\s*/g);
@@ -131,11 +131,11 @@ export function contactToArray(
         ? (contact = contact.split('@')[0])
         : (contact = contact.split('@')[0]?.replace(/[^\w ]/g, ''));
       if (contact !== '')
-        if (isGroup) (localArr as any).push(`${contact}@g.us`);
-        else if (isNewsletter) (localArr as any).push(`${contact}@newsletter`);
+        if (isGroup) (localArr).push(`${contact}@g.us`);
+        else if (isNewsletter) (localArr).push(`${contact}@newsletter`);
         else if (isLid || contact.length > 14)
-          (localArr as any).push(`${contact}@lid`);
-        else (localArr as any).push(`${contact}@c.us`);
+          (localArr).push(`${contact}@lid`);
+        else (localArr).push(`${contact}@c.us`);
     }
   }
 
@@ -147,13 +147,13 @@ export function groupToArray(group: any) {
   if (Array.isArray(group)) {
     for (let contact of group) {
       contact = contact.split('@')[0];
-      if (contact !== '') (localArr as any).push(`${contact}@g.us`);
+      if (contact !== '') (localArr).push(`${contact}@g.us`);
     }
   } else {
     const arrContacts = group.split(/\s*[,;]\s*/g);
     for (let contact of arrContacts) {
       contact = contact.split('@')[0];
-      if (contact !== '') (localArr as any).push(`${contact}@g.us`);
+      if (contact !== '') (localArr).push(`${contact}@g.us`);
     }
   }
 
@@ -164,12 +164,12 @@ export function groupNameToArray(group: any) {
   const localArr: any = [];
   if (Array.isArray(group)) {
     for (const contact of group) {
-      if (contact !== '') (localArr as any).push(`${contact}`);
+      if (contact !== '') (localArr).push(`${contact}`);
     }
   } else {
     const arrContacts = group.split(/\s*[,;]\s*/g);
     for (const contact of arrContacts) {
-      if (contact !== '') (localArr as any).push(`${contact}`);
+      if (contact !== '') (localArr).push(`${contact}`);
     }
   }
 

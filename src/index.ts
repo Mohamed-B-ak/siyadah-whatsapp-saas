@@ -95,7 +95,7 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
   app.use((req: any, res: any, next: NextFunction) => {
     req.serverOptions = serverOptions;
     req.logger = logger;
-    req.io = io as any;
+    req.io = io;
 
     const oldSend = res.send;
 

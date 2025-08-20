@@ -49,7 +49,7 @@ function returnError(
   });
 }
 
-export async function getBusinessProfilesProducts(req: Request, res: Response) {
+export async function getBusinessProfilesProducts(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -65,7 +65,7 @@ export async function getBusinessProfilesProducts(req: Request, res: Response) {
      }
    */
   const session = req.session;
-  const { phone } = req.query as unknown as any;
+  const { phone } = req.query as unknown;
 
   try {
     const results: any = [];
@@ -78,7 +78,7 @@ export async function getBusinessProfilesProducts(req: Request, res: Response) {
     returnError(req, res, session, error);
   }
 }
-export async function getOrderbyMsg(req: Request, res: Response) {
+export async function getOrderbyMsg(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -96,7 +96,7 @@ export async function getOrderbyMsg(req: Request, res: Response) {
   const { messageId } = req.params;
 
   try {
-    const result = await (req.client as any).getOrder(messageId);
+    const result = await (req.client).getOrder(messageId);
 
     returnSucess(res, session, null, result);
   } catch (error) {

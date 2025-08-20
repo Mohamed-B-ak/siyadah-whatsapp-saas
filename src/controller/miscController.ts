@@ -22,7 +22,7 @@ import config from '../config';
 import { backupSessions, restoreSessions } from '../util/manageSession';
 import { clientsArray } from '../util/sessionUtil';
 
-export async function backupAllSessions(req: Request, res: Response) {
+export async function backupAllSessions(req, res) {
   /**
      * #swagger.tags = ["Misc"]
      * #swagger.description = 'Please, open the router in your browser, in swagger this not run'
@@ -63,7 +63,7 @@ export async function backupAllSessions(req: Request, res: Response) {
   }
 }
 
-export async function restoreAllSessions(req: Request, res: Response) {
+export async function restoreAllSessions(req, res) {
   /**
    #swagger.tags = ["Misc"]
    #swagger.autoBody=false
@@ -99,7 +99,7 @@ export async function restoreAllSessions(req: Request, res: Response) {
   }
 
   try {
-    const result = await restoreSessions(req, req.file as any);
+    const result = await restoreSessions(req, req.file);
     res.status(200).json(result);
   } catch (error: any) {
     res.status(500).json({
@@ -110,7 +110,7 @@ export async function restoreAllSessions(req: Request, res: Response) {
   }
 }
 
-export async function takeScreenshot(req: Request, res: Response) {
+export async function takeScreenshot(req, res) {
   /**
    #swagger.tags = ["Misc"]
    #swagger.autoBody=false
@@ -134,7 +134,7 @@ export async function takeScreenshot(req: Request, res: Response) {
   }
 }
 
-export async function clearSessionData(req: Request, res: Response) {
+export async function clearSessionData(req, res) {
   /**
    #swagger.tags = ["Misc"]
    #swagger.autoBody=false
@@ -181,7 +181,7 @@ export async function clearSessionData(req: Request, res: Response) {
   }
 }
 
-export async function setLimit(req: Request, res: Response) {
+export async function setLimit(req, res) {
   /**
    #swagger.tags = ["Misc"]
    #swagger.description = 'Change limits of whatsapp web. Types value: maxMediaSize, maxFileSize, maxShare, statusVideoMaxDuration, unlimitedPin;'

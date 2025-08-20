@@ -39,7 +39,7 @@ export async function encryptSession(
   let tokenDecrypt = '';
 
   if (secretkey === undefined) {
-    tokenDecrypt = (token as string).split(' ')[0];
+    tokenDecrypt = (token).split(' ')[0];
   } else {
     tokenDecrypt = secretkey;
   }

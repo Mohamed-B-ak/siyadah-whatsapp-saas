@@ -32,7 +32,7 @@ function returnError(
   });
 }
 
-export async function createNewsletter(req: Request, res: Response) {
+export async function createNewsletter(req, res) {
   /**
      * #swagger.tags = ["Newsletter]
         #swagger.operationId = 'createNewsletter'
@@ -79,7 +79,7 @@ export async function createNewsletter(req: Request, res: Response) {
   }
 }
 
-export async function editNewsletter(req: Request, res: Response) {
+export async function editNewsletter(req, res) {
   /**
        * #swagger.tags = ["Newsletter]
          #swagger.operationId = 'editNewsletter'
@@ -144,7 +144,7 @@ export async function editNewsletter(req: Request, res: Response) {
   }
 }
 
-export async function destroyNewsletter(req: Request, res: Response) {
+export async function destroyNewsletter(req, res) {
   /**
  * #swagger.tags = ["Newsletter]
     #swagger.autoBody=false
@@ -169,7 +169,7 @@ export async function destroyNewsletter(req: Request, res: Response) {
   }
 }
 
-export async function muteNewsletter(req: Request, res: Response) {
+export async function muteNewsletter(req, res) {
   /**
    * #swagger.tags = ["Newsletter]
      #swagger.operationId = 'muteNewsletter'

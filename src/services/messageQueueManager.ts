@@ -91,8 +91,8 @@ export class MessageQueueManager {
     return {
       sessionId,
       sessionName,
-      companyId: companyId as string,
-      userId: userId as string
+      companyId: companyId,
+      userId: userId
     };
   }
 
@@ -173,7 +173,7 @@ export class MessageQueueManager {
   setMessageSender(sender: (sessionId: string, phone: string, message: string, options: any) => Promise<boolean>) {
     if (this.messageQueueService) {
       // Replace the placeholder sendMessageViaWhatsApp method
-      (this.messageQueueService as any).sendMessageViaWhatsApp = async (sessionId: string, messageTask: any) => {
+      (this.messageQueueService).sendMessageViaWhatsApp = async (sessionId: string, messageTask: any) => {
         if (messageTask.message === 'IMMEDIATE_SEND_MARKER') {
           return true; // Just update timing, don't actually send
         }

@@ -19,7 +19,7 @@ import Prometheus from 'prom-client';
 
 const register = new Prometheus.Registry();
 
-export async function metrics(req: Request, res: Response) {
+export async function metrics(req, res) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false

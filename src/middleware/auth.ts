@@ -22,7 +22,7 @@ function formatSession(session: string) {
   return session.split(':')[0];
 }
 
-const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
+const verifyToken = (req, res, next) => {
   const secureToken = req.serverOptions.secretKey;
 
   const { session } = req.params;

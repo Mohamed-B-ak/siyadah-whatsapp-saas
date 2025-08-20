@@ -8,7 +8,7 @@ function returnSucess(res: Response, data: any) {
   });
 }
 
-function returnError(req: Request, res: Response, error: any) {
+function returnError(req, res, error) {
   req.logger?.error(error);
   
   if (res.headersSent) {
@@ -23,7 +23,7 @@ function returnError(req: Request, res: Response, error: any) {
   });
 }
 
-export async function getQueueStatus(req: Request, res: Response) {
+export async function getQueueStatus(req, res) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get message queue status for a session"
@@ -65,7 +65,7 @@ export async function getQueueStatus(req: Request, res: Response) {
   }
 }
 
-export async function clearQueue(req: Request, res: Response) {
+export async function clearQueue(req, res) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Clear all queued messages for a session"
@@ -108,7 +108,7 @@ export async function clearQueue(req: Request, res: Response) {
   }
 }
 
-export async function getAllQueues(req: Request, res: Response) {
+export async function getAllQueues(req, res) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get status of all message queues (admin only)"
@@ -130,7 +130,7 @@ export async function getAllQueues(req: Request, res: Response) {
   }
 }
 
-export async function getQueueStats(req: Request, res: Response) {
+export async function getQueueStats(req, res) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get message queue statistics"

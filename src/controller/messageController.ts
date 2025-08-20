@@ -19,7 +19,7 @@ import { Request, Response } from 'express';
 import { unlinkAsync } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
 
-function returnError(req: Request, res: Response, error: any) {
+function returnError(req, res, error) {
   req.logger.error(error);
   
   // Check if response has already been sent to avoid header errors
@@ -44,7 +44,7 @@ async function returnSucess(res: any, data: any) {
   res.status(201).json({ status: 'success', response: data, mapper: 'return' });
 }
 
-export async function sendMessage(req: Request, res: Response) {
+export async function sendMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -186,7 +186,7 @@ export async function sendMessage(req: Request, res: Response) {
   }
 }
 
-export async function editMessage(req: Request, res: Response) {
+export async function editMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -224,7 +224,7 @@ export async function editMessage(req: Request, res: Response) {
 
   const options = req.body.options || {};
   try {
-    const edited = await (req.client as any).editMessage(id, newText, options);
+    const edited = await (req.client).editMessage(id, newText, options);
 
     req.io.emit('edited-message', edited);
     returnSucess(res, edited);
@@ -233,7 +233,7 @@ export async function editMessage(req: Request, res: Response) {
   }
 }
 
-export async function sendFile(req: Request, res: Response) {
+export async function sendFile(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -383,7 +383,7 @@ export async function sendFile(req: Request, res: Response) {
   }
 }
 
-export async function sendVoice(req: Request, res: Response) {
+export async function sendVoice(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -513,7 +513,7 @@ export async function sendVoice(req: Request, res: Response) {
   }
 }
 
-export async function sendVoice64(req: Request, res: Response) {
+export async function sendVoice64(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -635,7 +635,7 @@ export async function sendVoice64(req: Request, res: Response) {
   }
 }
 
-export async function sendLinkPreview(req: Request, res: Response) {
+export async function sendLinkPreview(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -753,7 +753,7 @@ export async function sendLinkPreview(req: Request, res: Response) {
   }
 }
 
-export async function sendLocation(req: Request, res: Response) {
+export async function sendLocation(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -880,7 +880,7 @@ export async function sendLocation(req: Request, res: Response) {
   }
 }
 
-export async function sendButtons(req: Request, res: Response) {
+export async function sendButtons(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -973,7 +973,7 @@ export async function sendButtons(req: Request, res: Response) {
   }
 }
 
-export async function sendListMessage(req: Request, res: Response) {
+export async function sendListMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1118,7 +1118,7 @@ export async function sendListMessage(req: Request, res: Response) {
   }
 }
 
-export async function sendOrderMessage(req: Request, res: Response) {
+export async function sendOrderMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1274,7 +1274,7 @@ export async function sendOrderMessage(req: Request, res: Response) {
   }
 }
 
-export async function sendPollMessage(req: Request, res: Response) {
+export async function sendPollMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1335,7 +1335,7 @@ export async function sendPollMessage(req: Request, res: Response) {
   }
 }
 
-export async function sendStatusText(req: Request, res: Response) {
+export async function sendStatusText(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1452,7 +1452,7 @@ export async function sendStatusText(req: Request, res: Response) {
   }
 }
 
-export async function replyMessage(req: Request, res: Response) {
+export async function replyMessage(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1561,7 +1561,7 @@ export async function replyMessage(req: Request, res: Response) {
   }
 }
 
-export async function sendMentioned(req: Request, res: Response) {
+export async function sendMentioned(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1689,7 +1689,7 @@ export async function sendMentioned(req: Request, res: Response) {
     });
   }
 }
-export async function sendImageAsSticker(req: Request, res: Response) {
+export async function sendImageAsSticker(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1807,7 +1807,7 @@ export async function sendImageAsSticker(req: Request, res: Response) {
     returnError(req, res, error);
   }
 }
-export async function sendImageAsStickerGif(req: Request, res: Response) {
+export async function sendImageAsStickerGif(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false

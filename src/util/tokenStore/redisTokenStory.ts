@@ -16,7 +16,7 @@ class RedisTokenStore {
   tokenStore = {
     getToken: (sessionName: string) =>
       new Promise((resolve, reject) => {
-        (redisClient as any).get(
+        (redisClient).get(
           this.prefix + sessionName,
           (err: any, reply: any) => {
             if (err) {
@@ -40,7 +40,7 @@ class RedisTokenStore {
       new Promise((resolve) => {
         tokenData.sessionName = sessionName;
         tokenData.config = this.client.config;
-        (redisClient as any).set(
+        (redisClient).set(
           this.prefix + sessionName,
           JSON.stringify(tokenData),
           (err: any) => {
@@ -50,13 +50,13 @@ class RedisTokenStore {
       }),
     removeToken: (sessionName: string) =>
       new Promise((resolve) => {
-        (redisClient as any).del(this.prefix + sessionName, (err: any) => {
+        (redisClient).del(this.prefix + sessionName, (err: any) => {
           return resolve(err ? false : true);
         });
       }),
     listTokens: () =>
       new Promise((resolve) => {
-        (redisClient as any).keys(this.prefix + '*', (err: any, keys: any) => {
+        (redisClient).keys(this.prefix + '*', (err: any, keys: any) => {
           if (err) {
             return resolve([]);
           }
