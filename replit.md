@@ -88,3 +88,5 @@ Preferred communication style: Simple, everyday language.
 - **Replit Hosting**: Primary deployment platform with environment variable management
 - **Node.js 22.16.0**: Required runtime environment
 - **Environment Variables**: Configuration management for database URLs, API keys, and service credentials
+- **Production Builds**: Docker configured with `--ignore-scripts` to skip development-only tools like Husky
+- **Development Setup**: Use `./setup-dev.sh` for local development environment with git hooks

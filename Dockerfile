@@ -29,10 +29,11 @@ WORKDIR /app
 # Copy only manifests first so Docker can cache `npm ci` when code changes.
 COPY package.json package-lock.json* ./
 # Prefer npm ci when lockfile exists; fallback to npm i if not
+# Skip scripts (like husky prepare) in production Docker builds
 RUN if [ -f package-lock.json ]; then \
-      npm ci --legacy-peer-deps; \
+      npm ci --legacy-peer-deps --ignore-scripts; \
     else \
-      npm i --legacy-peer-deps; \
+      npm i --legacy-peer-deps --ignore-scripts; \
     fi
 
 # Now copy the rest of the source
