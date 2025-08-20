@@ -21,23 +21,23 @@ ENV DISPLAY=:99
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
-# Optional: many hosts require these flags; read them in your code or launcher
+# Optional: many hosts require these flags
 ENV PUPPETEER_DEFAULT_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu"
 
 # 4) App setup
 WORKDIR /app
 
-# Install deps with better caching:
-# Copy only manifests first so Docker can cache `npm ci` when code changes.
+# Copy only manifests first so Docker can cache deps
 COPY package.json package-lock.json* ./
 
-# Install production dependencies only (excludes husky and other devDependencies)
-# Then rebuild native modules (like bcrypt) for the production environment
+# Install production deps WITHOUT running lifecycle scripts (skips husky)
+# Then rebuild native modules (if any)
 RUN if [ -f package-lock.json ]; then \
-      npm ci --only=production --legacy-peer-deps; \
+      npm ci --omit=dev --ignore-scripts --legacy-peer-deps; \
     else \
-      npm i --only=production --legacy-peer-deps; \
-    fi && npm rebuild
+      npm i  --omit=dev --ignore-scripts --legacy-peer-deps; \
+    fi \
+ && npm rebuild
 
 # Now copy the rest of the source
 COPY . .
@@ -52,6 +52,6 @@ USER appuser
 
 EXPOSE 5000
 
-# 6) Start: you’re using tsx at runtime (no build)
-# Ensure "tsx" is in your deps OR npx can fetch it at runtime.
+# 6) Start: run with tsx at runtime (no build)
+# Ensure "tsx" is in dependencies OR allow npx to fetch it at runtime.
 CMD ["npx", "tsx", "src/server.ts"]
