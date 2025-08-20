@@ -7,6 +7,6 @@ export async function migrateToMongoDB() {
     console.log('⚠️ PostgreSQL deprecated - skipping migration');
     console.log('✅ MongoDB is the primary database');
   } catch (error) {
-    console.log('Migration skipped:', error instanceof Error ? error.message : 'Unknown error');
+    console.log('Migration skipped:', error.message);
   }
 }

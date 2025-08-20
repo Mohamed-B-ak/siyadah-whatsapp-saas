@@ -9,10 +9,10 @@ import {
   checkLimits,
   type AuthenticatedRequest
 } from './saas-auth';
-import type { 
-  Company, 
-  User, 
-  Session
+import { 
+  type InsertCompany, 
+  type InsertUser, 
+  type InsertSession
 } from '../shared/schema';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
@@ -204,7 +204,7 @@ router.put('/companies/profile', authenticateCompany, async (req: AuthenticatedR
     delete updateData.masterApiKey; // منع تحديث المفتاح الرئيسي
     
     const updatedCompany = await storage.updateCompany(req.company.id, updateData);
-    const { masterApiKey, ...companyData } = updatedCompany || {};
+    const { masterApiKey, ...companyData } = updatedCompany;
     
     res.json({
       success: true,
@@ -339,7 +339,7 @@ router.put('/users/:userId', authenticateCompany, async (req: AuthenticatedReque
     delete updateData.companyId; // منع تغيير الشركة
     
     const updatedUser = await storage.updateUser(userId, updateData);
-    const { apiKey, ...safeUser } = updatedUser || {};
+    const { apiKey, ...safeUser } = updatedUser;
     
     res.json({
       success: true,
@@ -477,19 +477,22 @@ router.post('/sessions', authenticateCompany, checkLimits, async (req: Authentic
       webhook: webhook || ''
     };
     
-    const validatedData = sessionData as any;
+    const validatedData = sessionData as InsertSession;
     const session = await storage.createSession(validatedData);
     
     // Also create session in WPPConnect
-    try {
-      const wppResponse = await fetch(`http://localhost:5000/api/${sessionData.sessionName}/start-session`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${req.company.masterApiKey}`
-        },
-        body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
-      });
+       try {
+        const { getBaseUrl } = await import('./config/environment');
+        const baseUrl = getBaseUrl();
+
+        const wppResponse = await fetch(`${baseUrl}/api/${sessionData.sessionName}/start-session`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${req.company?.masterApiKey || ''}`
+          },
+          body: JSON.stringify({ waitQrCode: waitQrCode || true, webhook: webhook || '' })
+        });
       
       const wppData = await wppResponse.json();
       
@@ -555,7 +558,9 @@ router.delete('/sessions/:sessionName', authenticateCompany, async (req: Authent
 
     // Close WhatsApp session first
     try {
-      const closeResponse = await fetch(`http://localhost:5000/api/${fullSessionName}/logout-session`, {
+      const { getBaseUrl } = await import('./config/environment');
+      const baseUrl = getBaseUrl();
+      const closeResponse = await fetch(`${baseUrl}/api/${fullSessionName}/logout-session`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

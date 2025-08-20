@@ -18,7 +18,11 @@ import { NextFunction, Request, Response } from 'express';
 
 import { contactToArray } from '../util/functions';
 
-export default async function statusConnection(req, res, next) {
+export default async function statusConnection(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const numbers: any = [];
     if (req.client && req.client.isConnected) {
@@ -40,17 +44,17 @@ export default async function statusConnection(req, res, next) {
             .checkNumberStatus(contact)
             .catch((error) => console.log(error));
           if (!profile?.numberExists) {
-            const num = (contact).split('@')[0];
+            const num = (contact as any).split('@')[0];
             res.status(400).json({
               response: null,
               status: 'Connected',
               message: `O número ${num} não existe.`,
             });
           } else {
-            if ((numbers).indexOf(profile.id._serialized) < 0) {
-              (numbers).push(profile.id._serialized);
+            if ((numbers as any).indexOf(profile.id._serialized) < 0) {
+              (numbers as any).push(profile.id._serialized);
             }
-            (localArr)[index] = profile.id._serialized;
+            (localArr as any)[index] = profile.id._serialized;
           }
         }
         index++;

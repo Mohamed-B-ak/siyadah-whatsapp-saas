@@ -16,7 +16,7 @@
 
 import { Request, Response } from 'express';
 
-export async function healthz(req, res) {
+export async function healthz(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -36,7 +36,7 @@ export async function healthz(req, res) {
   }
 }
 
-export async function unhealthy(req, res) {
+export async function unhealthy(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false

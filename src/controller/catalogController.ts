@@ -18,7 +18,7 @@ import { Request, Response } from 'express';
 import { createCatalogLink } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
 
-export async function getProducts(req, res) {
+export async function getProducts(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -45,7 +45,10 @@ export async function getProducts(req, res) {
     });
 
   try {
-    const result = await req.client?.getProducts(phone, qnt);
+    const result = await req.client?.getProducts(
+      phone as string,
+      qnt as unknown as number
+    );
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
     res.status(500).json({
@@ -56,7 +59,7 @@ export async function getProducts(req, res) {
   }
 }
 
-export async function getProductById(req, res) {
+export async function getProductById(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -82,7 +85,10 @@ export async function getProductById(req, res) {
     });
 
   try {
-    const result = await req.client.getProductById(phone, id);
+    const result = await req.client.getProductById(
+      phone as string,
+      id as string
+    );
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
     res
@@ -90,7 +96,7 @@ export async function getProductById(req, res) {
       .json({ status: 'Error', message: 'Error on get product', error: error });
   }
 }
-export async function editProduct(req, res) {
+export async function editProduct(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -143,7 +149,7 @@ export async function editProduct(req, res) {
   }
 }
 
-export async function delProducts(req, res) {
+export async function delProducts(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -192,7 +198,7 @@ export async function delProducts(req, res) {
   }
 }
 
-export async function changeProductImage(req, res) {
+export async function changeProductImage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -244,7 +250,7 @@ export async function changeProductImage(req, res) {
   }
 }
 
-export async function addProduct(req, res) {
+export async function addProduct(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -323,7 +329,7 @@ export async function addProduct(req, res) {
   }
 }
 
-export async function addProductImage(req, res) {
+export async function addProductImage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -374,7 +380,7 @@ export async function addProductImage(req, res) {
   }
 }
 
-export async function removeProductImage(req, res) {
+export async function removeProductImage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -425,7 +431,7 @@ export async function removeProductImage(req, res) {
   }
 }
 
-export async function getCollections(req, res) {
+export async function getCollections(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -453,9 +459,9 @@ export async function getCollections(req, res) {
 
   try {
     const result = await req.client.getCollections(
-      phone,
-      qnt,
-      max
+      phone as string,
+      qnt as string,
+      max as string
     );
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
@@ -467,7 +473,7 @@ export async function getCollections(req, res) {
   }
 }
 
-export async function createCollection(req, res) {
+export async function createCollection(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -518,7 +524,7 @@ export async function createCollection(req, res) {
   }
 }
 
-export async function editCollection(req, res) {
+export async function editCollection(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -571,7 +577,7 @@ export async function editCollection(req, res) {
   }
 }
 
-export async function deleteCollection(req, res) {
+export async function deleteCollection(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -620,7 +626,7 @@ export async function deleteCollection(req, res) {
   }
 }
 
-export async function setProductVisibility(req, res) {
+export async function setProductVisibility(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -678,7 +684,7 @@ export async function setProductVisibility(req, res) {
   }
 }
 
-export async function updateCartEnabled(req, res) {
+export async function updateCartEnabled(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -727,7 +733,7 @@ export async function updateCartEnabled(req, res) {
   }
 }
 
-export async function sendLinkCatalog(req, res) {
+export async function sendLinkCatalog(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -765,13 +771,13 @@ export async function sendLinkCatalog(req, res) {
     res.status(401).send({
       message: 'phones was not informed',
     });
-  const results = [];
-  const queuedResults = [];
-
+  const results: any = [];
+  const queuedResults: any = [];
+  
   try {
     const session = await req.client.getWid();
     const catalogLink = createCatalogLink(session);
-
+    
     // CRITICAL FIX: Process all catalog messages through the queue system with 30-second delays
     for (const phone of phones) {
       const catalogMessage = `${message} ${catalogLink}`;
@@ -789,7 +795,7 @@ export async function sendLinkCatalog(req, res) {
         phone,
         catalogMessage,
         options,
-        async (phoneNumber, msg, opts) => {
+        async (phoneNumber: string, msg: string, opts: any) => {
           return await req.client.sendText(phoneNumber, msg, opts);
         }
       );
@@ -801,7 +807,7 @@ export async function sendLinkCatalog(req, res) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: 'Catalog message queued for delivery with 30-second delay',
+            message: 'Catalog message queued for delivery with 30-second delay'
           });
         } else {
           results.push({ phone: phone, status: queueResult.result.id });
@@ -810,7 +816,7 @@ export async function sendLinkCatalog(req, res) {
         results.push({
           phone: phone,
           status: 'error',
-          error: queueResult.error,
+          error: queueResult.error
         });
       }
     }
@@ -825,8 +831,8 @@ export async function sendLinkCatalog(req, res) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length,
-      },
+        queued: queuedResults.length
+      }
     });
   } catch (error) {
     res.status(500).json({

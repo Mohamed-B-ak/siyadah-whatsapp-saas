@@ -59,7 +59,7 @@ async function loadWebhookUrl(sessionName?: string): Promise<string> {
   }
 }
 
-export async function setWebhook(req, res) {
+export async function setWebhook(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Webhook"]
    * #swagger.summary = "Set webhook URL for receiving messages"
@@ -116,7 +116,7 @@ export async function setWebhook(req, res) {
   }
 }
 
-export async function webhookTest(req, res) {
+export async function webhookTest(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Webhook"]
    * #swagger.summary = "Test webhook endpoint"
@@ -247,7 +247,7 @@ export async function webhookTest(req, res) {
   });
 }
 
-export async function getWebhookLogs(req, res) {
+export async function getWebhookLogs(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Webhook"]
    * #swagger.summary = "Get webhook logs"
@@ -261,7 +261,7 @@ export async function getWebhookLogs(req, res) {
   });
 }
 
-export async function clearWebhookLogs(req, res) {
+export async function clearWebhookLogs(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Webhook"]
    * #swagger.summary = "Clear webhook logs"
@@ -276,7 +276,7 @@ export async function clearWebhookLogs(req, res) {
   });
 }
 
-export async function configureWebhook(req, res) {
+export async function configureWebhook(req: Request, res: Response) {
   const { webhookUrl } = req.body;
 
   if (!webhookUrl) {
@@ -305,7 +305,7 @@ export async function configureWebhook(req, res) {
   }
 }
 
-export async function getWebhookConfig(req, res) {
+export async function getWebhookConfig(req: Request, res: Response) {
   res.json({
     success: true,
     webhookUrl: currentWebhookUrl || 'Not configured',

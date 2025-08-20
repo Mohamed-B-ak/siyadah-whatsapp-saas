@@ -20,11 +20,12 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
 
     // Create session in database
     const sessionData = await storage.createSession({
+      id: `${companyId}_${userId}_${sessionName}`,
       userId: userId,
       companyId: companyId,
       sessionName: sessionName,
       status: 'initializing',
-      qrCode: null,
+      qrCode: null as string | null,
       webhook: req.body.webhook || null,
       config: {
         autoClose: 0,
@@ -34,7 +35,10 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     });
 
     // Start actual WhatsApp session
-    const whatsappResponse = await fetch(`http://localhost:5000/api/${sessionData.id}/start-session`, {
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
+    
+    const whatsappResponse = await fetch(`${baseUrl}/api/${sessionData.id}/start-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -48,7 +52,6 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     // Update session with WhatsApp response
     await storage.updateSession(sessionData.id, {
       status: 'qr_pending',
-      whatsappStatus: whatsappResult.status || 'QRCODE',
       qrCode: whatsappResult.qrcode || null
     });
 
@@ -64,7 +67,7 @@ router.post('/sessions/:sessionName/create', authenticateUser, async (req: Authe
     res.status(500).json({ 
       success: false, 
       message: 'Failed to create session',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : String(error) 
     });
   }
 });
@@ -95,7 +98,10 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     console.log(`[QR-DATABASE] No stored QR code found for session: ${sessionId}, fetching from WhatsApp API`);
 
     // Fallback: Get QR from WhatsApp API
-    const qrResponse = await fetch(`http://localhost:5000/api/${sessionId}/qrcode-session`);
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
+    
+    const qrResponse = await fetch(`${baseUrl}/api/${sessionId}/qrcode-session`);
     
     if (qrResponse.headers.get('content-type')?.includes('image')) {
       // Return image directly
@@ -118,7 +124,7 @@ router.get('/sessions/:sessionName/qrcode', authenticateUser, authenticateSessio
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get QR code',
-      error: (error as Error).message 
+      error: error.message 
     });
   }
 });
@@ -133,10 +139,10 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
       return res.status(401).json({ success: false, message: 'User not authenticated' });
     }
 
-    // The sessionName parameter already contains the full session ID, don't add prefix
-    const fullSessionId = sessionName;
+    // Construct full session ID - if sessionName doesn't contain userId, add it
+    const fullSessionId = sessionName.includes('_') ? sessionName : `${userId}_${sessionName}`;
     
-    console.log(`[QR-REQUEST] QR code requested for session: ${fullSessionId}`);
+    console.log(`[QR-REQUEST] QR code requested for session: ${sessionName} -> ${fullSessionId}`);
 
     // First check if we have a stored QR code in database (PRIORITY)
     const sessionData = await storage.getSessionByName(fullSessionId);
@@ -167,7 +173,7 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
           console.log(`[QR-REQUEST] Fresh PNG buffer generated - Size: ${pngBuffer.length} bytes`);
           
         } catch (qrError) {
-          console.error('[QR-REQUEST] Error generating QR PNG:', qrError instanceof Error ? qrError.message : 'Unknown error');
+          console.error('[QR-REQUEST] Error generating QR PNG:', qrError);
           qrCodeToReturn = sessionData.qrCode; // Fallback to stored data
         }
       }
@@ -183,13 +189,42 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
         generatedAt: sessionData.qrCodeGeneratedAt
       });
     } else {
-      console.warn(`[QR-REQUEST] Session not found: ${fullSessionId}`);
+      console.warn(`[QR-REQUEST] Session not found in database: ${fullSessionId}`);
+      console.log(`[QR-REQUEST] Attempting alternative lookup formats...`);
+      
+      // Try alternative session name formats
+      const alternatives = [
+        `${req.user?.companyId}_${sessionName}`,
+        `${req.user?.id}_${sessionName}`,
+        sessionName
+      ];
+      
+      for (const altSessionId of alternatives) {
+        if (altSessionId !== fullSessionId) {
+          console.log(`[QR-REQUEST] Trying alternative: ${altSessionId}`);
+          const altSessionData = await storage.getSessionByName(altSessionId);
+          if (altSessionData && altSessionData.qrCode) {
+            console.log(`[QR-REQUEST] Found session with alternative ID: ${altSessionId}`);
+            return res.json({
+              success: true,
+              qrCode: altSessionData.qrCode,
+              status: altSessionData.status,
+              source: 'database_alt',
+              generatedAt: altSessionData.qrCodeGeneratedAt
+            });
+          }
+        }
+      }
     }
 
     console.log(`[QR-REQUEST] No stored QR code found for session: ${fullSessionId}, attempting WhatsApp API`);
 
     // Fallback: Get QR from WhatsApp API
-    const qrResponse = await fetch(`http://localhost:5000/api/${fullSessionId}/qrcode-session`);
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME || 'siyadah-whatsapp-saas.onrender.com'}`
+      : 'http://localhost:5000';
+      
+    const qrResponse = await fetch(`${baseUrl}/api/${fullSessionId}/qrcode-session`);
     
     if (qrResponse.headers.get('content-type')?.includes('image')) {
       // Convert image to base64 for JSON response
@@ -217,7 +252,7 @@ router.get('/sessions/:sessionName/qr', authenticateUser, async (req: Authentica
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get QR code',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message 
     });
   }
 });
@@ -232,7 +267,10 @@ router.get('/sessions/:sessionName/status', authenticateUser, authenticateSessio
     }
 
     // Get status from WhatsApp API
-    const statusResponse = await fetch(`http://localhost:5000/api/${sessionId}/status-session`);
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
+      
+    const statusResponse = await fetch(`${baseUrl}/api/${sessionId}/status-session`);
     const statusData = await statusResponse.json();
 
     // Update session in database
@@ -253,7 +291,7 @@ router.get('/sessions/:sessionName/status', authenticateUser, authenticateSessio
     res.status(500).json({ 
       success: false, 
       message: 'Failed to check status',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message 
     });
   }
 });
@@ -273,7 +311,10 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
     }
 
     // Send message through WhatsApp API
-    const messageResponse = await fetch(`http://localhost:5000/api/${sessionId}/send-message`, {
+    const { getBaseUrl } = await import('./config/environment');
+    const baseUrl = getBaseUrl();
+      
+    const messageResponse = await fetch(`${baseUrl}/api/${sessionId}/send-message`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, message })
@@ -281,7 +322,24 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
 
     const messageResult = await messageResponse.json();
 
-    // Log message in database (temporarily disabled until storage method is available)
+    // Log message in database (skip if not available)
+    try {
+      if (storage.logMessage) {
+        await storage.logMessage({
+          sessionId: sessionId,
+          userId: req.user?.id || '',
+          companyId: req.user?.companyId || '',
+          type: 'outgoing',
+          from: sessionId,
+          to: phone,
+          content: message,
+          status: messageResult.status || 'sent',
+          whatsappMessageId: messageResult.id
+        });
+      }
+    } catch (logError) {
+      console.warn('Message logging skipped:', logError);
+    }
 
     // Log API usage
     await storage.logApiUsage({
@@ -289,8 +347,9 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
       companyId: req.user?.companyId,
       endpoint: 'send-message',
       method: 'POST',
-      statusCode: messageResponse.status,
-      responseTime: Date.now() - (req.startTime || Date.now())
+      timestamp: new Date(),
+      responseStatus: messageResponse.status,
+      responseTime: Date.now() - req.startTime
     });
 
     res.json({
@@ -305,7 +364,7 @@ router.post('/sessions/:sessionName/send-message', authenticateUser, authenticat
     res.status(500).json({ 
       success: false, 
       message: 'Failed to send message',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message 
     });
   }
 });
@@ -332,7 +391,7 @@ router.get('/sessions', authenticateUser, async (req: AuthenticatedRequest, res)
     res.status(500).json({ 
       success: false, 
       message: 'Failed to get sessions',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message 
     });
   }
 });
@@ -348,11 +407,14 @@ router.delete('/sessions/:sessionName', authenticateUser, authenticateSession, a
 
     // Close WhatsApp session
     try {
-      await fetch(`http://localhost:5000/api/${sessionId}/close-session`, {
+      const { getBaseUrl } = await import('./config/environment');
+      const baseUrl = getBaseUrl();
+        
+      await fetch(`${baseUrl}/api/${sessionId}/close-session`, {
         method: 'POST'
       });
     } catch (error) {
-      console.log('WhatsApp session close error (may be already closed):', error instanceof Error ? error.message : 'Unknown error');
+      console.log('WhatsApp session close error (may be already closed):', error.message);
     }
 
     // Delete from database
@@ -368,7 +430,7 @@ router.delete('/sessions/:sessionName', authenticateUser, authenticateSession, a
     res.status(500).json({ 
       success: false, 
       message: 'Failed to delete session',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error.message 
     });
   }
 });

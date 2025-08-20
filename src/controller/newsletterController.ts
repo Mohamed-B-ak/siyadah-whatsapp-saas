@@ -15,7 +15,12 @@
  */
 import { Request, Response } from 'express';
 
-function returnError(req, res, session, error) {
+function returnError(
+  req: Request,
+  res: Response,
+  session: string,
+  error?: any
+) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',
@@ -27,7 +32,7 @@ function returnError(req, res, session, error) {
   });
 }
 
-export async function createNewsletter(req, res) {
+export async function createNewsletter(req: Request, res: Response) {
   /**
      * #swagger.tags = ["Newsletter]
         #swagger.operationId = 'createNewsletter'
@@ -74,7 +79,7 @@ export async function createNewsletter(req, res) {
   }
 }
 
-export async function editNewsletter(req, res) {
+export async function editNewsletter(req: Request, res: Response) {
   /**
        * #swagger.tags = ["Newsletter]
          #swagger.operationId = 'editNewsletter'
@@ -139,7 +144,7 @@ export async function editNewsletter(req, res) {
   }
 }
 
-export async function destroyNewsletter(req, res) {
+export async function destroyNewsletter(req: Request, res: Response) {
   /**
  * #swagger.tags = ["Newsletter]
     #swagger.autoBody=false
@@ -164,7 +169,7 @@ export async function destroyNewsletter(req, res) {
   }
 }
 
-export async function muteNewsletter(req, res) {
+export async function muteNewsletter(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Newsletter]
      #swagger.operationId = 'muteNewsletter'

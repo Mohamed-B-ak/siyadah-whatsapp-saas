@@ -89,8 +89,21 @@ export const authenticateUser = async (req: AuthenticatedRequest, res: Response,
       message: 'Invalid API key' 
     });
 
-    // This code is unreachable due to return statement above
-    // Removing to fix TypeScript error
+    if (!user.isActive) {
+      return res.status(403).json({ 
+        error: 'Forbidden', 
+        message: 'User account is deactivated' 
+      });
+    }
+
+    // التحقق من الشركة أيضاً - استخدام معرف الشركة من بيانات المستخدم
+    req.company = {
+      id: user.companyId,
+      name: 'Company',
+      isActive: true
+    };
+
+    req.user = user;
     next();
   } catch (error) {
     console.error('User authentication error:', error);
@@ -195,10 +208,12 @@ export const logApiUsage = async (req: AuthenticatedRequest, res: Response, next
           method: req.method,
           statusCode,
           responseTime,
+          requestSize,
+          responseSize,
           ipAddress: req.ip || req.connection.remoteAddress,
           userAgent: req.headers['user-agent'] || undefined,
-          // errorMessage: statusCode >= 400 ? 'Request failed' : undefined, // Removed - not in schema
-          // requestData: req.method !== 'GET' ? req.body : undefined, // Removed - not in schema
+          errorMessage: statusCode >= 400 ? 'Request failed' : undefined,
+          requestData: req.method !== 'GET' ? req.body : undefined,
         });
       }
     } catch (error) {

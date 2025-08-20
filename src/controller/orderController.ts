@@ -15,7 +15,12 @@
  */
 import { Request, Response } from 'express';
 
-function returnSucess(res, session, phone, data) {
+function returnSucess(
+  res: Response,
+  session: string,
+  phone: string | null,
+  data?: any
+) {
   res.status(201).json({
     status: 'Success',
     response: {
@@ -27,7 +32,12 @@ function returnSucess(res, session, phone, data) {
   });
 }
 
-function returnError(req, res, session, error) {
+function returnError(
+  req: Request,
+  res: Response,
+  session: string,
+  error?: any
+) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',
@@ -39,7 +49,7 @@ function returnError(req, res, session, error) {
   });
 }
 
-export async function getBusinessProfilesProducts(req, res) {
+export async function getBusinessProfilesProducts(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -55,7 +65,7 @@ export async function getBusinessProfilesProducts(req, res) {
      }
    */
   const session = req.session;
-  const { phone } = req.query as any;
+  const { phone } = req.query as unknown as any;
 
   try {
     const results: any = [];
@@ -68,7 +78,7 @@ export async function getBusinessProfilesProducts(req, res) {
     returnError(req, res, session, error);
   }
 }
-export async function getOrderbyMsg(req, res) {
+export async function getOrderbyMsg(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -86,7 +96,7 @@ export async function getOrderbyMsg(req, res) {
   const { messageId } = req.params;
 
   try {
-    const result = await (req.client).getOrder(messageId);
+    const result = await (req.client as any).getOrder(messageId);
 
     returnSucess(res, session, null, result);
   } catch (error) {

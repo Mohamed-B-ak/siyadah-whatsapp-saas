@@ -24,10 +24,25 @@ import { clientsArray, eventEmitter } from './sessionUtil';
 import Factory from './tokenStore/factory';
 
 // WEBHOOK RATE LIMITING AND LOOP PREVENTION SYSTEM
+interface WebhookRateLimit {
+  lastWebhookTime: number;
+  webhookCount: number;
+  hourlyResetTime: number;
+  cooldownUntil: number;
+  lastStatus: string;
+  duplicateCount: number;
+}
+
+interface SessionProtectionState {
+  lastProtectionTime: number;
+  protectionCount: number;
+  originalStatus: string;
+  isInCooldown: boolean;
+}
 
 // Global tracking for webhook rate limiting
-const webhookRateLimits = {};
-const protectionStates = {};
+const webhookRateLimits: { [sessionId: string]: WebhookRateLimit } = {};
+const protectionStates: { [sessionId: string]: SessionProtectionState } = {};
 
 // Rate limiting configuration
 const WEBHOOK_RATE_LIMIT = {
@@ -39,7 +54,7 @@ const WEBHOOK_RATE_LIMIT = {
 };
 
 // Helper functions for rate limiting
-function initializeRateLimit(sessionId) {
+function initializeRateLimit(sessionId: string): WebhookRateLimit {
   const now = Date.now();
   return {
     lastWebhookTime: 0,
@@ -51,7 +66,7 @@ function initializeRateLimit(sessionId) {
   };
 }
 
-function initializeProtectionState(sessionId) {
+function initializeProtectionState(sessionId: string): SessionProtectionState {
   return {
     lastProtectionTime: 0,
     protectionCount: 0,
@@ -60,7 +75,7 @@ function initializeProtectionState(sessionId) {
   };
 }
 
-function shouldAllowWebhook(sessionId, status, logger) {
+function shouldAllowWebhook(sessionId: string, status: string, logger: any): boolean {
   const now = Date.now();
   
   // Initialize if not exists
@@ -111,7 +126,7 @@ function shouldAllowWebhook(sessionId, status, logger) {
   return true;
 }
 
-function shouldAllowAutoProtection(sessionId, statusFind, logger) {
+function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger: any): boolean {
   const now = Date.now();
   
   // Initialize if not exists
@@ -154,7 +169,7 @@ function shouldAllowAutoProtection(sessionId, statusFind, logger) {
 }
 
 export default class CreateSessionUtil {
-  startChatWootClient(client) {
+  startChatWootClient(client: any) {
     if (client.config.chatWoot && !client._chatWootClient)
       client._chatWootClient = new chatWootClient(
         client.config.chatWoot,
@@ -163,9 +178,14 @@ export default class CreateSessionUtil {
     return client._chatWootClient;
   }
 
-  async createSessionUtil(req, clientsArray, session, res) {
+  async createSessionUtil(
+    req: any,
+    clientsArray: any,
+    session: string,
+    res?: any
+  ) {
     try {
-      let client = this.getClient(session);
+      let client = this.getClient(session) as any;
       if (client.status != null && client.status !== 'CLOSED') return;
       client.status = 'INITIALIZING';
       client.config = req.body;
@@ -221,72 +241,37 @@ export default class CreateSessionUtil {
             qrMaxRetries: 5, // Allow multiple QR generation attempts
             qrRefreshS: 30, // Refresh QR every 30 seconds
             qrLogSkip: false, // Log all QR activities
-            // Force disable auto-close at browser level
-            browserArgs: [
-              '--disable-web-security',
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-gpu',
-              '--single-process',
-              '--no-zygote',
-              '--disable-features=VizDisplayCompositor',
-            ],
+            // Force disable auto-close at browser level - using environment-aware config
+            browserArgs: [],
             // Add timeout for browser launch
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser',
-              args: [
-                // Essential security and stability flags
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--single-process',
-                '--no-zygote',
-                
-                // Memory and performance optimization for Replit
-                '--memory-pressure-off',
-                '--max_old_space_size=4096',
-                '--disable-background-timer-throttling',
-                '--disable-backgrounding-occluded-windows',
-                '--disable-renderer-backgrounding',
-                '--disable-ipc-flooding-protection',
-                
-                // Profile and process management
-                '--disable-web-security',
-                '--force-new-browser-profile',
-                '--disable-profile-directory-check',
-                '--disable-process-singleton-dialog',
-                '--no-first-run',
-                
-                // Reduce browser overhead
-                '--disable-component-extensions-with-background-pages',
-                '--disable-sync',
-                '--disable-translate',
-                '--disable-default-apps',
-                '--disable-extensions',
-                '--disable-features=VizDisplayCompositor,AudioServiceOutOfProcess',
-                
-                // WhatsApp Web specific optimizations
-                '--disable-blink-features=AutomationControlled',
-                '--exclude-switches=enable-automation',
-                '--disable-client-side-phishing-detection',
-                '--disable-component-update',
-                '--disable-domain-reliability',
-                '--disable-features=TranslateUI',
-                '--disable-background-networking',
-                '--disable-breakpad'
-              ],
+              executablePath: await (async () => {
+                const { deploymentConfig } = await import('../../server/config/environment');
+                console.log('[CHROME-CONFIG] Platform:', deploymentConfig.platform);
+                console.log('[CHROME-CONFIG] Chrome path:', deploymentConfig.chromeExecutablePath);
+                return deploymentConfig.chromeExecutablePath;
+              })(),
+              args: await (async () => {
+                const { getBrowserArgs, deploymentConfig } = await import('../../server/config/environment');
+                const args = getBrowserArgs(deploymentConfig.platform);
+                console.log('[CHROME-CONFIG] Browser args:', args.join(' '));
+                return args;
+              })(),
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
               ignoreDefaultArgs: ['--enable-automation'], // Hide automation detection
             },
-            catchLinkCode: (code) => {
+            catchLinkCode: (code: string) => {
               this.exportPhoneCode(req, client.config.phone, code, client, res);
             },
-            catchQR: (base64Qr, asciiQR, attempt, urlCode) => {
+            catchQR: (
+              base64Qr: any,
+              asciiQR: any,
+              attempt: any,
+              urlCode: string
+            ) => {
               req.logger.info(
                 `[${session}] QR Code generated - Attempt ${attempt}`
               );
@@ -305,10 +290,10 @@ export default class CreateSessionUtil {
                 );
               }
             },
-            onLoadingScreen: (percent, message) => {
+            onLoadingScreen: (percent: string, message: string) => {
               req.logger.info(`[${session}] ${percent}% - ${message}`);
             },
-            statusFind: (statusFind) => {
+            statusFind: (statusFind: string) => {
               try {
                 eventEmitter.emit(
                   `status-${client.session}`,
@@ -443,14 +428,14 @@ export default class CreateSessionUtil {
     } catch (e) {
       req.logger.warn(`[${session}] Session initialization warning: ${e}`);
       if (e instanceof Error && e.name == 'TimeoutError') {
-        const client = this.getClient(session);
+        const client = this.getClient(session) as any;
         // Don't close session on timeout - keep it alive for QR scanning
         req.logger.info(`[${session}] Timeout during initialization - keeping session alive for QR scanning`);
         client.status = 'QRCODE'; // Keep session alive and ready for QR
         client.qrcode = 'pending'; // Mark as QR ready
       } else {
         // For other errors, also try to keep session alive
-        const client = this.getClient(session);
+        const client = this.getClient(session) as any;
         if (client) {
           client.status = 'QRCODE';
           req.logger.info(`[${session}] Session error handled - marked as QRCODE ready`);
@@ -459,11 +444,17 @@ export default class CreateSessionUtil {
     }
   }
 
-  async opendata(req, session, res) {
+  async opendata(req: Request, session: string, res?: any) {
     await this.createSessionUtil(req, clientsArray, session, res);
   }
 
-  exportPhoneCode(req, phone, phoneCode, client, res) {
+  exportPhoneCode(
+    req: any,
+    phone: any,
+    phoneCode: any,
+    client: WhatsAppServer,
+    res?: any
+  ) {
     eventEmitter.emit(`phoneCode-${client.session}`, phoneCode, client);
 
     Object.assign(client, {
@@ -493,7 +484,13 @@ export default class CreateSessionUtil {
       });
   }
 
-  exportQR(req, qrCode, urlCode, client, res) {
+  exportQR(
+    req: any,
+    qrCode: any,
+    urlCode: any,
+    client: WhatsAppServer,
+    res?: any
+  ) {
     eventEmitter.emit(`qrcode-${client.session}`, qrCode, urlCode, client);
     
     // Store the QR data immediately
@@ -567,14 +564,14 @@ export default class CreateSessionUtil {
       });
   }
 
-  async onParticipantsChanged(req, client) {
+  async onParticipantsChanged(req: any, client: any) {
     await client.isConnected();
-    await client.onParticipantsChanged((message) => {
+    await client.onParticipantsChanged((message: any) => {
       callWebHook(client, req, 'onparticipantschanged', message);
     });
   }
 
-  async start(req, client) {
+  async start(req: Request, client: WhatsAppServer) {
     try {
       await client.isConnected();
       Object.assign(client, { status: 'CONNECTED', qrcode: null });
@@ -600,7 +597,7 @@ export default class CreateSessionUtil {
     }
   }
 
-  async checkStateSession(client, req) {
+  async checkStateSession(client: WhatsAppServer, req: Request) {
     await client.onStateChange((state) => {
       req.logger.info(`State Change ${state}: ${client.session}`);
       const conflits = [SocketState.CONFLICT];
@@ -611,8 +608,8 @@ export default class CreateSessionUtil {
     });
   }
 
-  async listenMessages(client, req) {
-    await client.onMessage(async (message) => {
+  async listenMessages(client: WhatsAppServer, req: Request) {
+    await client.onMessage(async (message: any) => {
       req.logger.info(
         `[MESSAGE-RECEIVED] Session: ${client.session}, From: ${message.from}, Body: ${message.body}`
       );
@@ -629,7 +626,7 @@ export default class CreateSessionUtil {
         });
     });
 
-    await client.onAnyMessage(async (message) => {
+    await client.onAnyMessage(async (message: any) => {
       message.session = client.session;
 
       if (message.type === 'sticker') {
@@ -654,70 +651,70 @@ export default class CreateSessionUtil {
     });
   }
 
-  async listenAcks(client, req) {
+  async listenAcks(client: WhatsAppServer, req: Request) {
     await client.onAck(async (ack) => {
       req.io.emit('onack', ack);
       callWebHook(client, req, 'onack', ack);
     });
   }
 
-  async onPresenceChanged(client, req) {
+  async onPresenceChanged(client: WhatsAppServer, req: Request) {
     await client.onPresenceChanged(async (presenceChangedEvent) => {
       req.io.emit('onpresencechanged', presenceChangedEvent);
       callWebHook(client, req, 'onpresencechanged', presenceChangedEvent);
     });
   }
 
-  async onReactionMessage(client, req) {
+  async onReactionMessage(client: WhatsAppServer, req: Request) {
     await client.isConnected();
-    await client.onReactionMessage(async (reaction) => {
+    await client.onReactionMessage(async (reaction: any) => {
       req.io.emit('onreactionmessage', reaction);
       callWebHook(client, req, 'onreactionmessage', reaction);
     });
   }
 
-  async onRevokedMessage(client, req) {
+  async onRevokedMessage(client: WhatsAppServer, req: Request) {
     await client.isConnected();
-    await client.onRevokedMessage(async (response) => {
+    await client.onRevokedMessage(async (response: any) => {
       req.io.emit('onrevokedmessage', response);
       callWebHook(client, req, 'onrevokedmessage', response);
     });
   }
-  async onPollResponse(client, req) {
+  async onPollResponse(client: WhatsAppServer, req: Request) {
     await client.isConnected();
-    await client.onPollResponse(async (response) => {
+    await client.onPollResponse(async (response: any) => {
       req.io.emit('onpollresponse', response);
       callWebHook(client, req, 'onpollresponse', response);
     });
   }
-  async onLabelUpdated(client, req) {
+  async onLabelUpdated(client: WhatsAppServer, req: Request) {
     await client.isConnected();
-    await client.onUpdateLabel(async (response) => {
+    await client.onUpdateLabel(async (response: any) => {
       req.io.emit('onupdatelabel', response);
       callWebHook(client, req, 'onupdatelabel', response);
     });
   }
 
-  encodeFunction(data, webhook) {
+  encodeFunction(data: any, webhook: any) {
     data.webhook = webhook;
     return JSON.stringify(data);
   }
 
-  decodeFunction(text, client) {
+  decodeFunction(text: any, client: any) {
     const object = JSON.parse(text);
     if (object.webhook && !client.webhook) client.webhook = object.webhook;
     delete object.webhook;
     return object;
   }
 
-  getClient(session) {
+  getClient(session: any) {
     let client = clientsArray[session];
 
     if (!client)
       client = clientsArray[session] = {
         status: null,
         session: session,
-      };
+      } as any;
     return client;
   }
 }

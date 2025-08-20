@@ -1,71 +1,44 @@
-# Dependency directories
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# Environment variables
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Log files
-logs/
+coverage
+.nyc_output
+dist
+.vscode
+.idea
 *.log
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDEs and editors
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# WhatsApp session data
-tokens/
-userDataDir/
-wppconnect_tokens/
-sessions/
-uploads/
-
-# Build output
-dist/
-build/
-
-# Git
-.git
-.gitignore
-
-# Documentation
+logs
+userDataDir
+tokens
+uploads
+wppconnect_tokens
+attached_assets
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache
+.coverage
+.tox
+.mypy_cache
+.dmypy.json
+dmypy.json
+WhatsAppImages
+chatwoot-source
+test_*.py
+*.pid
+*.png
+*.webp
+*.jpg
+*.jpeg
+*.gif
 *.md
 !README.md
-
-# Testing
-test/
-tests/
-*.test.js
-*.spec.js
-
-# Misc
-.nyc_output
-.eslintcache

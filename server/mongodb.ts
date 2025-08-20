@@ -357,7 +357,7 @@ export class MongoStorage {
         result = await collection.deleteOne({ _id: new ObjectId(id) });
       } else {
         // Fallback to string ID
-        result = await collection.deleteOne({ sessionName: id });
+        result = await collection.deleteOne({ _id: id });
       }
     } catch (error) {
       console.log('Primary delete failed, trying alternative methods:', error);
@@ -369,7 +369,7 @@ export class MongoStorage {
         // Try deleting by any field that contains the ID
         result = await collection.deleteOne({
           $or: [
-            { sessionName: id },
+            { _id: id },
             { sessionName: id },
             { sessionName: { $regex: id } }
           ]
@@ -467,7 +467,7 @@ export class MongoStorage {
     if (webhookToken !== undefined) updateData.webhookToken = webhookToken;
 
     const result = await collection.findOneAndUpdate(
-      { id: userId },
+      { _id: userId },
       { $set: updateData },
       { returnDocument: 'after' }
     );
@@ -483,7 +483,7 @@ export class MongoStorage {
     if (webhookToken !== undefined) updateData.webhookToken = webhookToken;
 
     const result = await collection.findOneAndUpdate(
-      { id: companyId },
+      { _id: companyId },
       { $set: updateData },
       { returnDocument: 'after' }
     );

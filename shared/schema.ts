@@ -6,13 +6,11 @@ export interface Company {
   id: string;
   name: string;
   email: string;
-  password?: string;
   masterApiKey: string;
   messagingApiKey?: string;
   planType: string;
   maxUsers: number;
   maxSessions: number;
-  monthlyPrice?: number;
   webhookUrl?: string;
   webhookToken?: string;
   isActive: boolean;
@@ -48,18 +46,10 @@ export interface Session {
   companyId: string;
   status: string;
   phoneNumber?: string;
-  qrCode?: string | null;
+  qrCode?: string;
   qrCodeGeneratedAt?: Date;
   lastActivity?: Date;
   connectedAt?: Date;
-  webhook?: string | null;
-  whatsappStatus?: string;
-  isActive?: boolean;
-  config?: {
-    autoClose?: number;
-    qrTimeout?: number;
-    authTimeoutMs?: number;
-  };
   createdAt: Date;
 }
 
@@ -81,7 +71,6 @@ export interface ApiUsageLog {
   id: string;
   companyId?: string;
   userId?: string;
-  sessionId?: string;
   endpoint: string;
   method: string;
   statusCode: number;
@@ -89,7 +78,6 @@ export interface ApiUsageLog {
   ipAddress?: string;
   userAgent?: string;
   timestamp: Date;
-  responseStatus?: number;
 }
 
 export interface ErrorLog {

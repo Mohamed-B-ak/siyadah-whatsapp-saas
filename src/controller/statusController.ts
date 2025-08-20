@@ -3,18 +3,18 @@ import { Request, Response } from 'express';
 import { unlinkAsync } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
 
-function returnError(req, res, error) {
+function returnError(req: Request, res: Response, error: any) {
   req.logger.error(error);
   res
     .status(500)
     .json({ status: 'Error', message: 'Erro ao enviar status.', error: error });
 }
 
-async function returnSucess(res, data) {
+async function returnSucess(res: Response, data: any) {
   res.status(201).json({ status: 'success', response: data, mapper: 'return' });
 }
 
-export async function sendTextStorie(req, res) {
+export async function sendTextStorie(req: Request, res: Response) {
   /**
      #swagger.tags = ["Status Stories"]
      #swagger.autoBody=false
@@ -120,7 +120,7 @@ export async function sendTextStorie(req, res) {
   }
 }
 
-export async function sendImageStorie(req, res) {
+export async function sendImageStorie(req: Request, res: Response) {
   /**
      #swagger.tags = ["Status Stories"]
      #swagger.autoBody=false
@@ -173,7 +173,7 @@ export async function sendImageStorie(req, res) {
   }
 }
 
-export async function sendVideoStorie(req, res) {
+export async function sendVideoStorie(req: Request, res: Response) {
   /**
      #swagger.tags = ["Status Stories"]
      #swagger.autoBody=false

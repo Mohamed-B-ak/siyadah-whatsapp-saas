@@ -38,7 +38,7 @@ import * as prometheusRegister from '../middleware/instrumentation';
 import statusConnection from '../middleware/statusConnection';
 import swaggerDocument from '../swagger.json';
 
-const upload = multer(uploadConfig);
+const upload = multer(uploadConfig as any) as any;
 const routes: Router = Router();
 
 // Health check endpoint
@@ -61,7 +61,7 @@ routes.get('/api/health', async (req, res) => {
   } catch (error) {
     res.status(503).json({
       status: 'unhealthy',
-      error: (error as Error).message,
+      error: error.message,
       timestamp: new Date().toISOString()
     });
   }
@@ -1019,8 +1019,8 @@ routes.post(
 routes.post('/api/:session/chatwoot', DeviceController.chatWoot);
 
 // Api Doc
-routes.use('/api-docs', swaggerUi.serve);
-routes.get('/api-docs', swaggerUi.setup(swaggerDocument));
+routes.use('/api-docs', swaggerUi.serve as any);
+routes.get('/api-docs', swaggerUi.setup(swaggerDocument) as any);
 
 //k8s
 routes.get('/healthz', HealthCheck.healthz);

@@ -106,11 +106,8 @@ router.post('/subclients', async (req, res) => {
       lastName,
       email,
       companyId: company.id,
-      permissions: ['read', 'write'],
-      status: 'active',
-      apiKey: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      role: 'user',
-      isActive: true
+      permissions: { level: permissions || 'read', actions: ['send_messages'] },
+      role: 'user'
     };
 
     const newUser = await storage.createUser(userData);
@@ -121,11 +118,12 @@ router.post('/subclients', async (req, res) => {
         companyId: company.id,
         endpoint: 'create-subclient',
         method: 'POST',
-        statusCode: 201,
+        timestamp: new Date(),
+        responseStatus: 201,
         responseTime: Date.now()
       });
     } catch (logError) {
-      console.warn('Failed to log API usage:', (logError as Error).message);
+      console.warn('Failed to log API usage:', logError.message);
     }
 
     res.status(201).json({
@@ -148,7 +146,7 @@ router.post('/subclients', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to create subclient',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });
@@ -195,7 +193,7 @@ router.get('/subclients', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch subclients',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });
@@ -252,7 +250,7 @@ router.get('/subclients/:userId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch subclient',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });
@@ -302,13 +300,6 @@ router.put('/subclients/:userId', async (req, res) => {
 
     const updatedUser = await storage.updateUser(userId, updateData);
 
-    if (!updatedUser) {
-      return res.status(404).json({
-        success: false,
-        message: 'Failed to update subclient'
-      });
-    }
-
     res.json({
       success: true,
       subclient: {
@@ -329,7 +320,7 @@ router.put('/subclients/:userId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to update subclient',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });
@@ -377,7 +368,7 @@ router.delete('/subclients/:userId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to deactivate subclient',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });

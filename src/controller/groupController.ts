@@ -21,7 +21,7 @@ import {
   groupToArray,
 } from '../util/functions';
 
-export async function getAllGroups(req, res) {
+export async function getAllGroups(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.deprecated = true
@@ -46,7 +46,7 @@ export async function getAllGroups(req, res) {
   }
 }
 
-export async function joinGroupByCode(req, res) {
+export async function joinGroupByCode(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -104,7 +104,7 @@ export async function joinGroupByCode(req, res) {
   }
 }
 
-export async function createGroup(req, res) {
+export async function createGroup(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -158,8 +158,8 @@ export async function createGroup(req, res) {
       );
       infoGroup.push({
         name: group,
-        id: (response).gid.user,
-        participants: (response).participants,
+        id: (response as any).gid.user,
+        participants: (response as any).participants,
       });
     }
 
@@ -179,7 +179,7 @@ export async function createGroup(req, res) {
   }
 }
 
-export async function leaveGroup(req, res) {
+export async function leaveGroup(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -225,7 +225,7 @@ export async function leaveGroup(req, res) {
   }
 }
 
-export async function getGroupMembers(req, res) {
+export async function getGroupMembers(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -254,7 +254,7 @@ export async function getGroupMembers(req, res) {
   }
 }
 
-export async function addParticipant(req, res) {
+export async function addParticipant(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -318,7 +318,7 @@ export async function addParticipant(req, res) {
   }
 }
 
-export async function removeParticipant(req, res) {
+export async function removeParticipant(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -384,7 +384,7 @@ export async function removeParticipant(req, res) {
   }
 }
 
-export async function promoteParticipant(req, res) {
+export async function promoteParticipant(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -445,7 +445,7 @@ export async function promoteParticipant(req, res) {
   }
 }
 
-export async function demoteParticipant(req, res) {
+export async function demoteParticipant(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -506,7 +506,7 @@ export async function demoteParticipant(req, res) {
   }
 }
 
-export async function getGroupAdmins(req, res) {
+export async function getGroupAdmins(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -560,7 +560,7 @@ export async function getGroupAdmins(req, res) {
   }
 }
 
-export async function getGroupInviteLink(req, res) {
+export async function getGroupInviteLink(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -602,7 +602,7 @@ export async function getGroupInviteLink(req, res) {
   }
 }
 
-export async function revokeGroupInviteLink(req, res) {
+export async function revokeGroupInviteLink(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -649,7 +649,7 @@ export async function revokeGroupInviteLink(req, res) {
   }
 }
 
-export async function getAllBroadcastList(req, res) {
+export async function getAllBroadcastList(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -673,7 +673,7 @@ export async function getAllBroadcastList(req, res) {
   }
 }
 
-export async function getGroupInfoFromInviteLink(req, res) {
+export async function getGroupInfoFromInviteLink(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -711,7 +711,7 @@ export async function getGroupInfoFromInviteLink(req, res) {
   }
 }
 
-export async function getGroupMembersIds(req, res) {
+export async function getGroupMembersIds(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -742,7 +742,7 @@ export async function getGroupMembersIds(req, res) {
   }
 }
 
-export async function setGroupDescription(req, res) {
+export async function setGroupDescription(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -787,7 +787,7 @@ export async function setGroupDescription(req, res) {
   }
 }
 
-export async function setGroupProperty(req, res) {
+export async function setGroupProperty(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -833,7 +833,7 @@ export async function setGroupProperty(req, res) {
   }
 }
 
-export async function setGroupSubject(req, res) {
+export async function setGroupSubject(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -878,7 +878,7 @@ export async function setGroupSubject(req, res) {
   }
 }
 
-export async function setMessagesAdminsOnly(req, res) {
+export async function setMessagesAdminsOnly(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -923,7 +923,7 @@ export async function setMessagesAdminsOnly(req, res) {
   }
 }
 
-export async function changePrivacyGroup(req, res) {
+export async function changePrivacyGroup(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -954,7 +954,7 @@ export async function changePrivacyGroup(req, res) {
     for (const group of contactToArray(groupId)) {
       await req.client.setGroupProperty(
         group,
-        'restrict',
+        'restrict' as any,
         status === 'true'
       );
     }
@@ -973,7 +973,7 @@ export async function changePrivacyGroup(req, res) {
   }
 }
 
-export async function setGroupProfilePic(req, res) {
+export async function setGroupProfilePic(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -1026,7 +1026,7 @@ export async function setGroupProfilePic(req, res) {
   }
 }
 
-export async function getCommonGroups(req, res) {
+export async function getCommonGroups(req: Request, res: Response) {
   /**
      #swagger.tags = ["Group"]
      #swagger.autoBody=false
@@ -1042,7 +1042,7 @@ export async function getCommonGroups(req, res) {
    */
   const { wid } = req.params;
   try {
-    res.status(200).json(await (req.client).getCommonGroups(wid));
+    res.status(200).json(await (req.client as any).getCommonGroups(wid));
   } catch (e) {
     req.logger.error(e);
     res.status(500).json({

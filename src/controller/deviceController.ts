@@ -20,7 +20,7 @@ import { contactToArray, unlinkAsync } from '../util/functions';
 import { clientsArray } from '../util/sessionUtil';
 import MessageQueueManager from '../services/messageQueueManager';
 
-function returnSucess(res, session, phone, data) {
+function returnSucess(res: any, session: any, phone: any, data: any) {
   res.status(201).json({
     status: 'Success',
     response: {
@@ -32,7 +32,7 @@ function returnSucess(res, session, phone, data) {
   });
 }
 
-function returnError(req, res, session, error) {
+function returnError(req: Request, res: Response, session: any, error: any) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',
@@ -44,7 +44,7 @@ function returnError(req, res, session, error) {
   });
 }
 
-export async function setProfileName(req, res) {
+export async function setProfileName(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -95,7 +95,7 @@ export async function setProfileName(req, res) {
   }
 }
 
-export async function showAllContacts(req, res) {
+export async function showAllContacts(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Contacts"]
      #swagger.autoBody=false
@@ -119,7 +119,7 @@ export async function showAllContacts(req, res) {
   }
 }
 
-export async function getAllChats(req, res) {
+export async function getAllChats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Deprecated in favor of 'list-chats'
@@ -145,7 +145,7 @@ export async function getAllChats(req, res) {
   }
 }
 
-export async function listChats(req, res) {
+export async function listChats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Retrieve a list of chats'
@@ -240,7 +240,7 @@ export async function listChats(req, res) {
   }
 }
 
-export async function getAllChatsWithMessages(req, res) {
+export async function getAllChatsWithMessages(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.summary = 'Deprecated in favor of list-chats'
@@ -268,7 +268,7 @@ export async function getAllChatsWithMessages(req, res) {
 /**
  * Depreciado em favor de getMessages
  */
-export async function getAllMessagesInChat(req, res) {
+export async function getAllMessagesInChat(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -300,11 +300,11 @@ export async function getAllMessagesInChat(req, res) {
     } = req.query;
 
     let response;
-    for (const contato of contactToArray(phone, isGroup)) {
+    for (const contato of contactToArray(phone, isGroup as boolean)) {
       response = await req.client.getAllMessagesInChat(
         contato,
-        includeMe,
-        includeNotifications
+        includeMe as boolean,
+        includeNotifications as boolean
       );
     }
 
@@ -319,7 +319,7 @@ export async function getAllMessagesInChat(req, res) {
   }
 }
 
-export async function getAllNewMessages(req, res) {
+export async function getAllNewMessages(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -343,7 +343,7 @@ export async function getAllNewMessages(req, res) {
   }
 }
 
-export async function getAllUnreadMessages(req, res) {
+export async function getAllUnreadMessages(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -367,7 +367,7 @@ export async function getAllUnreadMessages(req, res) {
   }
 }
 
-export async function getChatById(req, res) {
+export async function getChatById(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -406,7 +406,7 @@ export async function getChatById(req, res) {
   }
 }
 
-export async function getMessageById(req, res) {
+export async function getMessageById(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -427,13 +427,13 @@ export async function getMessageById(req, res) {
   try {
     const result = await req.client.getMessageById(messageId);
 
-    returnSucess(res, session, result.chatId.user, result);
+    returnSucess(res, session, (result as any).chatId.user, result);
   } catch (error) {
     returnError(req, res, session, error);
   }
 }
 
-export async function getBatteryLevel(req, res) {
+export async function getBatteryLevel(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -457,7 +457,7 @@ export async function getBatteryLevel(req, res) {
   }
 }
 
-export async function getHostDevice(req, res) {
+export async function getHostDevice(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -486,7 +486,7 @@ export async function getHostDevice(req, res) {
   }
 }
 
-export async function getPhoneNumber(req, res) {
+export async function getPhoneNumber(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -512,7 +512,7 @@ export async function getPhoneNumber(req, res) {
   }
 }
 
-export async function getBlockList(req, res) {
+export async function getBlockList(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -526,7 +526,7 @@ export async function getBlockList(req, res) {
   const response = await req.client.getBlockList();
 
   try {
-    const blocked = response.map((contato) => {
+    const blocked = response.map((contato: any) => {
       return { phone: contato ? contato.split('@')[0] : '' };
     });
 
@@ -541,7 +541,7 @@ export async function getBlockList(req, res) {
   }
 }
 
-export async function deleteChat(req, res) {
+export async function deleteChat(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -578,7 +578,7 @@ export async function deleteChat(req, res) {
   const session = req.session;
 
   try {
-    const results = {};
+    const results: any = {};
     for (const contato of phone) {
       results[contato] = await req.client.deleteChat(contato);
     }
@@ -587,7 +587,7 @@ export async function deleteChat(req, res) {
     returnError(req, res, session, error);
   }
 }
-export async function deleteAllChats(req, res) {
+export async function deleteAllChats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -601,7 +601,7 @@ export async function deleteAllChats(req, res) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.deleteChat(chat.chatId);
+      await req.client.deleteChat((chat as any).chatId);
     }
     res.status(200).json({ status: 'success' });
   } catch (error) {
@@ -614,7 +614,7 @@ export async function deleteAllChats(req, res) {
   }
 }
 
-export async function clearChat(req, res) {
+export async function clearChat(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -652,7 +652,7 @@ export async function clearChat(req, res) {
   const session = req.session;
 
   try {
-    const results = {};
+    const results: any = {};
     for (const contato of phone) {
       results[contato] = await req.client.clearChat(contato);
     }
@@ -662,7 +662,7 @@ export async function clearChat(req, res) {
   }
 }
 
-export async function clearAllChats(req, res) {
+export async function clearAllChats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -676,7 +676,7 @@ export async function clearAllChats(req, res) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.clearChat(`${chat.chatId}`);
+      await req.client.clearChat(`${(chat as any).chatId}`);
     }
     res.status(201).json({ status: 'success' });
   } catch (e) {
@@ -687,7 +687,7 @@ export async function clearAllChats(req, res) {
   }
 }
 
-export async function archiveChat(req, res) {
+export async function archiveChat(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -736,7 +736,7 @@ export async function archiveChat(req, res) {
   }
 }
 
-export async function archiveAllChats(req, res) {
+export async function archiveAllChats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -750,7 +750,7 @@ export async function archiveAllChats(req, res) {
   try {
     const chats = await req.client.getAllChats();
     for (const chat of chats) {
-      await req.client.archiveChat(`${chat.chatId}`, true);
+      await req.client.archiveChat(`${(chat as any).chatId}`, true);
     }
     res.status(201).json({ status: 'success' });
   } catch (e) {
@@ -763,7 +763,7 @@ export async function archiveAllChats(req, res) {
   }
 }
 
-export async function getAllChatsArchiveds(req, res) {
+export async function getAllChatsArchiveds(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Chat"]
    * #swagger.description = 'Retrieves all archived chats.'
@@ -777,7 +777,7 @@ export async function getAllChatsArchiveds(req, res) {
    */
   try {
     const chats = await req.client.getAllChats();
-    const archived = [];
+    const archived = [] as any;
     for (const chat of chats) {
       if (chat.archive === true) {
         archived.push(chat);
@@ -793,7 +793,7 @@ export async function getAllChatsArchiveds(req, res) {
     });
   }
 }
-export async function deleteMessage(req, res) {
+export async function deleteMessage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -864,7 +864,7 @@ export async function deleteMessage(req, res) {
       .json({ status: 'error', message: 'Error on delete message', error: e });
   }
 }
-export async function reactMessage(req, res) {
+export async function reactMessage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -915,7 +915,7 @@ export async function reactMessage(req, res) {
   }
 }
 
-export async function reply(req, res) {
+export async function reply(req: Request, res: Response) {
   /**
    * #swagger.deprecated=true
      #swagger.tags = ["Messages"]
@@ -966,7 +966,7 @@ export async function reply(req, res) {
   }
 }
 
-export async function forwardMessages(req, res) {
+export async function forwardMessages(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1021,7 +1021,7 @@ export async function forwardMessages(req, res) {
   }
 }
 
-export async function markUnseenMessage(req, res) {
+export async function markUnseenMessage(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1069,7 +1069,7 @@ export async function markUnseenMessage(req, res) {
   }
 }
 
-export async function blockContact(req, res) {
+export async function blockContact(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1117,7 +1117,7 @@ export async function blockContact(req, res) {
   }
 }
 
-export async function unblockContact(req, res) {
+export async function unblockContact(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1165,7 +1165,7 @@ export async function unblockContact(req, res) {
   }
 }
 
-export async function pinChat(req, res) {
+export async function pinChat(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1217,7 +1217,7 @@ export async function pinChat(req, res) {
     res
       .status(200)
       .json({ status: 'success', response: { message: 'Chat fixed' } });
-  } catch (e) {
+  } catch (e: any) {
     req.logger.error(e);
     res.status(500).json({
       status: 'error',
@@ -1227,7 +1227,7 @@ export async function pinChat(req, res) {
   }
 }
 
-export async function setProfilePic(req, res) {
+export async function setProfilePic(req: Request, res: Response) {
   /**
      #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -1250,7 +1250,7 @@ export async function setProfilePic(req, res) {
       .json({ status: 'Error', message: 'File parameter is required!' });
 
   try {
-    const { path: pathFile } = req.file;
+    const { path: pathFile } = req.file as any;
 
     await req.client.setProfilePic(pathFile);
     await unlinkAsync(pathFile);
@@ -1269,7 +1269,7 @@ export async function setProfilePic(req, res) {
   }
 }
 
-export async function getUnreadMessages(req, res) {
+export async function getUnreadMessages(req: Request, res: Response) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Messages"]
@@ -1292,7 +1292,7 @@ export async function getUnreadMessages(req, res) {
   }
 }
 
-export async function getChatIsOnline(req, res) {
+export async function getChatIsOnline(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1320,7 +1320,7 @@ export async function getChatIsOnline(req, res) {
   }
 }
 
-export async function getLastSeen(req, res) {
+export async function getLastSeen(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1349,7 +1349,7 @@ export async function getLastSeen(req, res) {
   }
 }
 
-export async function getListMutes(req, res) {
+export async function getListMutes(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1378,7 +1378,7 @@ export async function getListMutes(req, res) {
   }
 }
 
-export async function loadAndGetAllMessagesInChat(req, res) {
+export async function loadAndGetAllMessagesInChat(req: Request, res: Response) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1403,8 +1403,8 @@ export async function loadAndGetAllMessagesInChat(req, res) {
   try {
     const response = await req.client.loadAndGetAllMessagesInChat(
       `${phone}@c.us`,
-      includeMe,
-      includeNotifications
+      includeMe as boolean,
+      includeNotifications as boolean
     );
 
     res.status(200).json({ status: 'success', response: response });
@@ -1415,7 +1415,7 @@ export async function loadAndGetAllMessagesInChat(req, res) {
       .json({ status: 'error', response: 'Error on open list', error: error });
   }
 }
-export async function getMessages(req, res) {
+export async function getMessages(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1442,9 +1442,9 @@ export async function getMessages(req, res) {
   const { count = 20, direction = 'before', id = null } = req.query;
   try {
     const response = await req.client.getMessages(`${phone}`, {
-      count: parseInt(count),
-      direction: direction.toString(),
-      id: id,
+      count: parseInt(count as string),
+      direction: direction.toString() as any,
+      id: id as string,
     });
     res.status(200).json({ status: 'success', response: response });
   } catch (e) {
@@ -1455,7 +1455,7 @@ export async function getMessages(req, res) {
   }
 }
 
-export async function sendContactVcard(req, res) {
+export async function sendContactVcard(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1514,7 +1514,7 @@ export async function sendContactVcard(req, res) {
   }
 }
 
-export async function sendMute(req, res) {
+export async function sendMute(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1568,7 +1568,7 @@ export async function sendMute(req, res) {
   }
 }
 
-export async function sendSeen(req, res) {
+export async function sendSeen(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1605,7 +1605,7 @@ export async function sendSeen(req, res) {
   const session = req.session;
 
   try {
-    const results = [];
+    const results: any = [];
     for (const contato of phone) {
       results.push(await req.client.sendSeen(contato));
     }
@@ -1615,7 +1615,7 @@ export async function sendSeen(req, res) {
   }
 }
 
-export async function setChatState(req, res) {
+export async function setChatState(req: Request, res: Response) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1670,7 +1670,7 @@ export async function setChatState(req, res) {
   }
 }
 
-export async function setTemporaryMessages(req, res) {
+export async function setTemporaryMessages(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -1724,7 +1724,7 @@ export async function setTemporaryMessages(req, res) {
   }
 }
 
-export async function setTyping(req, res) {
+export async function setTyping(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1776,7 +1776,7 @@ export async function setTyping(req, res) {
   }
 }
 
-export async function setRecording(req, res) {
+export async function setRecording(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1833,7 +1833,7 @@ export async function setRecording(req, res) {
   }
 }
 
-export async function checkNumberStatus(req, res) {
+export async function checkNumberStatus(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -1865,7 +1865,7 @@ export async function checkNumberStatus(req, res) {
   }
 }
 
-export async function getContact(req, res) {
+export async function getContact(req: Request, res: Response) {
   /**
      #swagger.tags = ["Chat"]
      #swagger.autoBody=false
@@ -1882,7 +1882,7 @@ export async function getContact(req, res) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone, false)) {
+    for (const contato of contactToArray(phone as string, false)) {
       response = await req.client.getContact(contato);
     }
 
@@ -1895,7 +1895,7 @@ export async function getContact(req, res) {
   }
 }
 
-export async function getAllContacts(req, res) {
+export async function getAllContacts(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -1920,7 +1920,7 @@ export async function getAllContacts(req, res) {
   }
 }
 
-export async function getNumberProfile(req, res) {
+export async function getNumberProfile(req: Request, res: Response) {
   /**
      #swagger.deprecated=true
      #swagger.tags = ["Chat"]
@@ -1938,7 +1938,7 @@ export async function getNumberProfile(req, res) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone, false)) {
+    for (const contato of contactToArray(phone as string, false)) {
       response = await req.client.getNumberProfile(contato);
     }
 
@@ -1953,7 +1953,7 @@ export async function getNumberProfile(req, res) {
   }
 }
 
-export async function getProfilePicFromServer(req, res) {
+export async function getProfilePicFromServer(req: Request, res: Response) {
   /**
      #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -1971,7 +1971,7 @@ export async function getProfilePicFromServer(req, res) {
   const { isGroup = false } = req.query;
   try {
     let response;
-    for (const contato of contactToArray(phone, isGroup)) {
+    for (const contato of contactToArray(phone as string, isGroup as boolean)) {
       response = await req.client.getProfilePicFromServer(contato);
     }
 
@@ -1986,7 +1986,7 @@ export async function getProfilePicFromServer(req, res) {
   }
 }
 
-export async function getStatus(req, res) {
+export async function getStatus(req: Request, res: Response) {
   /**
      #swagger.tags = ["Contact"]
      #swagger.autoBody=false
@@ -2003,7 +2003,7 @@ export async function getStatus(req, res) {
   const { phone = true } = req.params;
   try {
     let response;
-    for (const contato of contactToArray(phone, false)) {
+    for (const contato of contactToArray(phone as string, false)) {
       response = await req.client.getStatus(contato);
     }
     res.status(200).json({ status: 'success', response: response });
@@ -2015,7 +2015,7 @@ export async function getStatus(req, res) {
   }
 }
 
-export async function setProfileStatus(req, res) {
+export async function setProfileStatus(req: Request, res: Response) {
   /**
      #swagger.tags = ["Profile"]
      #swagger.autoBody=false
@@ -2065,7 +2065,7 @@ export async function setProfileStatus(req, res) {
       .json({ status: 'error', message: 'Error on set profile status' });
   }
 }
-export async function rejectCall(req, res) {
+export async function rejectCall(req: Request, res: Response) {
   /**
      #swagger.tags = ["Misc"]
      #swagger.autoBody=false
@@ -2110,7 +2110,7 @@ export async function rejectCall(req, res) {
   }
 }
 
-export async function starMessage(req, res) {
+export async function starMessage(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2158,7 +2158,7 @@ export async function starMessage(req, res) {
   }
 }
 
-export async function getReactions(req, res) {
+export async function getReactions(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2187,7 +2187,7 @@ export async function getReactions(req, res) {
   }
 }
 
-export async function getVotes(req, res) {
+export async function getVotes(req: Request, res: Response) {
   /**
      #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -2213,7 +2213,7 @@ export async function getVotes(req, res) {
       .json({ status: 'error', message: 'Error on get votes', error: error });
   }
 }
-export async function chatWoot(req, res): Promise<any> {
+export async function chatWoot(req: Request, res: Response): Promise<any> {
   /**
      #swagger.tags = ["Misc"]
      #swagger.description = 'You can point your Chatwoot to this route so that it can perform functions.'
@@ -2248,7 +2248,7 @@ export async function chatWoot(req, res): Promise<any> {
      }
    */
   const { session } = req.params;
-  const client = clientsArray[session];
+  const client: any = clientsArray[session];
   if (client == null || client.status !== 'CONNECTED') return;
   try {
     if (await client.isConnected()) {
@@ -2276,8 +2276,8 @@ export async function chatWoot(req, res): Promise<any> {
           .status(200)
           .json({ status: 'success', message: 'Success on receive chatwoot' });
       // CRITICAL FIX: Process all ChatWoot messages through the queue system with 30-second delays
-      const results = [];
-      const queuedResults = [];
+      const results: any = [];
+      const queuedResults: any = [];
 
       for (const contato of contactToArray(phone, false)) {
         if (message_type == 'outgoing') {
@@ -2290,21 +2290,15 @@ export async function chatWoot(req, res): Promise<any> {
 
             // Check if attachments is Push-to-talk and send this with queue
             if (message.attachments[0].file_type === 'audio') {
-              const queueResult =
-                await MessageQueueManager.processMessageRequest(
-                  req,
-                  contato,
-                  'Voice Audio',
-                  { base_url, content: message.content },
-                  async (phoneNumber: string, msg: string, opts: any) => {
-                    return await client.sendPtt(
-                      phoneNumber,
-                      opts.base_url,
-                      msg,
-                      opts.content
-                    );
-                  }
-                );
+              const queueResult = await MessageQueueManager.processMessageRequest(
+                req,
+                contato,
+                'Voice Audio',
+                { base_url, content: message.content },
+                async (phoneNumber: string, msg: string, opts: any) => {
+                  return await client.sendPtt(phoneNumber, opts.base_url, msg, opts.content);
+                }
+              );
 
               if (queueResult.success) {
                 if (queueResult.queued) {
@@ -2314,8 +2308,7 @@ export async function chatWoot(req, res): Promise<any> {
                     status: 'queued',
                     messageId: queueResult.messageId,
                     estimatedSendTime: queueResult.estimatedSendTime,
-                    message:
-                      'ChatWoot voice message queued for delivery with 30-second delay',
+                    message: 'ChatWoot voice message queued for delivery with 30-second delay'
                   });
                 } else {
                   results.push(queueResult.result);
@@ -2323,21 +2316,15 @@ export async function chatWoot(req, res): Promise<any> {
               }
             } else {
               // File attachment with queue
-              const queueResult =
-                await MessageQueueManager.processMessageRequest(
-                  req,
-                  contato,
-                  message.content,
-                  { base_url, fileName: 'file' },
-                  async (phoneNumber: string, msg: string, opts: any) => {
-                    return await client.sendFile(
-                      phoneNumber,
-                      opts.base_url,
-                      opts.fileName,
-                      msg
-                    );
-                  }
-                );
+              const queueResult = await MessageQueueManager.processMessageRequest(
+                req,
+                contato,
+                message.content,
+                { base_url, fileName: 'file' },
+                async (phoneNumber: string, msg: string, opts: any) => {
+                  return await client.sendFile(phoneNumber, opts.base_url, opts.fileName, msg);
+                }
+              );
 
               if (queueResult.success) {
                 if (queueResult.queued) {
@@ -2347,8 +2334,7 @@ export async function chatWoot(req, res): Promise<any> {
                     status: 'queued',
                     messageId: queueResult.messageId,
                     estimatedSendTime: queueResult.estimatedSendTime,
-                    message:
-                      'ChatWoot file message queued for delivery with 30-second delay',
+                    message: 'ChatWoot file message queued for delivery with 30-second delay'
                   });
                 } else {
                   results.push(queueResult.result);
@@ -2375,8 +2361,7 @@ export async function chatWoot(req, res): Promise<any> {
                   status: 'queued',
                   messageId: queueResult.messageId,
                   estimatedSendTime: queueResult.estimatedSendTime,
-                  message:
-                    'ChatWoot text message queued for delivery with 30-second delay',
+                  message: 'ChatWoot text message queued for delivery with 30-second delay'
                 });
               } else {
                 results.push(queueResult.result);
@@ -2387,7 +2372,7 @@ export async function chatWoot(req, res): Promise<any> {
       }
       // Return unified response format showing queued and immediate results
       const allResults = [...results, ...queuedResults];
-
+      
       res.status(200).json({
         status: 'success',
         message: 'ChatWoot messages processed successfully',
@@ -2396,8 +2381,8 @@ export async function chatWoot(req, res): Promise<any> {
         summary: {
           total: allResults.length,
           immediate: results.length,
-          queued: queuedResults.length,
-        },
+          queued: queuedResults.length
+        }
       });
     }
   } catch (e) {
@@ -2409,7 +2394,7 @@ export async function chatWoot(req, res): Promise<any> {
     });
   }
 }
-export async function getPlatformFromMessage(req, res) {
+export async function getPlatformFromMessage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.autoBody=false

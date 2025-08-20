@@ -98,7 +98,10 @@ export async function download(message: any, client: any, logger: any) {
   }
 }
 
-export async function startAllSessions(req, res) {
+export async function startAllSessions(
+  req: Request,
+  res: Response
+): Promise<any> {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.autoBody=false
@@ -119,7 +122,7 @@ export async function startAllSessions(req, res) {
   let tokenDecrypt = '';
 
   if (secretkey === undefined) {
-    tokenDecrypt = (token).split(' ')[0];
+    tokenDecrypt = (token as any).split(' ')[0];
   } else {
     tokenDecrypt = secretkey;
   }
@@ -135,7 +138,7 @@ export async function startAllSessions(req, res) {
 
   allSessions.map(async (session: string) => {
     const util = new CreateSessionUtil();
-    await util.opendata(req, session, res);
+    await util.opendata(req, session);
   });
 
   return await res
@@ -143,7 +146,10 @@ export async function startAllSessions(req, res) {
     .json({ status: 'success', message: 'Starting all sessions' });
 }
 
-export async function showAllSessions(req, res) {
+export async function showAllSessions(
+  req: Request,
+  res: Response
+): Promise<any> {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.autoBody=false
@@ -184,7 +190,7 @@ export async function showAllSessions(req, res) {
   res.status(200).json({ response: await getAllTokens(req) });
 }
 
-export async function startSession(req, res): Promise<any> {
+export async function startSession(req: Request, res: Response): Promise<any> {
   console.log('[DEBUG] startSession function called');
   console.log('[DEBUG] Session:', req.session);
   console.log('[DEBUG] Request body:', req.body);
@@ -269,7 +275,7 @@ export async function startSession(req, res): Promise<any> {
   }
 }
 
-export async function closeSession(req, res): Promise<any> {
+export async function closeSession(req: Request, res: Response): Promise<any> {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.operationId = 'closeSession'
@@ -287,11 +293,11 @@ export async function closeSession(req, res): Promise<any> {
   
   try {
     // Check if session exists in clientsArray
-    const sessionClient = (clientsArray)[session];
+    const sessionClient = (clientsArray as any)[session];
     
-    req.logger.info(`[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${(sessionClient as any)?.status}`);
+    req.logger.info(`[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${sessionClient?.status}`);
     
-    if (!sessionClient || (sessionClient as any).status === null) {
+    if (!sessionClient || sessionClient.status === null) {
       // Session already closed or doesn't exist
       req.logger.info(`[CLOSE-SESSION] Session ${session} already closed or doesn't exist`);
       return await res
@@ -331,7 +337,7 @@ export async function closeSession(req, res): Promise<any> {
   }
 }
 
-export async function logOutSession(req, res): Promise<any> {
+export async function logOutSession(req: Request, res: Response): Promise<any> {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.operationId = 'logoutSession'
@@ -445,7 +451,10 @@ export async function logOutSession(req, res): Promise<any> {
   }
 }
 
-export async function checkConnectionSession(req, res) {
+export async function checkConnectionSession(
+  req: Request,
+  res: Response
+): Promise<any> {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.operationId = 'CheckConnectionState'
@@ -466,7 +475,7 @@ export async function checkConnectionSession(req, res) {
   }
 }
 
-export async function downloadMediaByMessage(req, res) {
+export async function downloadMediaByMessage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -533,7 +542,7 @@ export async function downloadMediaByMessage(req, res) {
   }
 }
 
-export async function getMediaByMessage(req, res) {
+export async function getMediaByMessage(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
@@ -581,7 +590,7 @@ export async function getMediaByMessage(req, res) {
   }
 }
 
-export async function getSessionState(req, res) {
+export async function getSessionState(req: Request, res: Response) {
   /**
      #swagger.tags = ["Auth"]
      #swagger.operationId = 'getSessionState'
@@ -647,7 +656,7 @@ export async function getSessionState(req, res) {
   }
 }
 
-export async function getQrCode(req, res) {
+export async function getQrCode(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.autoBody=false
@@ -860,7 +869,7 @@ export async function getQrCode(req, res) {
   }
 }
 
-export async function killServiceWorker(req, res) {
+export async function killServiceWorker(req: Request, res: Response) {
   /**
    * #swagger.ignore=true
    * #swagger.tags = ["Messages"]
@@ -885,7 +894,7 @@ export async function killServiceWorker(req, res) {
   }
 }
 
-export async function restartService(req, res) {
+export async function restartService(req: Request, res: Response) {
   /**
    * #swagger.ignore=true
    * #swagger.tags = ["Messages"]
@@ -909,7 +918,7 @@ export async function restartService(req, res) {
   }
 }
 
-export async function subscribePresence(req, res) {
+export async function subscribePresence(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.operationId = 'subscribePresence'
@@ -972,7 +981,7 @@ export async function subscribePresence(req, res) {
   }
 }
 
-export async function setOnlinePresence(req, res) {
+export async function setOnlinePresence(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Misc"]
      #swagger.operationId = 'setOnlinePresence'
@@ -1018,7 +1027,7 @@ export async function setOnlinePresence(req, res) {
   }
 }
 
-export async function getSecretKey(req, res) {
+export async function getSecretKey(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.operationId = 'getSecretKey'
@@ -1042,7 +1051,7 @@ export async function getSecretKey(req, res) {
   }
 }
 
-export async function editBusinessProfile(req, res) {
+export async function editBusinessProfile(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Profile"]
      #swagger.operationId = 'editBusinessProfile'

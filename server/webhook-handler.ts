@@ -22,18 +22,21 @@ router.post('/webhook-handler', async (req, res) => {
       } = webhookData;
       
       // Find session by WhatsApp session name
-      const sessionData = await storage.getSessionByName(session);
+      const sessionData = await storage.getSession(session);
       
       if (sessionData) {
         // Log incoming message
-        await storage.createMessage({
+        await storage.logMessage({
           sessionId: sessionData.id,
           userId: sessionData.userId,
           companyId: sessionData.companyId,
-          message: body || '',
-          phone: from || '',
-          direction: 'incoming',
-          status: 'received'
+          type: 'incoming',
+          from: from,
+          to: to,
+          content: body,
+          status: 'received',
+          whatsappMessageId: messageId,
+          timestamp: new Date(timestamp * 1000)
         });
         
         console.log(`Message logged for session ${session}: ${from} -> ${body}`);
@@ -44,7 +47,7 @@ router.post('/webhook-handler', async (req, res) => {
       console.log(`QR code generated for session ${session}`);
       
       // Update session with QR code
-      const sessionData = await storage.getSessionByName(session);
+      const sessionData = await storage.getSession(session);
       if (sessionData) {
         await storage.updateSession(sessionData.id, {
           qrCode: qrcode,
@@ -58,7 +61,7 @@ router.post('/webhook-handler', async (req, res) => {
       console.log(`Session ${session} state changed to: ${state}`);
       
       // Update session status
-      const sessionData = await storage.getSessionByName(session);
+      const sessionData = await storage.getSession(session);
       if (sessionData) {
         await storage.updateSession(sessionData.id, {
           whatsappStatus: state,
@@ -80,7 +83,7 @@ router.post('/webhook-handler', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Webhook processing failed',
-      error: (error as Error).message 
+      error: error.message 
     });
   }
 });
@@ -110,7 +113,7 @@ router.get('/webhook-logs/:sessionId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to get webhook logs',
-      error: (error as Error).message
+      error: error.message
     });
   }
 });

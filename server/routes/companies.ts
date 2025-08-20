@@ -92,9 +92,7 @@ router.post('/users', authenticateCompany, async (req: any, res) => {
       companyId: company.id,
       role: role || 'user',
       apiKey: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      isActive: true,
-      permissions: ['read', 'write'],
-      status: 'active'
+      isActive: true
     });
 
     return res.json({

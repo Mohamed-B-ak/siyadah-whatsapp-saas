@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import MessageQueueManager from '../services/messageQueueManager';
 
-function returnSucess(res, data) {
+function returnSucess(res: Response, data: any) {
   res.status(200).json({
     status: 'success',
     response: data,
   });
 }
 
-function returnError(req, res, error) {
+function returnError(req: Request, res: Response, error: any) {
   req.logger?.error(error);
   
   if (res.headersSent) {
@@ -23,7 +23,7 @@ function returnError(req, res, error) {
   });
 }
 
-export async function getQueueStatus(req, res) {
+export async function getQueueStatus(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get message queue status for a session"
@@ -65,7 +65,7 @@ export async function getQueueStatus(req, res) {
   }
 }
 
-export async function clearQueue(req, res) {
+export async function clearQueue(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Clear all queued messages for a session"
@@ -108,7 +108,7 @@ export async function clearQueue(req, res) {
   }
 }
 
-export async function getAllQueues(req, res) {
+export async function getAllQueues(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get status of all message queues (admin only)"
@@ -130,7 +130,7 @@ export async function getAllQueues(req, res) {
   }
 }
 
-export async function getQueueStats(req, res) {
+export async function getQueueStats(req: Request, res: Response) {
   /**
    * #swagger.tags = ["Message Queue"]
    * #swagger.description = "Get message queue statistics"

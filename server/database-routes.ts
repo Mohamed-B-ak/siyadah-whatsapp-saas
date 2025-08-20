@@ -27,7 +27,7 @@ router.post('/test', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error testing MongoDB connection: ' + (error instanceof Error ? error.message : 'Unknown error')
+      message: 'Error testing MongoDB connection: ' + error.message
     });
   }
 });
@@ -56,7 +56,7 @@ router.get('/status', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error getting MongoDB status: ' + (error instanceof Error ? error.message : 'Unknown error')
+      message: 'Error getting MongoDB status: ' + error.message
     });
   }
 });
@@ -90,7 +90,7 @@ router.get('/config', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error getting MongoDB config: ' + (error instanceof Error ? error.message : 'Unknown error')
+      message: 'Error getting MongoDB config: ' + error.message
     });
   }
 });
@@ -107,7 +107,7 @@ router.post('/migrate', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: 'Error during migration: ' + (error instanceof Error ? error.message : 'Unknown error')
+      message: 'Error during migration: ' + error.message
     });
   }
 });

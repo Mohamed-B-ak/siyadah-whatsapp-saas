@@ -95,7 +95,7 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
   app.use((req: any, res: any, next: NextFunction) => {
     req.serverOptions = serverOptions;
     req.logger = logger;
-    req.io = io;
+    req.io = io as any;
 
     const oldSend = res.send;
 
@@ -130,7 +130,7 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
     app.use('/api/v1', saasRoutes);
     logger.info('SaaS routes loaded successfully');
   } catch (error) {
-    logger.warn('SaaS routes not available:', (error as Error).message);
+    logger.warn('SaaS routes not available:', error.message);
   }
 
   createFolders();

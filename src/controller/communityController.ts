@@ -16,7 +16,7 @@
 
 import { Request, Response } from 'express';
 
-export async function createCommunity(req, res) {
+export async function createCommunity(req: Request, res: Response) {
   /**
        #swagger.tags = ["Community"]
        #swagger.autoBody=false
@@ -71,7 +71,7 @@ export async function createCommunity(req, res) {
   }
 }
 
-export async function deactivateCommunity(req, res) {
+export async function deactivateCommunity(req: Request, res: Response) {
   /**
          #swagger.tags = ["Community"]
          #swagger.autoBody=false
@@ -118,7 +118,7 @@ export async function deactivateCommunity(req, res) {
   }
 }
 
-export async function addSubgroupsCommunity(req, res) {
+export async function addSubgroupsCommunity(req: Request, res: Response) {
   /**
     #swagger.tags = ["Community"]
     #swagger.autoBody=false
@@ -167,7 +167,7 @@ export async function addSubgroupsCommunity(req, res) {
   }
 }
 
-export async function removeSubgroupsCommunity(req, res) {
+export async function removeSubgroupsCommunity(req: Request, res: Response) {
   /**
      #swagger.tags = ["Community"]
     #swagger.autoBody=false
@@ -216,7 +216,7 @@ export async function removeSubgroupsCommunity(req, res) {
   }
 }
 
-export async function demoteCommunityParticipant(req, res) {
+export async function demoteCommunityParticipant(req: Request, res: Response) {
   /**
     #swagger.tags = ["Community"]
     #swagger.autoBody=false
@@ -268,7 +268,7 @@ export async function demoteCommunityParticipant(req, res) {
   }
 }
 
-export async function promoteCommunityParticipant(req, res) {
+export async function promoteCommunityParticipant(req: Request, res: Response) {
   /**
     #swagger.tags = ["Community"]
     #swagger.autoBody=false
@@ -320,7 +320,7 @@ export async function promoteCommunityParticipant(req, res) {
   }
 }
 
-export async function getCommunityParticipants(req, res) {
+export async function getCommunityParticipants(req: Request, res: Response) {
   /**
     #swagger.tags = ["Community"]
     #swagger.autoBody=false
