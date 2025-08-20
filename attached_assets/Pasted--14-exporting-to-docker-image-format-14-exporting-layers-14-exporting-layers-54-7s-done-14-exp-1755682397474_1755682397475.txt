@@ -1,0 +1,45 @@
+#14 exporting to docker image format
+#14 exporting layers
+#14 exporting layers 54.7s done
+#14 exporting manifest sha256:bc7f4b3df859ad08ffaa254d8f823cf9d9e03cd868475eebaf4b7a719c30f63a done
+#14 exporting config sha256:4a468dd3f27366821b3c62a8669313a22a47bfcd5cd4c839028aca2356010ccf done
+#14 DONE 70.6s
+#15 exporting cache to client directory
+#15 preparing build cache for export
+#15 writing cache manifest sha256:2e9d35603ec4efe875071ad69fe75bd3e671b6400395f2f41fdfeb785714a202
+#15 writing cache manifest sha256:2e9d35603ec4efe875071ad69fe75bd3e671b6400395f2f41fdfeb785714a202 0.2s done
+#15 DONE 16.5s
+Pushing image to registry...
+Upload succeeded
+==> Deploying...
+npm warn exec The following package was not found and will be installed: tsx@4.20.4
+node:internal/modules/cjs/loader:1401
+  const err = new Error(message);
+              ^
+Error: Cannot find module '/app/node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node'
+Require stack:
+- /app/node_modules/bcrypt/bcrypt.js
+- /app/server/routes/auth.ts
+- /app/server/routes/index.ts
+- /app/src/server.ts
+    at node:internal/modules/cjs/loader:1401:15
+    at nextResolveSimple (/tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-D46fvsV_.cjs:4:1004)
+    at /tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-D46fvsV_.cjs:3:2630
+    at /tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-D46fvsV_.cjs:3:1542
+    at resolveTsPaths (/tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-D46fvsV_.cjs:4:760)
+    at /tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-D46fvsV_.cjs:4:1102
+    at m._resolveFilename (file:///tmp/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/register-B7jrtLTO.mjs:1:789)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/app/node_modules/bcrypt/bcrypt.js',
+    '/app/server/routes/auth.ts',
+    '/app/server/routes/index.ts',
+    '/app/src/server.ts'
+  ]
+}
+Node.js v22.16.0
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

@@ -5,14 +5,19 @@
 echo "🔧 Setting up development environment..."
 
 # Install Husky for git hooks (only needed for development)
-if command -v husky &> /dev/null; then
-    echo "📦 Installing Husky git hooks..."
-    husky install
-    echo "✅ Husky configured successfully"
+# Skip in CI environments (like production builds)
+if [ "$CI" != "true" ]; then
+    if command -v husky &> /dev/null; then
+        echo "📦 Installing Husky git hooks..."
+        husky install
+        echo "✅ Husky configured successfully"
+    else
+        echo "⚠️  Husky not found - installing via npm..."
+        npm install husky --save-dev
+        npx husky install
+    fi
 else
-    echo "⚠️  Husky not found - installing via npm..."
-    npm install husky --save-dev
-    npx husky install
+    echo "🏗️  CI environment detected - skipping Husky setup"
 fi
 
 echo "🚀 Development environment ready!"

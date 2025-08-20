@@ -28,12 +28,16 @@ WORKDIR /app
 # Install deps with better caching:
 # Copy only manifests first so Docker can cache `npm ci` when code changes.
 COPY package.json package-lock.json* ./
+
+# Temporarily disable Husky in production by setting CI environment variable
+# This prevents prepare script (husky install) from running while allowing other scripts
+ENV CI=true
+
 # Prefer npm ci when lockfile exists; fallback to npm i if not
-# Skip scripts (like husky prepare) in production Docker builds
 RUN if [ -f package-lock.json ]; then \
-      npm ci --legacy-peer-deps --ignore-scripts; \
+      npm ci --legacy-peer-deps; \
     else \
-      npm i --legacy-peer-deps --ignore-scripts; \
+      npm i --legacy-peer-deps; \
     fi
 
 # Now copy the rest of the source
