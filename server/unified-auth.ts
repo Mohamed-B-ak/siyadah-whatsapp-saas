@@ -92,11 +92,12 @@ router.post('/register', async (req: Request, res: Response) => {
       const user = await storage.createUser({
         name,
         email,
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         companyId,
         apiKey,
         role: 'user',
         permissions: ['read', 'write'],
+        status: 'active',
         isActive: true
       });
 
@@ -151,7 +152,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
       console.log(`[UNIFIED-AUTH] Company found: ${company.name}`);
       // Check both password fields for compatibility
-      const passwordField = company.password || company.passwordHash;
+      const passwordField = company.password;
       console.log(`[UNIFIED-AUTH] Password field exists: ${!!passwordField}`);
       
       if (!passwordField) {

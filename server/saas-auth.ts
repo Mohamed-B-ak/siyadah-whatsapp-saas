@@ -198,7 +198,7 @@ export const logApiUsage = async (req: AuthenticatedRequest, res: Response, next
           ipAddress: req.ip || req.connection.remoteAddress,
           userAgent: req.headers['user-agent'] || undefined,
           // errorMessage: statusCode >= 400 ? 'Request failed' : undefined, // Removed - not in schema
-          requestData: req.method !== 'GET' ? req.body : undefined,
+          // requestData: req.method !== 'GET' ? req.body : undefined, // Removed - not in schema
         });
       }
     } catch (error) {

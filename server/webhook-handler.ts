@@ -30,13 +30,10 @@ router.post('/webhook-handler', async (req, res) => {
           sessionId: sessionData.id,
           userId: sessionData.userId,
           companyId: sessionData.companyId,
-          // type: 'incoming', // Removed - not in schema
-          from: from,
-          to: to,
-          content: body,
-          status: 'received',
-          whatsappMessageId: messageId,
-          timestamp: new Date(timestamp * 1000)
+          message: body || '',
+          phone: from || '',
+          direction: 'incoming',
+          status: 'received'
         });
         
         console.log(`Message logged for session ${session}: ${from} -> ${body}`);

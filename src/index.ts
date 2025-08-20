@@ -130,7 +130,7 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
     app.use('/api/v1', saasRoutes);
     logger.info('SaaS routes loaded successfully');
   } catch (error) {
-    logger.warn('SaaS routes not available:', error.message);
+    logger.warn('SaaS routes not available:', (error as Error).message);
   }
 
   createFolders();
