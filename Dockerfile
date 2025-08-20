@@ -63,6 +63,7 @@ RUN npm install --legacy-peer-deps --ignore-scripts
 
 # Copy TypeScript configuration and source files
 COPY tsconfig.json ./
+COPY build-production.js ./
 COPY src/ ./src/
 COPY shared/ ./shared/
 COPY server/ ./server/
