@@ -678,7 +678,7 @@ export async function setProductVisibility(req, res) {
   }
 }
 
-export async function updateCartEnabled(req: Request, res: Response) {
+export async function updateCartEnabled(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -727,7 +727,7 @@ export async function updateCartEnabled(req: Request, res: Response) {
   }
 }
 
-export async function sendLinkCatalog(req: Request, res: Response) {
+export async function sendLinkCatalog(req, res) {
   /**
    * #swagger.tags = ["Messages"]
      #swagger.autoBody=false
