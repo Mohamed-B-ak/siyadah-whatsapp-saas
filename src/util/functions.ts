@@ -255,7 +255,7 @@ export async function callWebHook(
             const events = ['unreadmessages', 'onmessage'];
             if (events.includes(event) && req.serverOptions.webhook.readMessage)
               client.sendSeen(chatId);
-          } catch (e) {}
+          } catch (_e) {}
         })
         .catch((e) => {
           req.logger.warn('Error calling Webhook.', e);

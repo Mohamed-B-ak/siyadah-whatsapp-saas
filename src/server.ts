@@ -98,7 +98,7 @@ console.log('📈 Performance monitoring active');
 console.log('🧹 Session management initialized');
 
 // Global error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
+app.use((err: any, req: any, res: any, _next: any) => {
   console.error('Global error handler:', err);
   res.status(err.statusCode || 500).json({
     error: err.message || 'Internal server error',

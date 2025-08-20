@@ -37,12 +37,11 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
 
   try {
     let tokenDecrypt = '';
-    let sessionDecrypt = '';
 
     // Method 1: Try to parse from session parameter (session:token format)
     try {
       if (session.includes(':')) {
-        sessionDecrypt = session.split(':')[0];
+        const _sessionDecrypt = session.split(':')[0];
         tokenDecrypt = session
           .split(':')[1]
           .replace(/_/g, '/')
@@ -58,25 +57,25 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
         if (token.startsWith('Bearer ')) {
           const fullToken = token.split(' ')[1];
           if (fullToken && fullToken.includes(':')) {
-            sessionDecrypt = fullToken.split(':')[0];
+            const _sessionDecrypt = fullToken.split(':')[0];
             tokenDecrypt = fullToken
               .split(':')[1]
               .replace(/_/g, '/')
               .replace(/-/g, '+');
           } else if (fullToken) {
-            sessionDecrypt = session;
+            const _sessionDecrypt = session;
             tokenDecrypt = fullToken.replace(/_/g, '/').replace(/-/g, '+');
           }
         } else {
           // Direct token without Bearer prefix
           if (token.includes(':')) {
-            sessionDecrypt = token.split(':')[0];
+            const _sessionDecrypt = token.split(':')[0];
             tokenDecrypt = token
               .split(':')[1]
               .replace(/_/g, '/')
               .replace(/-/g, '+');
           } else {
-            sessionDecrypt = session;
+            const _sessionDecrypt = session;
             tokenDecrypt = token.replace(/_/g, '/').replace(/-/g, '+');
           }
         }
@@ -89,7 +88,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
     if (!tokenDecrypt && sessionkey) {
       try {
         if (sessionkey.includes(':')) {
-          sessionDecrypt = sessionkey.split(':')[0];
+          const _sessionDecrypt = sessionkey.split(':')[0];
           tokenDecrypt = sessionkey
             .split(':')[1]
             .replace(/_/g, '/')

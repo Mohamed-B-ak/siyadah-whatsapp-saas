@@ -54,7 +54,7 @@ const WEBHOOK_RATE_LIMIT = {
 };
 
 // Helper functions for rate limiting
-function initializeRateLimit(sessionId: string): WebhookRateLimit {
+function initializeRateLimit(_sessionId: string): WebhookRateLimit {
   const now = Date.now();
   return {
     lastWebhookTime: 0,
@@ -66,7 +66,7 @@ function initializeRateLimit(sessionId: string): WebhookRateLimit {
   };
 }
 
-function initializeProtectionState(sessionId: string): SessionProtectionState {
+function initializeProtectionState(_sessionId: string): SessionProtectionState {
   return {
     lastProtectionTime: 0,
     protectionCount: 0,

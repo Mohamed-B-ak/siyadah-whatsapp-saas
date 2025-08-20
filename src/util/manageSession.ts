@@ -89,7 +89,7 @@ export async function restoreSessions(
         force: true,
         recursive: true,
       });
-    } catch (error) {
+    } catch (_error) {
       logger.info("Folder 'tokens' not found.");
     }
     try {
@@ -101,7 +101,7 @@ export async function restoreSessions(
           recursive: true,
         }
       );
-    } catch (error) {
+    } catch (_error) {
       logger.info("Folder 'userDataDir' not found.");
     }
     logger.info('Sessions successfully restored. Starting...');
@@ -122,7 +122,7 @@ export async function closeAllSessions(req: Request) {
         await client.page.browser().close();
       }
       delete clientsArray[session];
-    } catch (error) {
+    } catch (_error) {
       logger.error('Not was possible stop session: ' + session);
     }
   });
