@@ -8,6 +8,7 @@ jest.mock('../../server/storage', () => ({
     getCompanyByApiKey: jest.fn(),
     createUser: jest.fn(),
     getUsersByCompany: jest.fn(),
+    getUserByEmail: jest.fn(),
     logApiUsage: jest.fn(),
   },
 }));
@@ -35,6 +36,7 @@ describe('Subclient API', () => {
 
       const { storage } = require('../../server/storage');
       storage.getCompanyByApiKey.mockResolvedValue(mockCompany);
+      storage.getUserByEmail.mockResolvedValue(null); // No existing user
       storage.createUser.mockResolvedValue(mockUser);
       storage.logApiUsage.mockResolvedValue(undefined);
 

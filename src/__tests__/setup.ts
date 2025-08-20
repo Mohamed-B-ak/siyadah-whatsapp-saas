@@ -12,3 +12,8 @@ global.console = {
 // Mock environment variables for tests
 process.env.NODE_ENV = 'test';
 process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+
+// Add a placeholder test to prevent empty suite error
+describe('setup', () => {
+  it.skip('placeholder', () => {});
+});
