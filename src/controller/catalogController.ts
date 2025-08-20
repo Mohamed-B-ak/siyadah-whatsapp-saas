@@ -192,7 +192,7 @@ export async function delProducts(req, res) {
   }
 }
 
-export async function changeProductImage(req: Request, res: Response) {
+export async function changeProductImage(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -244,7 +244,7 @@ export async function changeProductImage(req: Request, res: Response) {
   }
 }
 
-export async function addProduct(req: Request, res: Response) {
+export async function addProduct(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -323,7 +323,7 @@ export async function addProduct(req: Request, res: Response) {
   }
 }
 
-export async function addProductImage(req: Request, res: Response) {
+export async function addProductImage(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -374,7 +374,7 @@ export async function addProductImage(req: Request, res: Response) {
   }
 }
 
-export async function removeProductImage(req: Request, res: Response) {
+export async function removeProductImage(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -425,7 +425,7 @@ export async function removeProductImage(req: Request, res: Response) {
   }
 }
 
-export async function getCollections(req: Request, res: Response) {
+export async function getCollections(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -453,9 +453,9 @@ export async function getCollections(req: Request, res: Response) {
 
   try {
     const result = await req.client.getCollections(
-      phone as string,
-      qnt as string,
-      max as string
+      phone,
+      qnt,
+      max
     );
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
@@ -467,7 +467,7 @@ export async function getCollections(req: Request, res: Response) {
   }
 }
 
-export async function createCollection(req: Request, res: Response) {
+export async function createCollection(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -518,7 +518,7 @@ export async function createCollection(req: Request, res: Response) {
   }
 }
 
-export async function editCollection(req: Request, res: Response) {
+export async function editCollection(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -571,7 +571,7 @@ export async function editCollection(req: Request, res: Response) {
   }
 }
 
-export async function deleteCollection(req: Request, res: Response) {
+export async function deleteCollection(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -620,7 +620,7 @@ export async function deleteCollection(req: Request, res: Response) {
   }
 }
 
-export async function setProductVisibility(req: Request, res: Response) {
+export async function setProductVisibility(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false

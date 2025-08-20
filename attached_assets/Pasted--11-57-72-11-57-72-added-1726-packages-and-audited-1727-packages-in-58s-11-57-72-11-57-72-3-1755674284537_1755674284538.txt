@@ -1,0 +1,91 @@
+#11 57.72 
+#11 57.72 added 1726 packages, and audited 1727 packages in 58s
+#11 57.72 
+#11 57.72 306 packages are looking for funding
+#11 57.72   run `npm fund` for details
+#11 57.74 
+#11 57.74 12 vulnerabilities (5 low, 7 moderate)
+#11 57.74 
+#11 57.74 To address all issues possible (including breaking changes), run:
+#11 57.74   npm audit fix --force
+#11 57.74 
+#11 57.74 Some issues need review, and may require choosing
+#11 57.74 a different dependency.
+#11 57.74 
+#11 57.74 Run `npm audit` for details.
+#11 57.74 npm notice
+#11 57.74 npm notice New major version of npm available! 10.9.3 -> 11.5.2
+#11 57.74 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+#11 57.74 npm notice To update run: npm install -g npm@11.5.2
+#11 57.74 npm notice
+#11 DONE 59.0s
+#12 [ 7/14] COPY tsconfig.json ./
+#12 DONE 1.2s
+#13 [ 8/14] COPY src/ ./src/
+#13 DONE 0.0s
+#14 [ 9/14] COPY shared/ ./shared/
+#14 DONE 0.0s
+#15 [10/14] COPY server/ ./server/
+#15 DONE 0.0s
+#16 [11/14] RUN npm run build
+#16 0.242 
+#16 0.242 > @wppconnect/server@2.8.6 build
+#16 0.242 > npm run build:types && npm run build:js
+#16 0.242 
+#16 0.415 
+#16 0.415 > @wppconnect/server@2.8.6 build:types
+#16 0.415 > tsc
+#16 0.415 
+#16 9.153 
+#16 9.153 > @wppconnect/server@2.8.6 build:js
+#16 9.153 > rimraf dist && babel src --out-dir dist --extensions ".ts,.tsx" --source-maps inline --copy-files
+#16 9.153 
+#16 9.760 SyntaxError: /app/src/controller/catalogController.ts: Unexpected token, expected "," (195:44)
+#16 9.760 
+#16 9.760   193 | }
+#16 9.760   194 |
+#16 9.760 > 195 | export async function changeProductImage(req: Request, res: Response) {
+#16 9.760       |                                             ^
+#16 9.760   196 |   /**
+#16 9.760   197 |    * #swagger.tags = ["Catalog & Bussiness"]
+#16 9.760   198 |      #swagger.autoBody=false
+#16 9.760     at constructor (/app/node_modules/@babel/parser/lib/index.js:367:19)
+#16 9.760     at Parser.raise (/app/node_modules/@babel/parser/lib/index.js:6630:19)
+#16 9.760     at Parser.unexpected (/app/node_modules/@babel/parser/lib/index.js:6650:16)
+#16 9.760     at Parser.expect (/app/node_modules/@babel/parser/lib/index.js:6930:12)
+#16 9.760     at Parser.parseBindingList (/app/node_modules/@babel/parser/lib/index.js:7399:14)
+#16 9.760     at Parser.parseFunctionParams (/app/node_modules/@babel/parser/lib/index.js:13466:24)
+#16 9.760     at Parser.parseFunction (/app/node_modules/@babel/parser/lib/index.js:13448:10)
+#16 9.760     at Parser.parseFunctionStatement (/app/node_modules/@babel/parser/lib/index.js:13130:17)
+#16 9.760     at Parser.parseStatementContent (/app/node_modules/@babel/parser/lib/index.js:12895:25)
+#16 9.760     at Parser.parseStatementLike (/app/node_modules/@babel/parser/lib/index.js:12772:17) {
+#16 9.760   code: 'BABEL_PARSE_ERROR',
+#16 9.760   reasonCode: 'UnexpectedToken',
+#16 9.760   loc: Position { line: 195, column: 44, index: 5236 },
+#16 9.760   pos: 5236,
+#16 9.760   syntaxPlugin: undefined
+#16 9.760 }
+#16 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [11/14] RUN npm run build:
+9.760     at Parser.parseFunction (/app/node_modules/@babel/parser/lib/index.js:13448:10)
+9.760     at Parser.parseFunctionStatement (/app/node_modules/@babel/parser/lib/index.js:13130:17)
+9.760     at Parser.parseStatementContent (/app/node_modules/@babel/parser/lib/index.js:12895:25)
+9.760     at Parser.parseStatementLike (/app/node_modules/@babel/parser/lib/index.js:12772:17) {
+9.760   code: 'BABEL_PARSE_ERROR',
+9.760   reasonCode: 'UnexpectedToken',
+9.760   loc: Position { line: 195, column: 44, index: 5236 },
+9.760   pos: 5236,
+9.760   syntaxPlugin: undefined
+9.760 }
+------
+Dockerfile:71
+--------------------
+  69 |     
+  70 |     # Build TypeScript to JavaScript
+  71 | >>> RUN npm run build
+  72 |     
+  73 |     # Remove dev dependencies to reduce image size
+--------------------
+error: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+error: exit status 1
