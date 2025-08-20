@@ -18,7 +18,7 @@ import { Request, Response } from 'express';
 import { createCatalogLink } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
 
-export async function getProducts(req: Request, res: Response) {
+export async function getProducts(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -45,10 +45,7 @@ export async function getProducts(req: Request, res: Response) {
     });
 
   try {
-    const result = await req.client?.getProducts(
-      phone as string,
-      qnt as unknown as number
-    );
+    const result = await req.client?.getProducts(phone, qnt);
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
     res.status(500).json({
@@ -59,7 +56,7 @@ export async function getProducts(req: Request, res: Response) {
   }
 }
 
-export async function getProductById(req: Request, res: Response) {
+export async function getProductById(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -85,10 +82,7 @@ export async function getProductById(req: Request, res: Response) {
     });
 
   try {
-    const result = await req.client.getProductById(
-      phone as string,
-      id as string
-    );
+    const result = await req.client.getProductById(phone, id);
     res.status(201).json({ status: 'success', response: result });
   } catch (error) {
     res
@@ -96,7 +90,7 @@ export async function getProductById(req: Request, res: Response) {
       .json({ status: 'Error', message: 'Error on get product', error: error });
   }
 }
-export async function editProduct(req: Request, res: Response) {
+export async function editProduct(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -149,7 +143,7 @@ export async function editProduct(req: Request, res: Response) {
   }
 }
 
-export async function delProducts(req: Request, res: Response) {
+export async function delProducts(req, res) {
   /**
    * #swagger.tags = ["Catalog & Bussiness"]
      #swagger.autoBody=false
@@ -773,11 +767,11 @@ export async function sendLinkCatalog(req: Request, res: Response) {
     });
   const results: any = [];
   const queuedResults: any = [];
-  
+
   try {
     const session = await req.client.getWid();
     const catalogLink = createCatalogLink(session);
-    
+
     // CRITICAL FIX: Process all catalog messages through the queue system with 30-second delays
     for (const phone of phones) {
       const catalogMessage = `${message} ${catalogLink}`;
@@ -807,7 +801,7 @@ export async function sendLinkCatalog(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: 'Catalog message queued for delivery with 30-second delay'
+            message: 'Catalog message queued for delivery with 30-second delay',
           });
         } else {
           results.push({ phone: phone, status: queueResult.result.id });
@@ -816,7 +810,7 @@ export async function sendLinkCatalog(req: Request, res: Response) {
         results.push({
           phone: phone,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -831,8 +825,8 @@ export async function sendLinkCatalog(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     res.status(500).json({
