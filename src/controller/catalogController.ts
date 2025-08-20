@@ -765,8 +765,8 @@ export async function sendLinkCatalog(req, res) {
     res.status(401).send({
       message: 'phones was not informed',
     });
-  const results: any = [];
-  const queuedResults: any = [];
+  const results = [];
+  const queuedResults = [];
 
   try {
     const session = await req.client.getWid();
@@ -789,7 +789,7 @@ export async function sendLinkCatalog(req, res) {
         phone,
         catalogMessage,
         options,
-        async (phoneNumber: string, msg: string, opts: any) => {
+        async (phoneNumber, msg, opts) => {
           return await req.client.sendText(phoneNumber, msg, opts);
         }
       );

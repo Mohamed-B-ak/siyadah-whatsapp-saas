@@ -1,0 +1,84 @@
+#11 61.82 
+#11 61.82 added 1726 packages, and audited 1727 packages in 1m
+#11 61.82 
+#11 61.82 306 packages are looking for funding
+#11 61.82   run `npm fund` for details
+#11 61.85 
+#11 61.85 12 vulnerabilities (5 low, 7 moderate)
+#11 61.85 
+#11 61.85 To address all issues possible (including breaking changes), run:
+#11 61.85   npm audit fix --force
+#11 61.85 
+#11 61.85 Some issues need review, and may require choosing
+#11 61.85 a different dependency.
+#11 61.85 
+#11 61.85 Run `npm audit` for details.
+#11 61.85 npm notice
+#11 61.85 npm notice New major version of npm available! 10.9.3 -> 11.5.2
+#11 61.85 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+#11 61.85 npm notice To update run: npm install -g npm@11.5.2
+#11 61.85 npm notice
+#11 DONE 62.3s
+#12 [ 7/15] COPY tsconfig.json ./
+#12 DONE 1.2s
+#13 [ 8/15] COPY build-production.js ./
+#13 DONE 0.0s
+#14 [ 9/15] COPY src/ ./src/
+#14 DONE 0.0s
+#15 [10/15] COPY shared/ ./shared/
+#15 DONE 0.0s
+#16 [11/15] COPY server/ ./server/
+#16 DONE 0.0s
+#17 [12/15] RUN node build-production.js
+#17 0.108 🚀 Starting Production Build for Render.com...
+#17 0.109 🧹 Cleaning previous build...
+#17 0.817 ⚙️ Compiling with Babel...
+#17 1.849 SyntaxError: /app/src/controller/catalogController.ts: Missing initializer in const declaration. (768:15)
+#17 1.849 
+#17 1.849   766 |       message: 'phones was not informed',
+#17 1.849   767 |     });
+#17 1.849 > 768 |   const results: any = [];
+#17 1.849       |                ^
+#17 1.849   769 |   const queuedResults: any = [];
+#17 1.849   770 |
+#17 1.849   771 |   try {
+#17 1.849     at constructor (/app/node_modules/@babel/parser/lib/index.js:367:19)
+#17 1.849     at Parser.raise (/app/node_modules/@babel/parser/lib/index.js:6630:19)
+#17 1.849     at Parser.parseVar (/app/node_modules/@babel/parser/lib/index.js:13396:16)
+#17 1.849     at Parser.parseVarStatement (/app/node_modules/@babel/parser/lib/index.js:13235:10)
+#17 1.849     at Parser.parseStatementContent (/app/node_modules/@babel/parser/lib/index.js:12856:23)
+#17 1.849     at Parser.parseStatementLike (/app/node_modules/@babel/parser/lib/index.js:12772:17)
+#17 1.849     at Parser.parseStatementListItem (/app/node_modules/@babel/parser/lib/index.js:12752:17)
+#17 1.849     at Parser.parseBlockOrModuleBlockBody (/app/node_modules/@babel/parser/lib/index.js:13321:61)
+#17 1.849     at Parser.parseBlockBody (/app/node_modules/@babel/parser/lib/index.js:13314:10)
+#17 1.849     at Parser.parseBlock (/app/node_modules/@babel/parser/lib/index.js:13302:10) {
+#17 1.849   code: 'BABEL_PARSE_ERROR',
+#17 1.849   reasonCode: 'DeclarationMissingInitializer',
+#17 1.849   loc: Position { line: 768, column: 15, index: 20165 },
+#17 1.849   pos: 20165,
+#17 1.849   syntaxPlugin: undefined
+#17 1.849 }
+#17 1.926 ❌ Production build failed: Command failed: npx babel src --out-dir dist --extensions ".ts,.tsx" --source-maps inline --copy-files
+#17 ERROR: process "/bin/sh -c node build-production.js" did not complete successfully: exit code: 1
+------
+ > [12/15] RUN node build-production.js:
+1.849     at Parser.parseBlockOrModuleBlockBody (/app/node_modules/@babel/parser/lib/index.js:13321:61)
+1.849     at Parser.parseBlockBody (/app/node_modules/@babel/parser/lib/index.js:13314:10)
+1.849     at Parser.parseBlock (/app/node_modules/@babel/parser/lib/index.js:13302:10) {
+1.849   code: 'BABEL_PARSE_ERROR',
+1.849   reasonCode: 'DeclarationMissingInitializer',
+1.849   loc: Position { line: 768, column: 15, index: 20165 },
+1.849   pos: 20165,
+1.849   syntaxPlugin: undefined
+1.849 }
+1.926 ❌ Production build failed: Command failed: npx babel src --out-dir dist --extensions ".ts,.tsx" --source-maps inline --copy-files
+------
+Dockerfile:72
+--------------------
+  70 |     
+  71 |     # Build TypeScript to JavaScript
+  72 | >>> RUN node build-production.js
+  73 |     
+  74 |     # Remove dev dependencies to reduce image size
+--------------------
+error: failed to solve: process "/bin/sh -c node build-production.js" did not complete successfully: exit code: 1
