@@ -26,9 +26,12 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
   const secureToken = req.serverOptions.secretKey;
 
   const { session } = req.params;
-  const { authorization: authHeader, sessionkey: sessionkeyHeader } = req.headers;
+  const { authorization: authHeader, sessionkey: sessionkeyHeader } =
+    req.headers;
   const token = Array.isArray(authHeader) ? authHeader[0] : authHeader;
-  const sessionkey = Array.isArray(sessionkeyHeader) ? sessionkeyHeader[0] : sessionkeyHeader;
+  const sessionkey = Array.isArray(sessionkeyHeader)
+    ? sessionkeyHeader[0]
+    : sessionkeyHeader;
   if (!session)
     return res.status(401).send({ message: 'Session not informed' });
 
@@ -56,7 +59,10 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
           const fullToken = token.split(' ')[1];
           if (fullToken && fullToken.includes(':')) {
             sessionDecrypt = fullToken.split(':')[0];
-            tokenDecrypt = fullToken.split(':')[1].replace(/_/g, '/').replace(/-/g, '+');
+            tokenDecrypt = fullToken
+              .split(':')[1]
+              .replace(/_/g, '/')
+              .replace(/-/g, '+');
           } else if (fullToken) {
             sessionDecrypt = session;
             tokenDecrypt = fullToken.replace(/_/g, '/').replace(/-/g, '+');
@@ -65,7 +71,10 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
           // Direct token without Bearer prefix
           if (token.includes(':')) {
             sessionDecrypt = token.split(':')[0];
-            tokenDecrypt = token.split(':')[1].replace(/_/g, '/').replace(/-/g, '+');
+            tokenDecrypt = token
+              .split(':')[1]
+              .replace(/_/g, '/')
+              .replace(/-/g, '+');
           } else {
             sessionDecrypt = session;
             tokenDecrypt = token.replace(/_/g, '/').replace(/-/g, '+');
@@ -81,7 +90,10 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
       try {
         if (sessionkey.includes(':')) {
           sessionDecrypt = sessionkey.split(':')[0];
-          tokenDecrypt = sessionkey.split(':')[1].replace(/_/g, '/').replace(/-/g, '+');
+          tokenDecrypt = sessionkey
+            .split(':')[1]
+            .replace(/_/g, '/')
+            .replace(/-/g, '+');
         } else {
           sessionDecrypt = session;
           tokenDecrypt = sessionkey.replace(/_/g, '/').replace(/-/g, '+');
@@ -100,7 +112,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
 
     // Use the session name from URL path for verification
     const sessionName = formatSession(req.params.session);
-    
+
     bcrypt.compare(
       sessionName + secureToken,
       tokenDecrypt,

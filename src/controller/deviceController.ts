@@ -16,9 +16,9 @@
 import { Chat } from '@wppconnect-team/wppconnect';
 import { Request, Response } from 'express';
 
+import MessageQueueManager from '../services/messageQueueManager';
 import { contactToArray, unlinkAsync } from '../util/functions';
 import { clientsArray } from '../util/sessionUtil';
-import MessageQueueManager from '../services/messageQueueManager';
 
 function returnSucess(res: any, session: any, phone: any, data: any) {
   res.status(201).json({
@@ -2290,15 +2290,21 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
 
             // Check if attachments is Push-to-talk and send this with queue
             if (message.attachments[0].file_type === 'audio') {
-              const queueResult = await MessageQueueManager.processMessageRequest(
-                req,
-                contato,
-                'Voice Audio',
-                { base_url, content: message.content },
-                async (phoneNumber: string, msg: string, opts: any) => {
-                  return await client.sendPtt(phoneNumber, opts.base_url, msg, opts.content);
-                }
-              );
+              const queueResult =
+                await MessageQueueManager.processMessageRequest(
+                  req,
+                  contato,
+                  'Voice Audio',
+                  { base_url, content: message.content },
+                  async (phoneNumber: string, msg: string, opts: any) => {
+                    return await client.sendPtt(
+                      phoneNumber,
+                      opts.base_url,
+                      msg,
+                      opts.content
+                    );
+                  }
+                );
 
               if (queueResult.success) {
                 if (queueResult.queued) {
@@ -2308,7 +2314,8 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
                     status: 'queued',
                     messageId: queueResult.messageId,
                     estimatedSendTime: queueResult.estimatedSendTime,
-                    message: 'ChatWoot voice message queued for delivery with 30-second delay'
+                    message:
+                      'ChatWoot voice message queued for delivery with 30-second delay',
                   });
                 } else {
                   results.push(queueResult.result);
@@ -2316,15 +2323,21 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
               }
             } else {
               // File attachment with queue
-              const queueResult = await MessageQueueManager.processMessageRequest(
-                req,
-                contato,
-                message.content,
-                { base_url, fileName: 'file' },
-                async (phoneNumber: string, msg: string, opts: any) => {
-                  return await client.sendFile(phoneNumber, opts.base_url, opts.fileName, msg);
-                }
-              );
+              const queueResult =
+                await MessageQueueManager.processMessageRequest(
+                  req,
+                  contato,
+                  message.content,
+                  { base_url, fileName: 'file' },
+                  async (phoneNumber: string, msg: string, opts: any) => {
+                    return await client.sendFile(
+                      phoneNumber,
+                      opts.base_url,
+                      opts.fileName,
+                      msg
+                    );
+                  }
+                );
 
               if (queueResult.success) {
                 if (queueResult.queued) {
@@ -2334,7 +2347,8 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
                     status: 'queued',
                     messageId: queueResult.messageId,
                     estimatedSendTime: queueResult.estimatedSendTime,
-                    message: 'ChatWoot file message queued for delivery with 30-second delay'
+                    message:
+                      'ChatWoot file message queued for delivery with 30-second delay',
                   });
                 } else {
                   results.push(queueResult.result);
@@ -2361,7 +2375,8 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
                   status: 'queued',
                   messageId: queueResult.messageId,
                   estimatedSendTime: queueResult.estimatedSendTime,
-                  message: 'ChatWoot text message queued for delivery with 30-second delay'
+                  message:
+                    'ChatWoot text message queued for delivery with 30-second delay',
                 });
               } else {
                 results.push(queueResult.result);
@@ -2372,7 +2387,7 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
       }
       // Return unified response format showing queued and immediate results
       const allResults = [...results, ...queuedResults];
-      
+
       res.status(200).json({
         status: 'success',
         message: 'ChatWoot messages processed successfully',
@@ -2381,8 +2396,8 @@ export async function chatWoot(req: Request, res: Response): Promise<any> {
         summary: {
           total: allResults.length,
           immediate: results.length,
-          queued: queuedResults.length
-        }
+          queued: queuedResults.length,
+        },
       });
     }
   } catch (e) {

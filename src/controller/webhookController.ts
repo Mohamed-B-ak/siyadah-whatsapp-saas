@@ -18,41 +18,58 @@ async function loadWebhookUrl(sessionName?: string): Promise<string> {
 
     // Import MongoDB storage for database lookup
     const { mongoStorage } = require('../../server/mongodb');
-    
-    console.log(`[WEBHOOK-LOAD] Looking up webhook for session: ${sessionName}`);
-    
+
+    console.log(
+      `[WEBHOOK-LOAD] Looking up webhook for session: ${sessionName}`
+    );
+
     // Find session in database to get company ID
     const session = await mongoStorage.getSessionByName(sessionName);
     if (!session) {
-      console.log(`[WEBHOOK-LOAD] Session not found in database: ${sessionName}`);
+      console.log(
+        `[WEBHOOK-LOAD] Session not found in database: ${sessionName}`
+      );
       return '';
     }
-    
-    console.log(`[WEBHOOK-LOAD] Session found - Company ID: ${session.companyId}, User ID: ${session.userId}`);
-    
+
+    console.log(
+      `[WEBHOOK-LOAD] Session found - Company ID: ${session.companyId}, User ID: ${session.userId}`
+    );
+
     // Get company data to find webhook URL
     const company = await mongoStorage.getCompany(session.companyId);
     if (company && company.webhookUrl) {
-      console.log(`[WEBHOOK-LOAD] ✅ Found company webhook: ${company.webhookUrl}`);
+      console.log(
+        `[WEBHOOK-LOAD] ✅ Found company webhook: ${company.webhookUrl}`
+      );
       return company.webhookUrl;
     }
-    
+
     // Fallback: Check file-based storage for backward compatibility
     const webhookStorageFile = path.join(process.cwd(), 'webhook-storage.json');
     if (fs.existsSync(webhookStorageFile)) {
       const data = fs.readFileSync(webhookStorageFile, 'utf8');
       const storage = JSON.parse(data);
-      
+
       // Look up by company's master API key
-      if (company && storage[company.masterApiKey] && storage[company.masterApiKey].webhookUrl) {
-        console.log(`[WEBHOOK-LOAD] ✅ Found file-based webhook for company ${company.masterApiKey}: ${storage[company.masterApiKey].webhookUrl}`);
+      if (
+        company &&
+        storage[company.masterApiKey] &&
+        storage[company.masterApiKey].webhookUrl
+      ) {
+        console.log(
+          `[WEBHOOK-LOAD] ✅ Found file-based webhook for company ${
+            company.masterApiKey
+          }: ${storage[company.masterApiKey].webhookUrl}`
+        );
         return storage[company.masterApiKey].webhookUrl;
       }
     }
-    
-    console.log(`[WEBHOOK-LOAD] ❌ No webhook configured for session: ${sessionName} (Company: ${session.companyId})`);
+
+    console.log(
+      `[WEBHOOK-LOAD] ❌ No webhook configured for session: ${sessionName} (Company: ${session.companyId})`
+    );
     return '';
-    
   } catch (error) {
     console.error('[WEBHOOK-LOAD] Error loading webhook URL:', error);
     return '';
@@ -147,47 +164,72 @@ export async function webhookTest(req: Request, res: Response) {
   webhookLogs.push(webhookData);
 
   // AUTOMATIC QR CODE DATABASE STORAGE
-  console.log(`[QR-CAPTURE-DEBUG] Event: ${webhookData.event}, Has base64: ${!!req.body.base64}, Session: ${webhookData.session}`);
-  
+  console.log(
+    `[QR-CAPTURE-DEBUG] Event: ${webhookData.event}, Has base64: ${!!req.body
+      .base64}, Session: ${webhookData.session}`
+  );
+
   if (webhookData.event === 'qrcode') {
     try {
       const path = require('path');
       const mongodbPath = path.resolve(__dirname, '../../server/mongodb');
       const { mongoStorage } = require(mongodbPath);
-      
+
       const sessionName = webhookData.session;
       const qrBase64 = req.body.base64;
-      
-      console.log(`[QR-CAPTURE] 🔍 Attempting to save QR code for session: ${sessionName}`);
+
+      console.log(
+        `[QR-CAPTURE] 🔍 Attempting to save QR code for session: ${sessionName}`
+      );
       console.log(`[QR-CAPTURE] Has QR base64 data: ${!!qrBase64}`);
       if (qrBase64) {
         console.log(`[QR-CAPTURE] QR data length: ${qrBase64.length}`);
       }
-      
+
       // Prioritize saving just the URL code (more efficient than full PNG base64)
-      let qrCodeData = req.body.urlcode || req.body.qrcode || qrBase64 || req.body.data?.urlcode || req.body.data?.qrcode;
-      
+      const qrCodeData =
+        req.body.urlcode ||
+        req.body.qrcode ||
+        qrBase64 ||
+        req.body.data?.urlcode ||
+        req.body.data?.qrcode;
+
       if (qrCodeData) {
-        console.log(`[QR-CAPTURE] Saving QR code type: ${req.body.urlcode ? 'urlcode' : 'base64'} (${qrCodeData.length} chars)`);
-        
-        const updateResult = await mongoStorage.updateSessionByName(sessionName, {
-          qrCode: qrCodeData,
-          qrCodeGeneratedAt: new Date(),
-          status: 'qr_ready'
-        });
-        
+        console.log(
+          `[QR-CAPTURE] Saving QR code type: ${
+            req.body.urlcode ? 'urlcode' : 'base64'
+          } (${qrCodeData.length} chars)`
+        );
+
+        const updateResult = await mongoStorage.updateSessionByName(
+          sessionName,
+          {
+            qrCode: qrCodeData,
+            qrCodeGeneratedAt: new Date(),
+            status: 'qr_ready',
+          }
+        );
+
         if (updateResult) {
-          console.log(`[QR-CAPTURE] ✅ QR code automatically saved to database for session: ${sessionName}`);
+          console.log(
+            `[QR-CAPTURE] ✅ QR code automatically saved to database for session: ${sessionName}`
+          );
           console.log(`[QR-CAPTURE] Database ID: ${updateResult.id}`);
         } else {
-          console.log(`[QR-CAPTURE] ⚠️ Session not found in database: ${sessionName}`);
+          console.log(
+            `[QR-CAPTURE] ⚠️ Session not found in database: ${sessionName}`
+          );
         }
       } else {
         console.log(`[QR-CAPTURE] ⚠️ No QR code data found in webhook body`);
         console.log(`[QR-CAPTURE] Available fields:`, Object.keys(req.body));
       }
     } catch (dbError) {
-      console.log(`[QR-CAPTURE] ❌ Failed to save QR code to database: ${(dbError as Error).message}`);
+      console.log(
+        `[QR-CAPTURE] ❌ Failed to save QR code to database: ${
+          (dbError as Error).message
+        }`
+      );
     }
   }
 
@@ -200,44 +242,54 @@ export async function webhookTest(req: Request, res: Response) {
   // Forward to user-specific webhook URL based on session (MESSAGES ONLY)
   const sessionName = req.body.session || req.body.sessionName;
   const webhookUrl = await loadWebhookUrl(sessionName);
-  
+
   // Define message-related events that should be forwarded
   const messageEvents = [
-    'onmessage',      // Incoming messages
-    'onack',          // Message delivery confirmations  
+    'onmessage', // Incoming messages
+    'onack', // Message delivery confirmations
     'onmessagereceived', // Message received confirmations
-    'onmessagesent',  // Message sent confirmations
-    'oncontact',      // Contact events
-    'onpresence',     // User presence updates
+    'onmessagesent', // Message sent confirmations
+    'oncontact', // Contact events
+    'onpresence', // User presence updates
     'onbatterychange', // Device battery status
-    'onchats',        // Chat list updates
-    'onlivemode',     // Live mode events
-    'onunreadmessages' // Unread message notifications
+    'onchats', // Chat list updates
+    'onlivemode', // Live mode events
+    'onunreadmessages', // Unread message notifications
   ];
-  
+
   // Only forward message-related events, filter out QR codes and system events
   const eventType = webhookData.event || 'unknown';
   const shouldForward = messageEvents.includes(eventType);
-  
+
   if (webhookUrl && shouldForward) {
     try {
       const axios = require('axios');
-      
+
       await axios.post(webhookUrl, webhookData, {
         timeout: 10000,
         headers: {
           'Content-Type': 'application/json',
-          'User-Agent': 'WhatsApp-Webhook-Bridge/1.0'
-        }
+          'User-Agent': 'WhatsApp-Webhook-Bridge/1.0',
+        },
       });
-      console.log(`📬 Forwarded MESSAGE webhook to: ${webhookUrl} (event: ${eventType})`);
+      console.log(
+        `📬 Forwarded MESSAGE webhook to: ${webhookUrl} (event: ${eventType})`
+      );
     } catch (error: any) {
-      console.log(`⚠️ Failed to forward webhook to ${webhookUrl}: ${error.message || error}`);
+      console.log(
+        `⚠️ Failed to forward webhook to ${webhookUrl}: ${
+          error.message || error
+        }`
+      );
     }
   } else if (webhookUrl && !shouldForward) {
-    console.log(`🚫 Filtered webhook event: ${eventType} (not forwarded to ${webhookUrl})`);
+    console.log(
+      `🚫 Filtered webhook event: ${eventType} (not forwarded to ${webhookUrl})`
+    );
   } else {
-    console.log(`💡 No webhook URL configured for session: ${sessionName || 'unknown'}`);
+    console.log(
+      `💡 No webhook URL configured for session: ${sessionName || 'unknown'}`
+    );
   }
 
   res.json({
@@ -282,25 +334,25 @@ export async function configureWebhook(req: Request, res: Response) {
   if (!webhookUrl) {
     return res.status(400).json({
       success: false,
-      message: 'Webhook URL is required'
+      message: 'Webhook URL is required',
     });
   }
 
   try {
     new URL(webhookUrl);
     currentWebhookUrl = webhookUrl;
-    
+
     console.log(`🔧 Webhook URL configured: ${webhookUrl}`);
-    
+
     res.json({
       success: true,
       message: 'Webhook URL configured successfully',
-      webhookUrl: webhookUrl
+      webhookUrl: webhookUrl,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: 'Invalid webhook URL format'
+      message: 'Invalid webhook URL format',
     });
   }
 }
@@ -309,6 +361,6 @@ export async function getWebhookConfig(req: Request, res: Response) {
   res.json({
     success: true,
     webhookUrl: currentWebhookUrl || 'Not configured',
-    isConfigured: !!currentWebhookUrl
+    isConfigured: !!currentWebhookUrl,
   });
 }

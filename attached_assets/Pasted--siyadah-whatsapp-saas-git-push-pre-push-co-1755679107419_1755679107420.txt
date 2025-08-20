@@ -1,0 +1,204 @@
+أريدك تصلّح مشروعي siyadah-whatsapp-saas بحيث ينجح git push بدون أن يفشل pre-push. نفّذ بدقة، وبـ commits صغيرة وواضحة. لا تغيّر منطق العمل إلا فيما يخص الإصلاحات المطلوبة. في كل خطوة: طبّق التعديل، شغّل yarn test, وثبّت النتيجة.
+
+المطلوب باختصار
+
+إزالة أسطر Husky القديمة (deprecated shim) من جميع hooks.
+
+جعل Jest يتجاهل dist/ ومنع suites الفارغة.
+
+حلّ تعارض ESM مع chalk (استخدام chalk@4).
+
+إصلاح خطأ storage.getUserByEmail is not a function (بتنفيذ الدالة أو mock في التست — اختر أحدهما فقط).
+
+توحيد الاستجابة لتُرجع count بدل total حيثما تتوقعه الاختبارات.
+
+التأكد أن TypeScript/Jest مضبوطين (بدون تغييرات أوسع من اللازم).
+
+التحقق النهائي: كل الـ tests تمر محليًا ثم يسمح الـ pre-push بالتمرير.
+
+قيود عامة
+
+لا تشغّل اختبارات على dist/.
+
+لا تغيّر APIs إلا إذا كان الاختبار يعتمد عليها صراحة (مثل حقل count).
+
+أعطني في النهاية ملخصًا وروابط commits.
+
+الخطوة 1: إصلاح Husky (تحذير DEPRECATED)
+
+افتح كل ملفات .husky/* خاصة pre-commit, commit-msg, pre-push.
+
+احذف السطرين (إن وُجدا) من كل ملف:
+
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+
+أبقِ الأوامر الفعلية فقط. اجعل الملفات executable:
+
+chmod +x .husky/* || true
+
+
+Commit:
+
+git add .husky
+git commit -m "chore(husky): remove deprecated shim lines (v9+ compatible)"
+
+الخطوة 2: إعداد Jest ليتجاهل dist/ ومنع suites الفارغة
+
+لو ما فيه jest.config.js (أو ts)، أنشئ jest.config.js بالمحتوى:
+
+/** @type {import('jest').Config} */
+module.exports = {
+  testEnvironment: 'node',
+  testPathIgnorePatterns: ['<rootDir>/dist/'],
+};
+
+
+ملف src/__tests__/setup.ts إن كان بلا اختبارات، حوّله لـ placeholder:
+
+// src/__tests__/setup.ts
+describe('setup', () => {
+  it.skip('placeholder', () => {});
+});
+
+
+Commit:
+
+git add jest.config.* package.json src/__tests__/setup.ts
+git commit -m "test(jest): ignore dist/ and disable empty setup suite"
+
+الخطوة 3: حل مشكلة ESM مع chalk
+
+ثبّت نسخة CommonJS:
+
+yarn add chalk@4
+
+
+تأكد أن الاستيراد في whatsapp_client_nodejs/WhatsAppClient.js بصيغة:
+
+const chalk = require('chalk');
+
+
+Commit:
+
+git add package.json yarn.lock whatsapp_client_nodejs/WhatsAppClient.js
+git commit -m "fix(deps): pin chalk@4 to avoid ESM issues under Jest CJS"
+
+الخطوة 4: إصلاح getUserByEmail
+
+اختر أحد الخيارين أدناه (الأولوية للتنفيذ الحقيقي، إن كان سهلًا):
+
+(أ) تنفيذ الدالة في التخزين (يفضّل)
+
+في ملف التخزين (مثل server/storage.ts)، أضف export لدالة:
+
+// server/storage.ts (عدّل المسارات/الأنواع حسب المشروع)
+type User = { id: string; email: string; name?: string };
+
+const _fakeUsers: Record<string, User> = {
+  'test@example.com': { id: 'u_1', email: 'test@example.com', name: 'Test User' },
+};
+
+export const storage = {
+  // ... باقي الدوال الموجودة
+  async getUserByEmail(email: string): Promise<User | null> {
+    return _fakeUsers[email.toLowerCase()] ?? null;
+  },
+};
+
+
+تأكد من صحّة الاستيراد في server/subclient-api.ts:
+
+import { storage } from './storage';
+
+(ب) أو: Mock داخل التست (لو ما تبغى تلمس التخزين الآن)
+
+في src/__tests__/api.test.ts أضف mock:
+
+jest.mock('../../server/storage', () => ({
+  storage: {
+    getUserByEmail: jest.fn(async (email: string) =>
+      email ? { id: 'u_1', email, name: 'Mocked User' } : null
+    ),
+    // أضف أي دوال أخرى يستعملها subclient-api في هذا الملف
+  },
+}));
+
+
+Commit (حسب ما عدّلت):
+
+git add server/storage.* src/__tests__/api.test.ts
+git commit -m "fix(api): provide storage.getUserByEmail (impl or test mock)"
+
+الخطوة 5: توحيد حقل العدّ في الـ API
+
+في server/subclient-api.ts عندما يتم إرجاع قائمة subclients، أضِف/استبدل الحقل ليكون:
+
+res.status(200).json({
+  success: true,
+  subclients,
+  count: subclients.length,
+});
+
+
+Commit:
+
+git add server/subclient-api.ts
+git commit -m "fix(api): include `count` in subclients list response"
+
+الخطوة 6: تحقق من إعداد TypeScript/Jest (بدون تغييرات واسعة)
+
+إذا الاختبارات TypeScript موجودة وتعمل (واضح من مرور bufferUtils سابقًا)، لا تغيّر الإعدادات كثيرًا.
+
+عند الحاجة فقط:
+
+yarn add -D ts-jest @types/jest
+
+
+وحدث jest.config.js:
+
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  testPathIgnorePatterns: ['<rootDir>/dist/'],
+};
+
+
+Commit إن أضيفت أدوات:
+
+git add jest.config.* package.json yarn.lock
+git commit -m "chore(test): ensure ts-jest preset for TS tests (if needed)"
+
+الخطوة 7: التشغيل والتحقق ثم الدفع
+
+شغّل:
+
+yarn test
+
+
+عالج أي فشل متبقٍ بأقل تغيير ممكن وكرّر التشغيل حتى تمُرّ كل الاختبارات.
+
+ادفع:
+
+git push
+
+معايير القبول
+
+لا تظهر رسالة Husky DEPRECATED.
+
+yarn test يمرّ بالكامل محليًا، ولا توجد Suites داخل dist/.
+
+خطأ getUserByEmail is not a function انتهى.
+
+لا خطأ Cannot use import statement outside a module بسبب chalk.
+
+pre-push لا يفشل.
+
+في النهاية، اعطني:
+
+ملخصًا بالتغييرات التي تمت فعليًا (قائمة الملفات وعدد الأسطر المعدّلة).
+
+روابط commits.
+
+مخرجات آخر تشغيل لـ yarn test.

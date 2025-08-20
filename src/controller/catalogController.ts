@@ -15,8 +15,8 @@
  */
 import { Request, Response } from 'express';
 
-import { createCatalogLink } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
+import { createCatalogLink } from '../util/functions';
 
 export async function getProducts(req: Request, res: Response) {
   /**
@@ -773,11 +773,11 @@ export async function sendLinkCatalog(req: Request, res: Response) {
     });
   const results: any = [];
   const queuedResults: any = [];
-  
+
   try {
     const session = await req.client.getWid();
     const catalogLink = createCatalogLink(session);
-    
+
     // CRITICAL FIX: Process all catalog messages through the queue system with 30-second delays
     for (const phone of phones) {
       const catalogMessage = `${message} ${catalogLink}`;
@@ -807,7 +807,7 @@ export async function sendLinkCatalog(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: 'Catalog message queued for delivery with 30-second delay'
+            message: 'Catalog message queued for delivery with 30-second delay',
           });
         } else {
           results.push({ phone: phone, status: queueResult.result.id });
@@ -816,7 +816,7 @@ export async function sendLinkCatalog(req: Request, res: Response) {
         results.push({
           phone: phone,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -831,8 +831,8 @@ export async function sendLinkCatalog(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     res.status(500).json({

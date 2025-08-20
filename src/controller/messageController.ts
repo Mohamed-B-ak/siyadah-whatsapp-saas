@@ -16,18 +16,18 @@
 
 import { Request, Response } from 'express';
 
-import { unlinkAsync } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
+import { unlinkAsync } from '../util/functions';
 
 function returnError(req: Request, res: Response, error: any) {
   req.logger.error(error);
-  
+
   // Check if response has already been sent to avoid header errors
   if (res.headersSent) {
     req.logger.warn('Response already sent, cannot send error response');
     return;
   }
-  
+
   res.status(500).json({
     status: 'Error',
     message: 'Erro ao enviar a mensagem.',
@@ -113,7 +113,7 @@ export async function sendMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -139,7 +139,7 @@ export async function sendMessage(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Message queued for delivery with 30-second delay`
+            message: `Message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -148,7 +148,7 @@ export async function sendMessage(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -160,7 +160,7 @@ export async function sendMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -178,8 +178,8 @@ export async function sendMessage(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -302,7 +302,7 @@ export async function sendFile(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -321,7 +321,7 @@ export async function sendFile(req: Request, res: Response) {
             filename: opts.filename,
             caption: message,
             quotedMsg: opts.quotedMsg,
-            ...opts
+            ...opts,
           });
         }
       );
@@ -333,7 +333,7 @@ export async function sendFile(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `File queued for delivery with 30-second delay`
+            message: `File queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -342,7 +342,7 @@ export async function sendFile(req: Request, res: Response) {
         results.push({
           phone: contact,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -354,7 +354,7 @@ export async function sendFile(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No files were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -375,8 +375,8 @@ export async function sendFile(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -434,7 +434,7 @@ export async function sendVoice(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -454,7 +454,7 @@ export async function sendVoice(req: Request, res: Response) {
             opts.path,
             opts.filename,
             msg,
-            opts.quotedMessageId,
+            opts.quotedMessageId
           );
         }
       );
@@ -466,7 +466,7 @@ export async function sendVoice(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Voice message queued for delivery with 30-second delay`
+            message: `Voice message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -475,7 +475,7 @@ export async function sendVoice(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -487,7 +487,7 @@ export async function sendVoice(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No voice messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -505,8 +505,8 @@ export async function sendVoice(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -556,7 +556,7 @@ export async function sendVoice64(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -576,7 +576,7 @@ export async function sendVoice64(req: Request, res: Response) {
             opts.base64Ptt,
             'Voice Audio',
             '',
-            opts.quotedMessageId,
+            opts.quotedMessageId
           );
         }
       );
@@ -588,7 +588,7 @@ export async function sendVoice64(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Voice64 message queued for delivery with 30-second delay`
+            message: `Voice64 message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -597,7 +597,7 @@ export async function sendVoice64(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -609,7 +609,7 @@ export async function sendVoice64(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No voice64 messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -627,8 +627,8 @@ export async function sendVoice64(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -680,7 +680,7 @@ export async function sendLinkPreview(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -695,7 +695,11 @@ export async function sendLinkPreview(req: Request, res: Response) {
         caption || `Link: ${url}`,
         { url, caption },
         async (phoneNumber: string, msg: string, opts: any) => {
-          return await req.client.sendLinkPreview(`${phoneNumber}`, opts.url, opts.caption);
+          return await req.client.sendLinkPreview(
+            `${phoneNumber}`,
+            opts.url,
+            opts.caption
+          );
         }
       );
 
@@ -706,7 +710,7 @@ export async function sendLinkPreview(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Link preview queued for delivery with 30-second delay`
+            message: `Link preview queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -715,7 +719,7 @@ export async function sendLinkPreview(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -727,7 +731,7 @@ export async function sendLinkPreview(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No link previews were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -745,8 +749,8 @@ export async function sendLinkPreview(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -802,7 +806,7 @@ export async function sendLocation(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -833,7 +837,7 @@ export async function sendLocation(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Location queued for delivery with 30-second delay`
+            message: `Location queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -842,7 +846,7 @@ export async function sendLocation(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -854,7 +858,7 @@ export async function sendLocation(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No locations were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -872,8 +876,8 @@ export async function sendLocation(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -900,7 +904,7 @@ export async function sendButtons(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -926,7 +930,7 @@ export async function sendButtons(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Button message queued for delivery with 30-second delay`
+            message: `Button message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -935,7 +939,7 @@ export async function sendButtons(req: Request, res: Response) {
         results.push({
           phone: contact,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -947,7 +951,7 @@ export async function sendButtons(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No button messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -965,8 +969,8 @@ export async function sendButtons(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1041,7 +1045,7 @@ export async function sendListMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -1071,7 +1075,7 @@ export async function sendListMessage(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `List message queued for delivery with 30-second delay`
+            message: `List message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1080,7 +1084,7 @@ export async function sendListMessage(req: Request, res: Response) {
         results.push({
           phone: contact,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1092,7 +1096,7 @@ export async function sendListMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No list messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1110,8 +1114,8 @@ export async function sendListMessage(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1216,7 +1220,11 @@ export async function sendOrderMessage(req: Request, res: Response) {
         `Order: ${items.length} items`,
         { items, options },
         async (phoneNumber: string, msg: string, opts: any) => {
-          return await req.client.sendOrderMessage(phoneNumber, opts.items, opts.options);
+          return await req.client.sendOrderMessage(
+            phoneNumber,
+            opts.items,
+            opts.options
+          );
         }
       );
 
@@ -1227,7 +1235,7 @@ export async function sendOrderMessage(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Order message queued for delivery with 30-second delay`
+            message: `Order message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1236,7 +1244,7 @@ export async function sendOrderMessage(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1248,7 +1256,7 @@ export async function sendOrderMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No order messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1266,8 +1274,8 @@ export async function sendOrderMessage(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1322,7 +1330,7 @@ export async function sendPollMessage(req: Request, res: Response) {
 
     for (const contact of phone) {
       results.push(
-        await req.client.sendPollMessage(contact, name, choices, options),
+        await req.client.sendPollMessage(contact, name, choices, options)
       );
     }
 
@@ -1381,7 +1389,7 @@ export async function sendStatusText(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -1406,7 +1414,7 @@ export async function sendStatusText(req: Request, res: Response) {
           status: 'queued',
           messageId: queueResult.messageId,
           estimatedSendTime: queueResult.estimatedSendTime,
-          message: `Status message queued for delivery with 30-second delay`
+          message: `Status message queued for delivery with 30-second delay`,
         });
       } else {
         results.push(queueResult.result);
@@ -1415,7 +1423,7 @@ export async function sendStatusText(req: Request, res: Response) {
       results.push({
         phone: 'status@broadcast',
         status: 'error',
-        error: queueResult.error
+        error: queueResult.error,
       });
     }
 
@@ -1426,7 +1434,7 @@ export async function sendStatusText(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'Status message was not processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1444,8 +1452,8 @@ export async function sendStatusText(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1503,7 +1511,11 @@ export async function replyMessage(req: Request, res: Response) {
         `Reply: ${message}`,
         { message, messageId },
         async (phoneNumber: string, msg: string, opts: any) => {
-          return await req.client.reply(phoneNumber, opts.message, opts.messageId);
+          return await req.client.reply(
+            phoneNumber,
+            opts.message,
+            opts.messageId
+          );
         }
       );
 
@@ -1514,7 +1526,7 @@ export async function replyMessage(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Reply message queued for delivery with 30-second delay`
+            message: `Reply message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1523,7 +1535,7 @@ export async function replyMessage(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1535,7 +1547,7 @@ export async function replyMessage(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No reply messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1553,8 +1565,8 @@ export async function replyMessage(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1607,7 +1619,7 @@ export async function sendMentioned(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'WhatsApp session not connected. Please scan QR code first.',
-        error: 'Session client not available'
+        error: 'Session client not available',
       });
     }
 
@@ -1625,7 +1637,7 @@ export async function sendMentioned(req: Request, res: Response) {
           return await req.client.sendMentioned(
             `${phoneNumber}`,
             msg,
-            opts.mentioned,
+            opts.mentioned
           );
         }
       );
@@ -1637,7 +1649,7 @@ export async function sendMentioned(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Mentioned message queued for delivery with 30-second delay`
+            message: `Mentioned message queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1646,7 +1658,7 @@ export async function sendMentioned(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1658,7 +1670,7 @@ export async function sendMentioned(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No mentioned messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1677,8 +1689,8 @@ export async function sendMentioned(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     req.logger.error(error);
@@ -1746,7 +1758,10 @@ export async function sendImageAsSticker(req: Request, res: Response) {
         'Image as sticker',
         { pathFile },
         async (phoneNumber: string, msg: string, opts: any) => {
-          return await req.client.sendImageAsSticker(phoneNumber, opts.pathFile);
+          return await req.client.sendImageAsSticker(
+            phoneNumber,
+            opts.pathFile
+          );
         }
       );
 
@@ -1757,7 +1772,7 @@ export async function sendImageAsSticker(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Image sticker queued for delivery with 30-second delay`
+            message: `Image sticker queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1766,7 +1781,7 @@ export async function sendImageAsSticker(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1779,7 +1794,7 @@ export async function sendImageAsSticker(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No sticker messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1793,15 +1808,15 @@ export async function sendImageAsSticker(req: Request, res: Response) {
 
     // Clean up file after all processing
     if (req.file) await unlinkAsync(pathFile);
-    
+
     returnSucess(res, {
       immediate: results,
       queued: queuedResults,
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);
@@ -1864,7 +1879,10 @@ export async function sendImageAsStickerGif(req: Request, res: Response) {
         'Animated sticker',
         { pathFile },
         async (phoneNumber: string, msg: string, opts: any) => {
-          return await req.client.sendImageAsStickerGif(phoneNumber, opts.pathFile);
+          return await req.client.sendImageAsStickerGif(
+            phoneNumber,
+            opts.pathFile
+          );
         }
       );
 
@@ -1875,7 +1893,7 @@ export async function sendImageAsStickerGif(req: Request, res: Response) {
             status: 'queued',
             messageId: queueResult.messageId,
             estimatedSendTime: queueResult.estimatedSendTime,
-            message: `Animated sticker queued for delivery with 30-second delay`
+            message: `Animated sticker queued for delivery with 30-second delay`,
           });
         } else {
           results.push(queueResult.result);
@@ -1884,7 +1902,7 @@ export async function sendImageAsStickerGif(req: Request, res: Response) {
         results.push({
           phone: contato,
           status: 'error',
-          error: queueResult.error
+          error: queueResult.error,
         });
       }
     }
@@ -1897,7 +1915,7 @@ export async function sendImageAsStickerGif(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'No animated sticker messages were processed',
-        error: 'Empty results'
+        error: 'Empty results',
       });
     }
 
@@ -1911,15 +1929,15 @@ export async function sendImageAsStickerGif(req: Request, res: Response) {
 
     // Clean up file after all processing
     if (req.file) await unlinkAsync(pathFile);
-    
+
     returnSucess(res, {
       immediate: results,
       queued: queuedResults,
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
-      }
+        queued: queuedResults.length,
+      },
     });
   } catch (error) {
     returnError(req, res, error);

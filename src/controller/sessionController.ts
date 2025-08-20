@@ -288,18 +288,24 @@ export async function closeSession(req: Request, res: Response): Promise<any> {
      }
    */
   const session = req.session;
-  
+
   req.logger.info(`[CLOSE-SESSION] Starting session closure for: ${session}`);
-  
+
   try {
     // Check if session exists in clientsArray
     const sessionClient = (clientsArray as any)[session];
-    
-    req.logger.info(`[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${sessionClient?.status}`);
-    
+
+    req.logger.info(
+      `[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${
+        sessionClient?.status
+      }`
+    );
+
     if (!sessionClient || sessionClient.status === null) {
       // Session already closed or doesn't exist
-      req.logger.info(`[CLOSE-SESSION] Session ${session} already closed or doesn't exist`);
+      req.logger.info(
+        `[CLOSE-SESSION] Session ${session} already closed or doesn't exist`
+      );
       return await res
         .status(200)
         .json({ status: true, message: 'Session successfully closed' });
@@ -310,12 +316,14 @@ export async function closeSession(req: Request, res: Response): Promise<any> {
 
       // Close the client if it exists
       if (req.client && typeof req.client.close === 'function') {
-        req.logger.info(`[CLOSE-SESSION] Closing client for session ${session}`);
+        req.logger.info(
+          `[CLOSE-SESSION] Closing client for session ${session}`
+        );
         await req.client.close();
       }
-      
+
       req.io.emit('whatsapp-status', false);
-      
+
       // Call webhook if client exists
       if (req.client) {
         callWebHook(req.client, req, 'closesession', {
@@ -330,10 +338,15 @@ export async function closeSession(req: Request, res: Response): Promise<any> {
         .json({ status: true, message: 'Session successfully closed' });
     }
   } catch (error) {
-    req.logger.error(`[CLOSE-SESSION] Error closing session ${session}:`, error);
-    return await res
-      .status(500)
-      .json({ status: false, message: 'Error closing session', error: (error as Error).message });
+    req.logger.error(
+      `[CLOSE-SESSION] Error closing session ${session}:`,
+      error
+    );
+    return await res.status(500).json({
+      status: false,
+      message: 'Error closing session',
+      error: (error as Error).message,
+    });
   }
 }
 
@@ -351,44 +364,61 @@ export async function logOutSession(req: Request, res: Response): Promise<any> {
      }
    */
   const session = req.session;
-  
-  req.logger.info(`[LOGOUT-SESSION] Starting session logout and deletion for: ${session}`);
-  
+
+  req.logger.info(
+    `[LOGOUT-SESSION] Starting session logout and deletion for: ${session}`
+  );
+
   try {
     // First logout the WhatsApp client if it exists and is connected
     if (req.client && typeof req.client.logout === 'function') {
-      req.logger.info(`[LOGOUT-SESSION] Logging out WhatsApp client for session: ${session}`);
+      req.logger.info(
+        `[LOGOUT-SESSION] Logging out WhatsApp client for session: ${session}`
+      );
       try {
         await req.client.logout();
       } catch (logoutError) {
-        req.logger.warn(`[LOGOUT-SESSION] Client logout failed (session may be inactive): ${(logoutError as Error).message}`);
+        req.logger.warn(
+          `[LOGOUT-SESSION] Client logout failed (session may be inactive): ${
+            (logoutError as Error).message
+          }`
+        );
       }
     } else {
-      req.logger.info(`[LOGOUT-SESSION] No active client found for session: ${session}, proceeding with cleanup`);
+      req.logger.info(
+        `[LOGOUT-SESSION] No active client found for session: ${session}, proceeding with cleanup`
+      );
     }
-    
+
     // Remove from sessions array and force cleanup from all registries
     deleteSessionOnArray(req.session);
     req.logger.info(`[LOGOUT-SESSION] Removed session ${session} from array`);
-    
+
     // Force remove from WPPConnect internal registry
     try {
       const { clientsArray } = require('../util/sessionUtil');
       if (clientsArray[req.session]) {
         delete clientsArray[req.session];
-        req.logger.info(`[LOGOUT-SESSION] Force removed ${session} from WPPConnect registry`);
+        req.logger.info(
+          `[LOGOUT-SESSION] Force removed ${session} from WPPConnect registry`
+        );
       }
     } catch (registryError) {
-      req.logger.warn(`[LOGOUT-SESSION] Registry cleanup warning: ${(registryError as Error).message}`);
+      req.logger.warn(
+        `[LOGOUT-SESSION] Registry cleanup warning: ${
+          (registryError as Error).message
+        }`
+      );
     }
 
     // Clean up session files and data comprehensively
     const pathUserData = config.customUserDataDir + req.session;
     const pathTokens = __dirname + `../../../tokens/${req.session}.data.json`;
     const pathTokensDir = __dirname + `../../../tokens/${req.session}`;
-    const pathWppTokens = __dirname + `../../../wppconnect_tokens/${req.session}`;
+    const pathWppTokens =
+      __dirname + `../../../wppconnect_tokens/${req.session}`;
     const pathUploads = __dirname + `../../../uploads/${req.session}`;
-    
+
     // Array of all possible session paths
     const sessionPaths = [
       pathUserData,
@@ -400,12 +430,14 @@ export async function logOutSession(req: Request, res: Response): Promise<any> {
       `./tokens/${req.session}`,
       `./tokens/${req.session}.data.json`,
       `./wppconnect_tokens/${req.session}`,
-      `./uploads/${req.session}`
+      `./uploads/${req.session}`,
     ];
 
     for (const sessionPath of sessionPaths) {
       if (fs.existsSync(sessionPath)) {
-        req.logger.info(`[LOGOUT-SESSION] Removing session data: ${sessionPath}`);
+        req.logger.info(
+          `[LOGOUT-SESSION] Removing session data: ${sessionPath}`
+        );
         try {
           await fs.promises.rm(sessionPath, {
             recursive: true,
@@ -413,16 +445,22 @@ export async function logOutSession(req: Request, res: Response): Promise<any> {
             force: true,
             retryDelay: 1000,
           });
-          req.logger.info(`[LOGOUT-SESSION] Successfully removed: ${sessionPath}`);
+          req.logger.info(
+            `[LOGOUT-SESSION] Successfully removed: ${sessionPath}`
+          );
         } catch (cleanupError) {
-          req.logger.warn(`[LOGOUT-SESSION] Failed to remove ${sessionPath}: ${(cleanupError as Error).message}`);
+          req.logger.warn(
+            `[LOGOUT-SESSION] Failed to remove ${sessionPath}: ${
+              (cleanupError as Error).message
+            }`
+          );
         }
       }
     }
 
     // Emit status change
     req.io.emit('whatsapp-status', false);
-    
+
     // Call webhook if client exists
     if (req.client) {
       callWebHook(req.client, req, 'logoutsession', {
@@ -431,22 +469,28 @@ export async function logOutSession(req: Request, res: Response): Promise<any> {
       });
     }
 
-    req.logger.info(`[LOGOUT-SESSION] Session ${session} successfully logged out and deleted`);
-    
+    req.logger.info(
+      `[LOGOUT-SESSION] Session ${session} successfully logged out and deleted`
+    );
+
     // Only send response if headers haven't been sent
     if (!res.headersSent) {
       return res
         .status(200)
         .json({ status: true, message: 'Session successfully closed' });
     }
-      
   } catch (error) {
-    req.logger.error(`[LOGOUT-SESSION] Error logging out session ${session}:`, error);
+    req.logger.error(
+      `[LOGOUT-SESSION] Error logging out session ${session}:`,
+      error
+    );
     // Only send response if headers haven't been sent
     if (!res.headersSent) {
-      return res
-        .status(500)
-        .json({ status: false, message: 'Error closing session', error: (error as Error).message });
+      return res.status(500).json({
+        status: false,
+        message: 'Error closing session',
+        error: (error as Error).message,
+      });
     }
   }
 }
@@ -606,14 +650,18 @@ export async function getSessionState(req: Request, res: Response) {
   try {
     const sessionName = req.params.session;
     const { waitQrCode = false } = req.body;
-    
+
     // Get client from clientsArray instead of req.client
     const { clientsArray } = require('../util/sessionUtil');
     const client = clientsArray[sessionName];
-    
-    req.logger.info(`[STATUS-CHECK] Checking status for session: ${sessionName}`);
-    req.logger.info(`[STATUS-CHECK] Client found: ${!!client}, Status: ${client?.status}`);
-    
+
+    req.logger.info(
+      `[STATUS-CHECK] Checking status for session: ${sessionName}`
+    );
+    req.logger.info(
+      `[STATUS-CHECK] Client found: ${!!client}, Status: ${client?.status}`
+    );
+
     const qr =
       client?.urlcode != null && client?.urlcode != ''
         ? await QRCode.toDataURL(client.urlcode, {
@@ -624,26 +672,32 @@ export async function getSessionState(req: Request, res: Response) {
             margin: 2,
             color: {
               dark: '#000000',
-              light: '#FFFFFF'
-            }
+              light: '#FFFFFF',
+            },
           })
         : null;
 
     // Return proper status based on actual client state
     if (!client) {
-      req.logger.info(`[STATUS-CHECK] No client found for session: ${sessionName}`);
-      res.status(200).json({ status: 'CLOSED', qrcode: null, message: 'Session not found' });
+      req.logger.info(
+        `[STATUS-CHECK] No client found for session: ${sessionName}`
+      );
+      res
+        .status(200)
+        .json({ status: 'CLOSED', qrcode: null, message: 'Session not found' });
     } else {
       const actualStatus = client.status || 'INITIALIZING';
-      req.logger.info(`[STATUS-CHECK] Returning status: ${actualStatus} for session: ${sessionName}`);
-      
+      req.logger.info(
+        `[STATUS-CHECK] Returning status: ${actualStatus} for session: ${sessionName}`
+      );
+
       res.status(200).json({
         status: actualStatus,
         qrcode: qr,
         urlcode: client.urlcode,
         version: version,
         sessionName: sessionName,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   } catch (ex) {
@@ -678,22 +732,26 @@ export async function getQrCode(req: Request, res: Response) {
     const client = clientsArray[session];
 
     if (client?.urlcode || client?.qrcode) {
-      req.logger.info(`[QR-REQUEST] QR code data found for session: ${session}`);
+      req.logger.info(
+        `[QR-REQUEST] QR code data found for session: ${session}`
+      );
       req.logger.info(`[QR-REQUEST] urlcode present: ${!!client.urlcode}`);
       req.logger.info(`[QR-REQUEST] qrcode present: ${!!client.qrcode}`);
       req.logger.info(`[QR-REQUEST] Client status: ${client.status}`);
-      
+
       if (client.qrcode) {
         req.logger.info(`[QR-REQUEST] QR code length: ${client.qrcode.length}`);
-        req.logger.info(`[QR-REQUEST] QR code format: ${client.qrcode.substring(0, 30)}...`);
+        req.logger.info(
+          `[QR-REQUEST] QR code format: ${client.qrcode.substring(0, 30)}...`
+        );
       }
 
       const acceptHeader = req.headers.accept || '';
-      
+
       if (acceptHeader.includes('application/json')) {
         // Prioritize stored qrcode over generating new one
         let qrCodeData = client.qrcode;
-        
+
         // Only generate if no stored QR code exists
         if (!qrCodeData && client.urlcode) {
           try {
@@ -705,13 +763,17 @@ export async function getQrCode(req: Request, res: Response) {
               margin: 2,
               color: {
                 dark: '#000000',
-                light: '#FFFFFF'
-              }
+                light: '#FFFFFF',
+              },
             };
             qrCodeData = await QRCode.toDataURL(client.urlcode, qrOptions);
-            req.logger.info(`[QR-REQUEST] Generated high-quality QR code from urlcode`);
+            req.logger.info(
+              `[QR-REQUEST] Generated high-quality QR code from urlcode`
+            );
           } catch (qrError) {
-            req.logger.error(`[QR-REQUEST] QR generation failed: ${(qrError as Error).message}`);
+            req.logger.error(
+              `[QR-REQUEST] QR generation failed: ${(qrError as Error).message}`
+            );
           }
         }
 
@@ -720,36 +782,43 @@ export async function getQrCode(req: Request, res: Response) {
             status: 'waiting',
             message: 'QR code is being generated, please wait...',
             session: session,
-            state: client.status || 'INITIALIZING'
+            state: client.status || 'INITIALIZING',
           });
         }
 
-        req.logger.info(`[QR-REQUEST] Returning QR code - length: ${qrCodeData.length}`);
-        
+        req.logger.info(
+          `[QR-REQUEST] Returning QR code - length: ${qrCodeData.length}`
+        );
+
         // Store QR code in database
         try {
           const { storage } = require('../../server/mongodb');
           if (storage && qrCodeData) {
             await storage.updateSessionQRCode(session, qrCodeData);
-            req.logger.info(`[QR-REQUEST] QR code saved to database for session: ${session}`);
+            req.logger.info(
+              `[QR-REQUEST] QR code saved to database for session: ${session}`
+            );
           }
         } catch (dbError) {
-          req.logger.warn(`[QR-REQUEST] Failed to save QR code to database: ${(dbError as Error).message}`);
+          req.logger.warn(
+            `[QR-REQUEST] Failed to save QR code to database: ${
+              (dbError as Error).message
+            }`
+          );
         }
-        
+
         return res.status(200).json({
           status: 'success',
           qrcode: qrCodeData,
           urlcode: client.urlcode || null,
           session: session,
           state: client.status || 'QRCODE',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-        
       } else {
         // PNG format response
         let qrDataURL = client.qrcode;
-        
+
         if (!qrDataURL && client.urlcode) {
           const qrOptions = {
             errorCorrectionLevel: 'H' as const,
@@ -759,11 +828,13 @@ export async function getQrCode(req: Request, res: Response) {
             margin: 2,
             color: {
               dark: '#000000',
-              light: '#FFFFFF'
-            }
+              light: '#FFFFFF',
+            },
           };
           qrDataURL = await QRCode.toDataURL(client.urlcode, qrOptions);
-          req.logger.info(`[QR-REQUEST] Generated high-quality QR code from urlcode`);
+          req.logger.info(
+            `[QR-REQUEST] Generated high-quality QR code from urlcode`
+          );
         }
 
         if (!qrDataURL) {
@@ -780,58 +851,84 @@ export async function getQrCode(req: Request, res: Response) {
             margin: 2,
             color: {
               dark: '#000000',
-              light: '#FFFFFF'
-            }
+              light: '#FFFFFF',
+            },
           });
-          
-          req.logger.info(`[QR-REQUEST] Fresh PNG buffer generated - Size: ${freshQrBuffer.length} bytes`);
-          
+
+          req.logger.info(
+            `[QR-REQUEST] Fresh PNG buffer generated - Size: ${freshQrBuffer.length} bytes`
+          );
+
           // Store QR code in database as base64
           try {
             const { storage } = require('../../server/mongodb');
             if (storage && freshQrBuffer) {
-              const qrCodeBase64 = `data:image/png;base64,${freshQrBuffer.toString('base64')}`;
+              const qrCodeBase64 = `data:image/png;base64,${freshQrBuffer.toString(
+                'base64'
+              )}`;
               await storage.updateSessionQRCode(session, qrCodeBase64);
-              req.logger.info(`[QR-REQUEST] QR code PNG saved to database for session: ${session}`);
+              req.logger.info(
+                `[QR-REQUEST] QR code PNG saved to database for session: ${session}`
+              );
             }
           } catch (dbError) {
-            req.logger.warn(`[QR-REQUEST] Failed to save QR code PNG to database: ${(dbError as Error).message}`);
+            req.logger.warn(
+              `[QR-REQUEST] Failed to save QR code PNG to database: ${
+                (dbError as Error).message
+              }`
+            );
           }
-          
+
           res.writeHead(200, {
             'Content-Type': 'image/png',
             'Content-Length': freshQrBuffer.length,
           });
           res.end(freshQrBuffer);
-          
         } catch (bufferError) {
-          req.logger.error(`[QR-REQUEST] Buffer generation failed: ${(bufferError as Error).message}`);
-          
+          req.logger.error(
+            `[QR-REQUEST] Buffer generation failed: ${
+              (bufferError as Error).message
+            }`
+          );
+
           // Fallback to base64 conversion
-          const base64Data = qrDataURL.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-          
+          const base64Data = qrDataURL.replace(
+            /^data:image\/(png|jpeg|jpg);base64,/,
+            ''
+          );
+
           // Clean base64 string
           const cleanBase64 = base64Data.replace(/[^A-Za-z0-9+/=]/g, '');
-          
+
           // Validate base64 format
           if (!/^[A-Za-z0-9+/]*={0,2}$/.test(cleanBase64)) {
-            req.logger.error(`[QR-REQUEST] Invalid base64 format after cleaning`);
+            req.logger.error(
+              `[QR-REQUEST] Invalid base64 format after cleaning`
+            );
             throw new Error('Invalid QR code format');
           }
 
           const img = Buffer.from(cleanBase64, 'base64');
-          
-          req.logger.info(`[QR-REQUEST] Fallback PNG created - Size: ${img.length} bytes`);
+
+          req.logger.info(
+            `[QR-REQUEST] Fallback PNG created - Size: ${img.length} bytes`
+          );
 
           // Store QR code in database as base64 (fallback)
           try {
             const { storage } = require('../../server/mongodb');
             if (storage && qrDataURL) {
               await storage.updateSessionQRCode(session, qrDataURL);
-              req.logger.info(`[QR-REQUEST] QR code fallback saved to database for session: ${session}`);
+              req.logger.info(
+                `[QR-REQUEST] QR code fallback saved to database for session: ${session}`
+              );
             }
           } catch (dbError) {
-            req.logger.warn(`[QR-REQUEST] Failed to save QR code fallback to database: ${(dbError as Error).message}`);
+            req.logger.warn(
+              `[QR-REQUEST] Failed to save QR code fallback to database: ${
+                (dbError as Error).message
+              }`
+            );
           }
 
           res.writeHead(200, {
@@ -845,7 +942,8 @@ export async function getQrCode(req: Request, res: Response) {
       req.logger.warn(`[QR-REQUEST] Session not found: ${session}`);
       res.status(200).json({
         status: null,
-        message: 'Session not started. Please, use the /start-session route, for initialization your session',
+        message:
+          'Session not started. Please, use the /start-session route, for initialization your session',
       });
     } else {
       req.logger.warn(
@@ -1039,14 +1137,14 @@ export async function getSecretKey(req: Request, res: Response) {
     res.json({
       status: true,
       secretKey: config.secretKey,
-      message: 'Secret key retrieved successfully'
+      message: 'Secret key retrieved successfully',
     });
   } catch (error) {
     req.logger.error(error);
     res.status(500).json({
       status: false,
       message: 'Error retrieving secret key',
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 }

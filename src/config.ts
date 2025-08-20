@@ -1,7 +1,11 @@
 import { ServerOptions } from './types/ServerOptions';
 
 export default {
-  secretKey: process.env.SECRET_KEY || 'SK_SIYADAH_WA_2025_PROD_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+  secretKey:
+    process.env.SECRET_KEY ||
+    'SK_SIYADAH_WA_2025_PROD_' +
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15),
   host: '0.0.0.0',
   port: process.env.PORT || '5000',
   deviceName: 'WppConnect',

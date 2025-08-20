@@ -1,5 +1,6 @@
-import request from 'supertest';
 import express from 'express';
+import request from 'supertest';
+
 import subclientAPI from '../../server/subclient-api';
 
 // Mock storage

@@ -28,10 +28,10 @@ import * as MessageController from '../controller/messageController';
 import * as MiscController from '../controller/miscController';
 import * as NewsletterController from '../controller/newsletterController';
 import * as OrderController from '../controller/orderController';
+import * as QueueController from '../controller/queueController';
 import * as SessionController from '../controller/sessionController';
 import * as StatusController from '../controller/statusController';
 import * as WebhookController from '../controller/webhookController';
-import * as QueueController from '../controller/queueController';
 import verifyToken from '../middleware/auth';
 import * as HealthCheck from '../middleware/healthCheck';
 import * as prometheusRegister from '../middleware/instrumentation';
@@ -50,19 +50,19 @@ routes.get('/api/health', async (req, res) => {
       services: {
         database: { status: 'up' },
         whatsapp: { status: 'up', activeSessions: 0 },
-        system: { 
+        system: {
           uptime: process.uptime(),
-          memory: process.memoryUsage()
-        }
+          memory: process.memoryUsage(),
+        },
       },
-      version: '2.8.6'
+      version: '2.8.6',
     };
     res.json(health);
   } catch (error) {
     res.status(503).json({
       status: 'unhealthy',
       error: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 });
@@ -84,13 +84,14 @@ routes.post('/api/:session/:secretkey/generate-token', encryptSession);
 routes.post('/api/set-messaging-key', async (req, res) => {
   try {
     const { storage } = await import('../../server/storage');
-    const messagingApiKey = "685c1019b12fc82021121258_mohamed_session:msg_d1550d2caba7d4343781";
-    
+    const messagingApiKey =
+      '685c1019b12fc82021121258_mohamed_session:msg_d1550d2caba7d4343781';
+
     // Update Mohamed's company with fixed messaging API key
-    const result = await storage.updateCompanyByEmail("mohamed@akacha.tn", {
-      messagingApiKey: messagingApiKey
+    const result = await storage.updateCompanyByEmail('mohamed@akacha.tn', {
+      messagingApiKey: messagingApiKey,
     });
-    
+
     if (result) {
       res.json({
         success: true,
@@ -98,20 +99,20 @@ routes.post('/api/set-messaging-key', async (req, res) => {
         data: {
           company: result.name,
           masterApiKey: result.masterApiKey,
-          messagingApiKey: result.messagingApiKey
-        }
+          messagingApiKey: result.messagingApiKey,
+        },
       });
     } else {
       res.status(404).json({
         success: false,
-        message: 'Company not found'
+        message: 'Company not found',
       });
     }
   } catch (error) {
     console.error('Error setting messaging key:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to set messaging API key'
+      message: 'Failed to set messaging API key',
     });
   }
 });
@@ -229,9 +230,21 @@ routes.post('/api/webhook/configure', WebhookController.configureWebhook);
 routes.get('/api/webhook/config', WebhookController.getWebhookConfig);
 
 // Message Queue Management Routes
-routes.get('/api/:session/queue/status', verifyToken, QueueController.getQueueStatus);
-routes.get('/api/:session/queue/stats', verifyToken, QueueController.getQueueStats);
-routes.delete('/api/:session/queue/clear', verifyToken, QueueController.clearQueue);
+routes.get(
+  '/api/:session/queue/status',
+  verifyToken,
+  QueueController.getQueueStatus
+);
+routes.get(
+  '/api/:session/queue/stats',
+  verifyToken,
+  QueueController.getQueueStats
+);
+routes.delete(
+  '/api/:session/queue/clear',
+  verifyToken,
+  QueueController.clearQueue
+);
 routes.get('/api/queue/overview', verifyToken, QueueController.getAllQueues);
 routes.post(
   '/api/:session/send-file',

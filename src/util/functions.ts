@@ -50,9 +50,13 @@ const MESSAGE_RATE_LIMIT = {
   RESET_INTERVAL: 60 * 60 * 1000, // 1 hour
 };
 
-function shouldAllowMessageWebhook(sessionId: string, event: string, logger: any): boolean {
+function shouldAllowMessageWebhook(
+  sessionId: string,
+  event: string,
+  logger: any
+): boolean {
   const now = Date.now();
-  
+
   // Initialize if not exists
   if (!messageRateLimits[sessionId]) {
     messageRateLimits[sessionId] = {
@@ -62,9 +66,9 @@ function shouldAllowMessageWebhook(sessionId: string, event: string, logger: any
       eventCounts: {},
     };
   }
-  
+
   const rateLimit = messageRateLimits[sessionId];
-  
+
   // Reset hourly counters
   if (now >= rateLimit.hourlyResetTime) {
     rateLimit.messageCount = 0;
@@ -72,26 +76,32 @@ function shouldAllowMessageWebhook(sessionId: string, event: string, logger: any
     rateLimit.hourlyResetTime = now + MESSAGE_RATE_LIMIT.RESET_INTERVAL;
     logger.info(`[${sessionId}] 🔄 Message webhook rate limit reset`);
   }
-  
+
   // Check total hourly limit
   if (rateLimit.messageCount >= MESSAGE_RATE_LIMIT.MAX_MESSAGES_PER_HOUR) {
-    logger.info(`[${sessionId}] 🚫 Message webhook hourly limit reached (${MESSAGE_RATE_LIMIT.MAX_MESSAGES_PER_HOUR})`);
+    logger.info(
+      `[${sessionId}] 🚫 Message webhook hourly limit reached (${MESSAGE_RATE_LIMIT.MAX_MESSAGES_PER_HOUR})`
+    );
     return false;
   }
-  
+
   // Check per-event-type limit
   const eventCount = rateLimit.eventCounts[event] || 0;
   if (eventCount >= MESSAGE_RATE_LIMIT.MAX_PER_EVENT_TYPE) {
-    logger.info(`[${sessionId}] 🚫 Event type limit reached for ${event} (${MESSAGE_RATE_LIMIT.MAX_PER_EVENT_TYPE})`);
+    logger.info(
+      `[${sessionId}] 🚫 Event type limit reached for ${event} (${MESSAGE_RATE_LIMIT.MAX_PER_EVENT_TYPE})`
+    );
     return false;
   }
-  
+
   // Update tracking
   rateLimit.lastMessageTime = now;
   rateLimit.messageCount++;
   rateLimit.eventCounts[event] = eventCount + 1;
-  
-  logger.info(`[${sessionId}] ✅ Message webhook allowed - ${event} (${rateLimit.messageCount}/${MESSAGE_RATE_LIMIT.MAX_MESSAGES_PER_HOUR})`);
+
+  logger.info(
+    `[${sessionId}] ✅ Message webhook allowed - ${event} (${rateLimit.messageCount}/${MESSAGE_RATE_LIMIT.MAX_MESSAGES_PER_HOUR})`
+  );
   return true;
 }
 
@@ -195,19 +205,25 @@ export async function callWebHook(
 
     // Filter for incoming messages only - skip outgoing messages and delivery confirmations
     if (event === 'onmessage' && data.fromMe === true) {
-      req.logger.info(`[${client.session}] 🚫 Skipping outgoing message webhook`);
+      req.logger.info(
+        `[${client.session}] 🚫 Skipping outgoing message webhook`
+      );
       return;
     }
 
     // Skip all delivery confirmation events (always for outgoing messages)
     if (event === 'onack') {
-      req.logger.info(`[${client.session}] 🚫 Skipping delivery confirmation webhook`);
+      req.logger.info(
+        `[${client.session}] 🚫 Skipping delivery confirmation webhook`
+      );
       return;
     }
 
     // Rate limiting for message and event webhooks
     if (!shouldAllowMessageWebhook(client.session, event, req.logger)) {
-      req.logger.info(`[${client.session}] 🚫 Webhook rate limited for event: ${event}`);
+      req.logger.info(
+        `[${client.session}] 🚫 Webhook rate limited for event: ${event}`
+      );
       return;
     }
 
@@ -218,11 +234,14 @@ export async function callWebHook(
         data.from ||
         data.chatId ||
         (data.chatId ? data.chatId._serialized : null);
-      data = Object.assign({ 
-        event: event, 
-        session: client.session,
-        rateLimited: true // Indicate this webhook is rate limited
-      }, data);
+      data = Object.assign(
+        {
+          event: event,
+          session: client.session,
+          rateLimited: true, // Indicate this webhook is rate limited
+        },
+        data
+      );
       if (req.serverOptions.mapper.enable)
         data = await convert(req.serverOptions.mapper.prefix, data);
       api

@@ -13,30 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Enterprise features (legacy compatibility)
+import advancedAnalytics from '../server/advanced-analytics';
+import backupSystem from '../server/backup-system';
 import companyAPIRoutes from '../server/company-api-routes';
 import dashboardRouter from '../server/dashboard-router';
-// إضافة نظام SaaS مباشرة للخادم الحالي
-import saasRoutes from '../server/saas-routes';
-// إضافة نسخة مبسطة للاختبار
-import saasSimple from '../server/saas-simple';
-import saasWhatsappBridge from '../server/saas-whatsapp-bridge';
-import subclientAPI from '../server/subclient-api';
-import webhookHandler from '../server/webhook-handler';
-import simpleWebhookRouter from '../server/simple-webhook-router';
 // Clean routes only
 // MongoDB-only APIs
 // MongoDB-only authentication
 // إضافة دعم MongoDB وإدارة قواعد البيانات
 import databaseRoutes from '../server/database-routes';
+import enterpriseFeatures from '../server/enterprise-features';
+// Initialize enterprise middleware
+import {
+  memoryMonitor,
+  performanceMonitor,
+} from '../server/middleware/performance';
+import notificationSystem from '../server/notification-system';
+// UNIFIED API ARCHITECTURE - Enterprise Grade
+import unifiedRoutes from '../server/routes'; // Database management API
+// Unified API v1 routes
+import whatsappRoutes from '../server/routes/whatsapp';
+// إضافة نظام SaaS مباشرة للخادم الحالي
+import saasRoutes from '../server/saas-routes';
+// إضافة نسخة مبسطة للاختبار
+import saasSimple from '../server/saas-simple';
+import saasWhatsappBridge from '../server/saas-whatsapp-bridge';
+import { sessionManager } from '../server/services/session-manager';
+import simpleWebhookRouter from '../server/simple-webhook-router';
+import subclientAPI from '../server/subclient-api';
+// Authentication system - now handled by unified routes
+import authRoutes from '../server/unified-auth';
+import webhookHandler from '../server/webhook-handler';
 // Clean system without demo auth
 // Clean authentication system
 import config from './config';
 import { initServer } from './index';
 
 const { app } = initServer(config);
-
-// UNIFIED API ARCHITECTURE - Enterprise Grade
-import unifiedRoutes from '../server/routes';
 app.use('/api/v1', unifiedRoutes); // Unified API structure
 
 // Legacy compatibility routes
@@ -45,30 +59,14 @@ app.use('/saas/api', saasWhatsappBridge); // WhatsApp integration (legacy)
 app.use('/', webhookHandler); // Webhook handling
 app.use('/api/webhook', simpleWebhookRouter); // Webhook configuration API
 app.use('/', dashboardRouter);
-app.use('/api/database', databaseRoutes); // Database management API
-
-// Authentication system - now handled by unified routes
-import authRoutes from '../server/unified-auth';
+app.use('/api/database', databaseRoutes);
 app.use('/auth', authRoutes);
-
-// Unified API v1 routes
-import whatsappRoutes from '../server/routes/whatsapp';
 app.use('/api/v1/whatsapp', whatsappRoutes);
-
-// Enterprise features (legacy compatibility)
-import advancedAnalytics from '../server/advanced-analytics';
-import enterpriseFeatures from '../server/enterprise-features';
-import notificationSystem from '../server/notification-system';
-import backupSystem from '../server/backup-system';
 
 app.use('/api/analytics/advanced', advancedAnalytics);
 app.use('/api/enterprise', enterpriseFeatures);
 app.use('/api/notifications', notificationSystem);
 app.use('/api/backup', backupSystem);
-
-// Initialize enterprise middleware
-import { performanceMonitor, memoryMonitor } from '../server/middleware/performance';
-import { sessionManager } from '../server/services/session-manager';
 
 app.use(performanceMonitor);
 memoryMonitor();
@@ -80,13 +78,16 @@ app.get('/api/health', async (req, res) => {
     timestamp: new Date().toISOString(),
     services: {
       database: { status: 'up' },
-      whatsapp: { status: 'up', activeSessions: sessionManager.getStats().active },
-      system: { 
+      whatsapp: {
+        status: 'up',
+        activeSessions: sessionManager.getStats().active,
+      },
+      system: {
         uptime: process.uptime(),
-        memory: process.memoryUsage()
-      }
+        memory: process.memoryUsage(),
+      },
     },
-    version: '2.8.6'
+    version: '2.8.6',
   };
   res.json(health);
 });
@@ -101,7 +102,7 @@ app.use((err: any, req: any, res: any, next: any) => {
   console.error('Global error handler:', err);
   res.status(err.statusCode || 500).json({
     error: err.message || 'Internal server error',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -112,7 +113,10 @@ const startupMessage = async () => {
     const { seedDatabase } = await import('../server/seed');
     await seedDatabase();
   } catch (error) {
-    console.warn('Database seeding skipped:', error instanceof Error ? error.message : error);
+    console.warn(
+      'Database seeding skipped:',
+      error instanceof Error ? error.message : error
+    );
   }
 
   console.log('\n=== Siyadah WhatsApp SaaS Platform ===');

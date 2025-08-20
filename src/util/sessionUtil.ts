@@ -48,7 +48,7 @@ export function deleteSessionOnArray(session: string): void {
   if (clientsArray[session]) {
     delete clientsArray[session];
   }
-  
+
   // Also remove from any other session tracking arrays/objects
   const sessionIndex = Object.keys(clientsArray).indexOf(session);
   if (sessionIndex > -1) {

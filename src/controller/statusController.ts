@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
-import { unlinkAsync } from '../util/functions';
 import MessageQueueManager from '../services/messageQueueManager';
+import { unlinkAsync } from '../util/functions';
 
 function returnError(req: Request, res: Response, error: any) {
   req.logger.error(error);
@@ -84,7 +84,7 @@ export async function sendTextStorie(req: Request, res: Response) {
           status: 'queued',
           messageId: queueResult.messageId,
           estimatedSendTime: queueResult.estimatedSendTime,
-          message: 'Status message queued for delivery with 30-second delay'
+          message: 'Status message queued for delivery with 30-second delay',
         });
       } else {
         results.push(queueResult.result);
@@ -93,7 +93,7 @@ export async function sendTextStorie(req: Request, res: Response) {
       return res.status(400).json({
         status: 'Error',
         message: 'Error sending status message',
-        error: queueResult.error
+        error: queueResult.error,
       });
     }
 
@@ -111,9 +111,9 @@ export async function sendTextStorie(req: Request, res: Response) {
       summary: {
         total: allResults.length,
         immediate: results.length,
-        queued: queuedResults.length
+        queued: queuedResults.length,
       },
-      mapper: 'return'
+      mapper: 'return',
     });
   } catch (error) {
     returnError(req, res, error);

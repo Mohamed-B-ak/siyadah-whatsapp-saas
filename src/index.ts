@@ -120,7 +120,7 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
   });
 
   app.use(routes);
-  
+
   // Add SaaS routes
   try {
     const saasRoutes = require('../server/saas-routes').default;

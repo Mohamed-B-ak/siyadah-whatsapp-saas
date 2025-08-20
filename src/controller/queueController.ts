@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import MessageQueueManager from '../services/messageQueueManager';
 
 function returnSucess(res: Response, data: any) {
@@ -10,16 +11,16 @@ function returnSucess(res: Response, data: any) {
 
 function returnError(req: Request, res: Response, error: any) {
   req.logger?.error(error);
-  
+
   if (res.headersSent) {
     req.logger?.warn('Response already sent, cannot send error response');
     return;
   }
-  
+
   res.status(500).json({
     status: 'error',
     message: error.message || 'Internal server error',
-    error: error
+    error: error,
   });
 }
 
@@ -34,32 +35,31 @@ export async function getQueueStatus(req: Request, res: Response) {
    *   schema: 'NERDWHATS_AMERICA'
    * }
    */
-  
+
   try {
     const session = req.params.session;
     if (!session) {
       return res.status(400).json({
         status: 'error',
-        message: 'Session parameter is required'
+        message: 'Session parameter is required',
       });
     }
 
     const queueStatus = await MessageQueueManager.getQueueStatus(session);
-    
+
     if (!queueStatus) {
       return returnSucess(res, {
         sessionId: session,
         queueExists: false,
-        message: 'No message queue found for this session'
+        message: 'No message queue found for this session',
       });
     }
 
     returnSucess(res, {
       sessionId: session,
       queueExists: true,
-      ...queueStatus
+      ...queueStatus,
     });
-    
   } catch (error) {
     returnError(req, res, error);
   }
@@ -76,33 +76,32 @@ export async function clearQueue(req: Request, res: Response) {
    *   schema: 'NERDWHATS_AMERICA'
    * }
    */
-  
+
   try {
     const session = req.params.session;
     if (!session) {
       return res.status(400).json({
         status: 'error',
-        message: 'Session parameter is required'
+        message: 'Session parameter is required',
       });
     }
 
     const cleared = await MessageQueueManager.clearQueue(session);
-    
+
     if (cleared) {
       req.logger?.info(`📬 Queue cleared for session: ${session}`);
       returnSucess(res, {
         sessionId: session,
         cleared: true,
-        message: 'Queue cleared successfully'
+        message: 'Queue cleared successfully',
       });
     } else {
       returnSucess(res, {
         sessionId: session,
         cleared: false,
-        message: 'No queue found to clear'
+        message: 'No queue found to clear',
       });
     }
-    
   } catch (error) {
     returnError(req, res, error);
   }
@@ -116,15 +115,14 @@ export async function getAllQueues(req: Request, res: Response) {
    *   "bearerAuth": []
    * }]
    */
-  
+
   try {
     // This would need to be implemented in the MessageQueueService
     // For now, return a placeholder response
     returnSucess(res, {
       message: 'Queue overview endpoint - to be implemented',
-      note: 'Use individual session endpoints for now'
+      note: 'Use individual session endpoints for now',
     });
-    
   } catch (error) {
     returnError(req, res, error);
   }
@@ -138,18 +136,18 @@ export async function getQueueStats(req: Request, res: Response) {
    *   "bearerAuth": []
    * }]
    */
-  
+
   try {
     const session = req.params.session;
     if (!session) {
       return res.status(400).json({
         status: 'error',
-        message: 'Session parameter is required'
+        message: 'Session parameter is required',
       });
     }
 
     const queueStatus = await MessageQueueManager.getQueueStatus(session);
-    
+
     if (!queueStatus) {
       return returnSucess(res, {
         sessionId: session,
@@ -157,8 +155,8 @@ export async function getQueueStats(req: Request, res: Response) {
           totalProcessed: 0,
           totalFailed: 0,
           pendingCount: 0,
-          isActive: false
-        }
+          isActive: false,
+        },
       });
     }
 
@@ -170,10 +168,9 @@ export async function getQueueStats(req: Request, res: Response) {
         pendingCount: queueStatus.pendingCount,
         isActive: queueStatus.isProcessing,
         lastMessageTime: queueStatus.lastMessageTime,
-        estimatedNextSend: queueStatus.estimatedNextSend
-      }
+        estimatedNextSend: queueStatus.estimatedNextSend,
+      },
     });
-    
   } catch (error) {
     returnError(req, res, error);
   }
