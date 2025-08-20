@@ -1402,7 +1402,7 @@ export async function sendStatusText(req: Request, res: Response) {
       'status@broadcast',
       message,
       {},
-      async (phoneNumber: string, msg: string, opts: any) => {
+      async (phoneNumber: string, msg: string, _opts: any) => {
         return await req.client.sendText(phoneNumber, msg);
       }
     );

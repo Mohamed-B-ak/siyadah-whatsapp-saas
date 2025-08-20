@@ -48,7 +48,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
           .replace(/_/g, '/')
           .replace(/-/g, '+');
       }
-    } catch (error) {
+    } catch (_error) {
       // Continue to next method
     }
 
@@ -80,7 +80,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
             tokenDecrypt = token.replace(/_/g, '/').replace(/-/g, '+');
           }
         }
-      } catch (e) {
+      } catch (_e) {
         // Continue to next method
       }
     }
@@ -95,10 +95,10 @@ const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
             .replace(/_/g, '/')
             .replace(/-/g, '+');
         } else {
-          sessionDecrypt = session;
+          const _sessionDecrypt = session;
           tokenDecrypt = sessionkey.replace(/_/g, '/').replace(/-/g, '+');
         }
-      } catch (e) {
+      } catch (_e) {
         // Continue to error
       }
     }

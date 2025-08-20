@@ -349,7 +349,7 @@ export async function configureWebhook(req: Request, res: Response) {
       message: 'Webhook URL configured successfully',
       webhookUrl: webhookUrl,
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(400).json({
       success: false,
       message: 'Invalid webhook URL format',

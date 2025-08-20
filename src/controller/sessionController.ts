@@ -514,7 +514,7 @@ export async function checkConnectionSession(
     await req.client.isConnected();
 
     res.status(200).json({ status: true, message: 'Connected' });
-  } catch (error) {
+  } catch (_error) {
     res.status(200).json({ status: false, message: 'Disconnected' });
   }
 }
@@ -649,7 +649,7 @@ export async function getSessionState(req: Request, res: Response) {
    */
   try {
     const sessionName = req.params.session;
-    const { waitQrCode = false } = req.body;
+    const { waitQrCode: _waitQrCode = false } = req.body;
 
     // Get client from clientsArray instead of req.client
     const { clientsArray } = require('../util/sessionUtil');

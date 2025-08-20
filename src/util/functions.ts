@@ -124,9 +124,11 @@ export function contactToArray(
   const localArr: any = [];
   if (Array.isArray(number)) {
     for (let contact of number) {
-      isGroup || isNewsletter
-        ? (contact = contact.split('@')[0])
-        : (contact = contact.split('@')[0]?.replace(/[^\w ]/g, ''));
+      if (isGroup || isNewsletter) {
+        contact = contact.split('@')[0];
+      } else {
+        contact = contact.split('@')[0]?.replace(/[^\w ]/g, '');
+      }
       if (contact !== '')
         if (isGroup) (localArr as any).push(`${contact}@g.us`);
         else if (isNewsletter) (localArr as any).push(`${contact}@newsletter`);
@@ -137,9 +139,11 @@ export function contactToArray(
   } else {
     const arrContacts = number.split(/\s*[,;]\s*/g);
     for (let contact of arrContacts) {
-      isGroup || isNewsletter
-        ? (contact = contact.split('@')[0])
-        : (contact = contact.split('@')[0]?.replace(/[^\w ]/g, ''));
+      if (isGroup || isNewsletter) {
+        contact = contact.split('@')[0];
+      } else {
+        contact = contact.split('@')[0]?.replace(/[^\w ]/g, '');
+      }
       if (contact !== '')
         if (isGroup) (localArr as any).push(`${contact}@g.us`);
         else if (isNewsletter) (localArr as any).push(`${contact}@newsletter`);

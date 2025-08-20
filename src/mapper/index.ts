@@ -14,7 +14,7 @@ export async function convert(prefix: string, data: any, event?: any) {
 
     if (!mappConfEvent) return data;
     return await mapper(data, mappConfEvent);
-  } catch (e) {
+  } catch (_e) {
     return data;
   }
 }
@@ -24,7 +24,7 @@ async function config_event(prefix: any, event: any) {
     const { default: mappConf } = await import(`./${prefix}${event}.js`);
     if (!mappConf) return undefined;
     return mappConf;
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 }
@@ -36,7 +36,7 @@ async function config_type(prefix: any, event: any, type: any) {
     );
     if (!mappConf) return undefined;
     return mappConf;
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 }

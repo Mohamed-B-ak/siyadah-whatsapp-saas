@@ -16,7 +16,7 @@
 // Enterprise features (legacy compatibility)
 import advancedAnalytics from '../server/advanced-analytics';
 import backupSystem from '../server/backup-system';
-import companyAPIRoutes from '../server/company-api-routes';
+import _companyAPIRoutes from '../server/company-api-routes';
 import dashboardRouter from '../server/dashboard-router';
 // Clean routes only
 // MongoDB-only APIs
@@ -37,11 +37,11 @@ import whatsappRoutes from '../server/routes/whatsapp';
 // إضافة نظام SaaS مباشرة للخادم الحالي
 import saasRoutes from '../server/saas-routes';
 // إضافة نسخة مبسطة للاختبار
-import saasSimple from '../server/saas-simple';
+import _saasSimple from '../server/saas-simple';
 import saasWhatsappBridge from '../server/saas-whatsapp-bridge';
 import { sessionManager } from '../server/services/session-manager';
 import simpleWebhookRouter from '../server/simple-webhook-router';
-import subclientAPI from '../server/subclient-api';
+import _subclientAPI from '../server/subclient-api';
 // Authentication system - now handled by unified routes
 import authRoutes from '../server/unified-auth';
 import webhookHandler from '../server/webhook-handler';
