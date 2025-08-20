@@ -55,7 +55,9 @@ export function backupSessions(req: Request): Promise<any> {
       const myStream = fileSystem.createReadStream(
         __dirname + '/../backupSessions.zip'
       );
-      myStream.pipe(req.res);
+      if (req.res) {
+        myStream.pipe(req.res);
+      }
       myStream.on('end', () => {
         logger.info('Sessions successfully backuped. Restarting sessions...');
         startAllSessions(config, logger);

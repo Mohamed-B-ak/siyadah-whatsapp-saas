@@ -32,7 +32,7 @@ function returnSucess(res: any, session: any, phone: any, data: any) {
   });
 }
 
-function returnError(req: Request, res: Response, session: any, error: any) {
+function returnError(req, res, session, error) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',
