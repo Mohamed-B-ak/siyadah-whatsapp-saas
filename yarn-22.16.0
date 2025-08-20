@@ -1,0 +1,4 @@
+#!/bin/bash
+# Yarn wrapper using Node.js 22.16.0
+export PATH=~/node-22.16.0/bin:$PATH
+NODE_PATH=~/node-22.16.0/bin exec ~/node-22.16.0/bin/node $(which yarn) "$@"

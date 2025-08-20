@@ -1,1 +1,6 @@
-yarn test && yarn lint
+#!/usr/bin/env sh
+# Use Node.js 22.16.0 specifically for pre-push checks
+export PATH=~/node-22.16.0/bin:$PATH
+export NODE_PATH=~/node-22.16.0/bin
+echo "🚀 Using Node.js version: $(~/node-22.16.0/bin/node --version)"
+NODE_PATH=~/node-22.16.0/bin ~/node-22.16.0/bin/node $(which yarn) test && NODE_PATH=~/node-22.16.0/bin ~/node-22.16.0/bin/node $(which yarn) lint
