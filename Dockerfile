@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 3) Runtime env for Puppeteer/Chrome in containers
 ENV NODE_ENV=production
+# Skip husky inside containers (no git hooks needed during build)
+ENV HUSKY=0
 ENV DISPLAY=:99
 ENV CHROME_BIN=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
