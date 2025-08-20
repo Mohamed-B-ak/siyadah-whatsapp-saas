@@ -18,10 +18,7 @@ import { Request, Response } from 'express';
 
 const saltRounds = 10;
 
-export async function encryptSession(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function encryptSession(req, res) {
   /**
    * #swagger.tags = ['Auth']
    * #swagger.parameters['secretkey'] = {

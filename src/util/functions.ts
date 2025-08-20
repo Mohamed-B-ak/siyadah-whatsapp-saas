@@ -176,12 +176,7 @@ export function groupNameToArray(group: any) {
   return localArr;
 }
 
-export async function callWebHook(
-  client: any,
-  req: Request,
-  event: any,
-  data: any
-) {
+export async function callWebHook(client, req, event, data) {
   const webhook =
     client?.config.webhook || req.serverOptions.webhook.url || false;
   if (webhook) {

@@ -24,25 +24,10 @@ import { clientsArray, eventEmitter } from './sessionUtil';
 import Factory from './tokenStore/factory';
 
 // WEBHOOK RATE LIMITING AND LOOP PREVENTION SYSTEM
-interface WebhookRateLimit {
-  lastWebhookTime: number;
-  webhookCount: number;
-  hourlyResetTime: number;
-  cooldownUntil: number;
-  lastStatus: string;
-  duplicateCount: number;
-}
-
-interface SessionProtectionState {
-  lastProtectionTime: number;
-  protectionCount: number;
-  originalStatus: string;
-  isInCooldown: boolean;
-}
 
 // Global tracking for webhook rate limiting
-const webhookRateLimits: { [sessionId: string]: WebhookRateLimit } = {};
-const protectionStates: { [sessionId: string]: SessionProtectionState } = {};
+const webhookRateLimits = {};
+const protectionStates = {};
 
 // Rate limiting configuration
 const WEBHOOK_RATE_LIMIT = {
@@ -54,7 +39,7 @@ const WEBHOOK_RATE_LIMIT = {
 };
 
 // Helper functions for rate limiting
-function initializeRateLimit(sessionId: string): WebhookRateLimit {
+function initializeRateLimit(sessionId) {
   const now = Date.now();
   return {
     lastWebhookTime: 0,
@@ -66,7 +51,7 @@ function initializeRateLimit(sessionId: string): WebhookRateLimit {
   };
 }
 
-function initializeProtectionState(sessionId: string): SessionProtectionState {
+function initializeProtectionState(sessionId) {
   return {
     lastProtectionTime: 0,
     protectionCount: 0,
@@ -75,7 +60,7 @@ function initializeProtectionState(sessionId: string): SessionProtectionState {
   };
 }
 
-function shouldAllowWebhook(sessionId: string, status: string, logger: any): boolean {
+function shouldAllowWebhook(sessionId, status, logger) {
   const now = Date.now();
   
   // Initialize if not exists
@@ -126,7 +111,7 @@ function shouldAllowWebhook(sessionId: string, status: string, logger: any): boo
   return true;
 }
 
-function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger: any): boolean {
+function shouldAllowAutoProtection(sessionId, statusFind, logger) {
   const now = Date.now();
   
   // Initialize if not exists
@@ -169,7 +154,7 @@ function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger
 }
 
 export default class CreateSessionUtil {
-  startChatWootClient(client: any) {
+  startChatWootClient(client) {
     if (client.config.chatWoot && !client._chatWootClient)
       client._chatWootClient = new chatWootClient(
         client.config.chatWoot,
@@ -178,12 +163,7 @@ export default class CreateSessionUtil {
     return client._chatWootClient;
   }
 
-  async createSessionUtil(
-    req: any,
-    clientsArray: any,
-    session: string,
-    res?: any
-  ) {
+  async createSessionUtil(req, clientsArray, session, res) {
     try {
       let client = this.getClient(session);
       if (client.status != null && client.status !== 'CLOSED') return;
@@ -303,15 +283,10 @@ export default class CreateSessionUtil {
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
               ignoreDefaultArgs: ['--enable-automation'], // Hide automation detection
             },
-            catchLinkCode: (code: string) => {
+            catchLinkCode: (code) => {
               this.exportPhoneCode(req, client.config.phone, code, client, res);
             },
-            catchQR: (
-              base64Qr: any,
-              asciiQR: any,
-              attempt: any,
-              urlCode: string
-            ) => {
+            catchQR: (base64Qr, asciiQR, attempt, urlCode) => {
               req.logger.info(
                 `[${session}] QR Code generated - Attempt ${attempt}`
               );
@@ -330,10 +305,10 @@ export default class CreateSessionUtil {
                 );
               }
             },
-            onLoadingScreen: (percent: string, message: string) => {
+            onLoadingScreen: (percent, message) => {
               req.logger.info(`[${session}] ${percent}% - ${message}`);
             },
-            statusFind: (statusFind: string) => {
+            statusFind: (statusFind) => {
               try {
                 eventEmitter.emit(
                   `status-${client.session}`,
@@ -484,17 +459,11 @@ export default class CreateSessionUtil {
     }
   }
 
-  async opendata(req: Request, session: string, res?: any) {
+  async opendata(req, session, res) {
     await this.createSessionUtil(req, clientsArray, session, res);
   }
 
-  exportPhoneCode(
-    req: any,
-    phone: any,
-    phoneCode: any,
-    client: WhatsAppServer,
-    res?: any
-  ) {
+  exportPhoneCode(req, phone, phoneCode, client, res) {
     eventEmitter.emit(`phoneCode-${client.session}`, phoneCode, client);
 
     Object.assign(client, {
@@ -524,13 +493,7 @@ export default class CreateSessionUtil {
       });
   }
 
-  exportQR(
-    req: any,
-    qrCode: any,
-    urlCode: any,
-    client: WhatsAppServer,
-    res?: any
-  ) {
+  exportQR(req, qrCode, urlCode, client, res) {
     eventEmitter.emit(`qrcode-${client.session}`, qrCode, urlCode, client);
     
     // Store the QR data immediately
@@ -604,14 +567,14 @@ export default class CreateSessionUtil {
       });
   }
 
-  async onParticipantsChanged(req: any, client: any) {
+  async onParticipantsChanged(req, client) {
     await client.isConnected();
-    await client.onParticipantsChanged((message: any) => {
+    await client.onParticipantsChanged((message) => {
       callWebHook(client, req, 'onparticipantschanged', message);
     });
   }
 
-  async start(req: Request, client: WhatsAppServer) {
+  async start(req, client) {
     try {
       await client.isConnected();
       Object.assign(client, { status: 'CONNECTED', qrcode: null });
@@ -637,7 +600,7 @@ export default class CreateSessionUtil {
     }
   }
 
-  async checkStateSession(client: WhatsAppServer, req: Request) {
+  async checkStateSession(client, req) {
     await client.onStateChange((state) => {
       req.logger.info(`State Change ${state}: ${client.session}`);
       const conflits = [SocketState.CONFLICT];
@@ -648,8 +611,8 @@ export default class CreateSessionUtil {
     });
   }
 
-  async listenMessages(client: WhatsAppServer, req: Request) {
-    await client.onMessage(async (message: any) => {
+  async listenMessages(client, req) {
+    await client.onMessage(async (message) => {
       req.logger.info(
         `[MESSAGE-RECEIVED] Session: ${client.session}, From: ${message.from}, Body: ${message.body}`
       );
@@ -666,7 +629,7 @@ export default class CreateSessionUtil {
         });
     });
 
-    await client.onAnyMessage(async (message: any) => {
+    await client.onAnyMessage(async (message) => {
       message.session = client.session;
 
       if (message.type === 'sticker') {
@@ -691,63 +654,63 @@ export default class CreateSessionUtil {
     });
   }
 
-  async listenAcks(client: WhatsAppServer, req: Request) {
+  async listenAcks(client, req) {
     await client.onAck(async (ack) => {
       req.io.emit('onack', ack);
       callWebHook(client, req, 'onack', ack);
     });
   }
 
-  async onPresenceChanged(client: WhatsAppServer, req: Request) {
+  async onPresenceChanged(client, req) {
     await client.onPresenceChanged(async (presenceChangedEvent) => {
       req.io.emit('onpresencechanged', presenceChangedEvent);
       callWebHook(client, req, 'onpresencechanged', presenceChangedEvent);
     });
   }
 
-  async onReactionMessage(client: WhatsAppServer, req: Request) {
+  async onReactionMessage(client, req) {
     await client.isConnected();
-    await client.onReactionMessage(async (reaction: any) => {
+    await client.onReactionMessage(async (reaction) => {
       req.io.emit('onreactionmessage', reaction);
       callWebHook(client, req, 'onreactionmessage', reaction);
     });
   }
 
-  async onRevokedMessage(client: WhatsAppServer, req: Request) {
+  async onRevokedMessage(client, req) {
     await client.isConnected();
-    await client.onRevokedMessage(async (response: any) => {
+    await client.onRevokedMessage(async (response) => {
       req.io.emit('onrevokedmessage', response);
       callWebHook(client, req, 'onrevokedmessage', response);
     });
   }
-  async onPollResponse(client: WhatsAppServer, req: Request) {
+  async onPollResponse(client, req) {
     await client.isConnected();
-    await client.onPollResponse(async (response: any) => {
+    await client.onPollResponse(async (response) => {
       req.io.emit('onpollresponse', response);
       callWebHook(client, req, 'onpollresponse', response);
     });
   }
-  async onLabelUpdated(client: WhatsAppServer, req: Request) {
+  async onLabelUpdated(client, req) {
     await client.isConnected();
-    await client.onUpdateLabel(async (response: any) => {
+    await client.onUpdateLabel(async (response) => {
       req.io.emit('onupdatelabel', response);
       callWebHook(client, req, 'onupdatelabel', response);
     });
   }
 
-  encodeFunction(data: any, webhook: any) {
+  encodeFunction(data, webhook) {
     data.webhook = webhook;
     return JSON.stringify(data);
   }
 
-  decodeFunction(text: any, client: any) {
+  decodeFunction(text, client) {
     const object = JSON.parse(text);
     if (object.webhook && !client.webhook) client.webhook = object.webhook;
     delete object.webhook;
     return object;
   }
 
-  getClient(session: any) {
+  getClient(session) {
     let client = clientsArray[session];
 
     if (!client)

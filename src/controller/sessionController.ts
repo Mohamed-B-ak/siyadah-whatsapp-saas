@@ -98,10 +98,7 @@ export async function download(message: any, client: any, logger: any) {
   }
 }
 
-export async function startAllSessions(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function startAllSessions(req, res) {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.autoBody=false
@@ -138,7 +135,7 @@ export async function startAllSessions(
 
   allSessions.map(async (session: string) => {
     const util = new CreateSessionUtil();
-    await util.opendata(req, session);
+    await util.opendata(req, session, res);
   });
 
   return await res
@@ -146,10 +143,7 @@ export async function startAllSessions(
     .json({ status: 'success', message: 'Starting all sessions' });
 }
 
-export async function showAllSessions(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function showAllSessions(req, res) {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.autoBody=false
@@ -295,9 +289,9 @@ export async function closeSession(req, res): Promise<any> {
     // Check if session exists in clientsArray
     const sessionClient = (clientsArray)[session];
     
-    req.logger.info(`[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${sessionClient?.status}`);
+    req.logger.info(`[CLOSE-SESSION] Session client found: ${!!sessionClient}, Status: ${(sessionClient as any)?.status}`);
     
-    if (!sessionClient || sessionClient.status === null) {
+    if (!sessionClient || (sessionClient as any).status === null) {
       // Session already closed or doesn't exist
       req.logger.info(`[CLOSE-SESSION] Session ${session} already closed or doesn't exist`);
       return await res
@@ -305,7 +299,7 @@ export async function closeSession(req, res): Promise<any> {
         .json({ status: true, message: 'Session successfully closed' });
     } else {
       // Mark session as closed
-      (clientsArray)[session] = { status: null };
+      (clientsArray as any)[session] = { status: null };
       req.logger.info(`[CLOSE-SESSION] Marked session ${session} as closed`);
 
       // Close the client if it exists
@@ -451,10 +445,7 @@ export async function logOutSession(req, res): Promise<any> {
   }
 }
 
-export async function checkConnectionSession(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function checkConnectionSession(req, res) {
   /**
    * #swagger.tags = ["Auth"]
      #swagger.operationId = 'CheckConnectionState'

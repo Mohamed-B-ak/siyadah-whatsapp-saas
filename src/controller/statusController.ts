@@ -10,7 +10,7 @@ function returnError(req, res, error) {
     .json({ status: 'Error', message: 'Erro ao enviar status.', error: error });
 }
 
-async function returnSucess(res: Response, data: any) {
+async function returnSucess(res, data) {
   res.status(201).json({ status: 'success', response: data, mapper: 'return' });
 }
 

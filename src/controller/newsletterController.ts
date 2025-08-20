@@ -15,12 +15,7 @@
  */
 import { Request, Response } from 'express';
 
-function returnError(
-  req: Request,
-  res: Response,
-  session: string,
-  error?: any
-) {
+function returnError(req, res, session, error) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',

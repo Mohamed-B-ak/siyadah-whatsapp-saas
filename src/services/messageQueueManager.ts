@@ -75,12 +75,7 @@ export class MessageQueueManager {
   }
 
   // Helper method to extract session info from request
-  getSessionInfo(req: Request): {
-    sessionId: string;
-    sessionName: string;
-    companyId?: string;
-    userId?: string;
-  } {
+  getSessionInfo(req) {
     const sessionName = req.params.session || req.client?.session || 'unknown';
     const sessionId = req.client?.session || sessionName;
     
@@ -97,20 +92,7 @@ export class MessageQueueManager {
   }
 
   // Integration method for existing message controller
-  async processMessageRequest(
-    req: Request,
-    phone: string,
-    message: string,
-    options: any = {},
-    sendFunction: (phone: string, message: string, options: any) => Promise<any>
-  ): Promise<{
-    success: boolean;
-    queued: boolean;
-    messageId?: string;
-    estimatedSendTime?: Date;
-    result?: any;
-    error?: string;
-  }> {
+  async processMessageRequest(req, phone, message, options = {}, sendFunction) {
     try {
       const sessionInfo = this.getSessionInfo(req);
       
@@ -170,10 +152,10 @@ export class MessageQueueManager {
   }
 
   // Method to integrate actual WhatsApp sending with queue processing
-  setMessageSender(sender: (sessionId: string, phone: string, message: string, options: any) => Promise<boolean>) {
+  setMessageSender(sender) {
     if (this.messageQueueService) {
       // Replace the placeholder sendMessageViaWhatsApp method
-      (this.messageQueueService).sendMessageViaWhatsApp = async (sessionId: string, messageTask: any) => {
+      (this.messageQueueService as any).sendMessageViaWhatsApp = async (sessionId, messageTask) => {
         if (messageTask.message === 'IMMEDIATE_SEND_MARKER') {
           return true; // Just update timing, don't actually send
         }

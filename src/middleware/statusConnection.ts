@@ -18,11 +18,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { contactToArray } from '../util/functions';
 
-export default async function statusConnection(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function statusConnection(req, res, next) {
   try {
     const numbers: any = [];
     if (req.client && req.client.isConnected) {

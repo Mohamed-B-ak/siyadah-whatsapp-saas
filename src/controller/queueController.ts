@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import MessageQueueManager from '../services/messageQueueManager';
 
-function returnSucess(res: Response, data: any) {
+function returnSucess(res, data) {
   res.status(200).json({
     status: 'success',
     response: data,

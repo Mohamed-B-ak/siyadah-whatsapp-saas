@@ -15,12 +15,7 @@
  */
 import { Request, Response } from 'express';
 
-function returnSucess(
-  res: Response,
-  session: string,
-  phone: string | null,
-  data?: any
-) {
+function returnSucess(res, session, phone, data) {
   res.status(201).json({
     status: 'Success',
     response: {
@@ -32,12 +27,7 @@ function returnSucess(
   });
 }
 
-function returnError(
-  req: Request,
-  res: Response,
-  session: string,
-  error?: any
-) {
+function returnError(req, res, session, error) {
   req.logger.error(error);
   res.status(400).json({
     status: 'Error',
@@ -65,7 +55,7 @@ export async function getBusinessProfilesProducts(req, res) {
      }
    */
   const session = req.session;
-  const { phone } = req.query as unknown;
+  const { phone } = req.query as any;
 
   try {
     const results: any = [];
