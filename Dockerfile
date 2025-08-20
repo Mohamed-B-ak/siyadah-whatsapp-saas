@@ -29,16 +29,13 @@ WORKDIR /app
 # Copy only manifests first so Docker can cache `npm ci` when code changes.
 COPY package.json package-lock.json* ./
 
-# Temporarily disable Husky in production by setting CI environment variable
-# This prevents prepare script (husky install) from running while allowing other scripts
-ENV CI=true
-
-# Prefer npm ci when lockfile exists; fallback to npm i if not
+# Install production dependencies only (excludes husky and other devDependencies)
+# Then rebuild native modules (like bcrypt) for the production environment
 RUN if [ -f package-lock.json ]; then \
-      npm ci --legacy-peer-deps; \
+      npm ci --only=production --legacy-peer-deps; \
     else \
-      npm i --legacy-peer-deps; \
-    fi
+      npm i --only=production --legacy-peer-deps; \
+    fi && npm rebuild
 
 # Now copy the rest of the source
 COPY . .

@@ -1,0 +1,64 @@
+10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 96.47MB / 286.99MB 1.8s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 125.83MB / 286.99MB 2.4s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 140.51MB / 286.99MB 2.7s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 156.24MB / 286.99MB 3.0s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 173.02MB / 286.99MB 3.3s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 187.70MB / 286.99MB 3.6s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 202.38MB / 286.99MB 3.9s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 219.15MB / 286.99MB 4.2s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 235.93MB / 286.99MB 4.5s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 251.66MB / 286.99MB 4.8s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 281.02MB / 286.99MB 5.4s
+#10 sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 286.99MB / 286.99MB 5.8s done
+#10 extracting sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785
+#10 extracting sha256:c60467b4688b107920697754f001b3c44fe84a85162c31ab1f6e77161597f785 13.1s done
+#10 sha256:cb3b06bbdd2b1a45657da418055f16fff4c63e00aaba3ca9af762cdfe0c3ae18 92B / 92B done
+#10 extracting sha256:cb3b06bbdd2b1a45657da418055f16fff4c63e00aaba3ca9af762cdfe0c3ae18 0.0s done
+#10 sha256:82acced1bad738862f66dfe13e91c31e49545699ce7d4d9eb65bf9b2b14ef990 1.73kB / 1.73kB done
+#10 extracting sha256:82acced1bad738862f66dfe13e91c31e49545699ce7d4d9eb65bf9b2b14ef990 0.0s done
+#10 CACHED
+#11 [5/7] RUN if [ -f package-lock.json ]; then       npm ci --legacy-peer-deps;     else       npm i --legacy-peer-deps;     fi
+#11 37.62 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#11 37.99 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 38.08 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#11 38.65 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#11 39.19 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 40.37 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+#11 40.64 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 40.73 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 40.80 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 49.03 
+#11 49.03 > @wppconnect/server@2.8.6 prepare
+#11 49.03 > husky install
+#11 49.03 
+#11 49.05 sh: 1: husky: not found
+#11 49.06 npm error code 127
+#11 49.06 npm error path /app
+#11 49.06 npm error command failed
+#11 49.06 npm error command sh -c husky install
+#11 49.06 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-08-20T09_36_09_978Z-debug-0.log
+#11 ERROR: process "/bin/sh -c if [ -f package-lock.json ]; then       npm ci --legacy-peer-deps;     else       npm i --legacy-peer-deps;     fi" did not complete successfully: exit code: 127
+------
+ > [5/7] RUN if [ -f package-lock.json ]; then       npm ci --legacy-peer-deps;     else       npm i --legacy-peer-deps;     fi:
+49.03 
+49.03 > @wppconnect/server@2.8.6 prepare
+49.03 > husky install
+49.03 
+49.05 sh: 1: husky: not found
+49.06 npm error code 127
+49.06 npm error path /app
+49.06 npm error command failed
+49.06 npm error command sh -c husky install
+49.06 npm error A complete log of this run can be found in: /root/.npm/_logs/2025-08-20T09_36_09_978Z-debug-0.log
+------
+Dockerfile:37
+--------------------
+  36 |     # Prefer npm ci when lockfile exists; fallback to npm i if not
+  37 | >>> RUN if [ -f package-lock.json ]; then \
+  38 | >>>       npm ci --legacy-peer-deps; \
+  39 | >>>     else \
+  40 | >>>       npm i --legacy-peer-deps; \
+  41 | >>>     fi
+  42 |     
+--------------------
+error: failed to solve: process "/bin/sh -c if [ -f package-lock.json ]; then       npm ci --legacy-peer-deps;     else       npm i --legacy-peer-deps;     fi" did not complete successfully: exit code: 127
