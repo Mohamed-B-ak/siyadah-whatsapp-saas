@@ -1,0 +1,113 @@
+#8 25.25 running python rtupdate hooks for python3.11...
+#8 25.25 running python post-rtupdate hooks for python3.11...
+#8 25.37 Processing triggers for fontconfig (2.14.1-4) ...
+#8 25.40 Processing triggers for libc-bin (2.36-9+deb12u10) ...
+#8 25.43 Processing triggers for systemd (252.38-1~deb12u1) ...
+#8 DONE 26.1s
+#9 [ 4/15] WORKDIR /app
+#9 DONE 0.0s
+#10 [ 5/15] COPY package*.json ./
+#10 DONE 0.0s
+#11 [ 6/15] RUN npm install --legacy-peer-deps --ignore-scripts
+#11 33.47 npm warn EBADENGINE Unsupported engine {
+#11 33.47 npm warn EBADENGINE   package: '@wppconnect/server@2.8.6',
+#11 33.47 npm warn EBADENGINE   required: { node: '22.16.0' },
+#11 33.47 npm warn EBADENGINE   current: { node: 'v22.18.0', npm: '10.9.3' }
+#11 33.47 npm warn EBADENGINE }
+#11 38.71 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+#11 39.15 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+#11 39.87 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#11 41.11 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#11 41.25 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#11 41.65 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+#11 43.42 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#11 44.54 npm warn deprecated multer@1.4.5-lts.2: Multer 1.x is impacted by a number of vulnerabilities, which have been patched in 2.x. You should upgrade to the latest 2.x version.
+#11 46.28 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 46.71 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 46.86 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 47.89 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#11 53.60 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#11 58.02 
+#11 58.02 added 1726 packages, and audited 1727 packages in 58s
+#11 58.02 
+#11 58.02 306 packages are looking for funding
+#11 58.02   run `npm fund` for details
+#11 58.04 
+#11 58.04 12 vulnerabilities (5 low, 7 moderate)
+#11 58.04 
+#11 58.04 To address all issues possible (including breaking changes), run:
+#11 58.04   npm audit fix --force
+#11 58.04 
+#11 58.04 Some issues need review, and may require choosing
+#11 58.04 a different dependency.
+#11 58.04 
+#11 58.04 Run `npm audit` for details.
+#11 58.05 npm notice
+#11 58.05 npm notice New major version of npm available! 10.9.3 -> 11.5.2
+#11 58.05 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+#11 58.05 npm notice To update run: npm install -g npm@11.5.2
+#11 58.05 npm notice
+#11 DONE 59.1s
+#12 [ 7/15] COPY tsconfig.json ./
+#12 DONE 1.2s
+#13 [ 8/15] COPY build-production.js ./
+#13 DONE 0.0s
+#14 [ 9/15] COPY src/ ./src/
+#14 DONE 0.0s
+#15 [10/15] COPY shared/ ./shared/
+#15 DONE 0.0s
+#16 [11/15] COPY server/ ./server/
+#16 DONE 0.0s
+#17 [12/15] RUN node build-production.js
+#17 0.102 🚀 Starting Production Build for Render.com...
+#17 0.103 🧹 Cleaning previous build...
+#17 0.710 ⚙️ Compiling with Babel...
+#17 1.802 SyntaxError: /app/src/controller/deviceController.ts: Unexpected token, expected "," (23:25)
+#17 1.802 
+#17 1.802   21 | import MessageQueueManager from '../services/messageQueueManager';
+#17 1.802   22 |
+#17 1.802 > 23 | function returnSucess(res: any, session: any, phone: any, data: any) {
+#17 1.802      |                          ^
+#17 1.802   24 |   res.status(201).json({
+#17 1.802   25 |     status: 'Success',
+#17 1.802   26 |     response: {
+#17 1.802     at constructor (/app/node_modules/@babel/parser/lib/index.js:367:19)
+#17 1.802     at Parser.raise (/app/node_modules/@babel/parser/lib/index.js:6630:19)
+#17 1.802     at Parser.unexpected (/app/node_modules/@babel/parser/lib/index.js:6650:16)
+#17 1.802     at Parser.expect (/app/node_modules/@babel/parser/lib/index.js:6930:12)
+#17 1.802     at Parser.parseBindingList (/app/node_modules/@babel/parser/lib/index.js:7399:14)
+#17 1.802     at Parser.parseFunctionParams (/app/node_modules/@babel/parser/lib/index.js:13466:24)
+#17 1.802     at Parser.parseFunction (/app/node_modules/@babel/parser/lib/index.js:13448:10)
+#17 1.802     at Parser.parseFunctionStatement (/app/node_modules/@babel/parser/lib/index.js:13130:17)
+#17 1.802     at Parser.parseStatementContent (/app/node_modules/@babel/parser/lib/index.js:12796:21)
+#17 1.802     at Parser.parseStatementLike (/app/node_modules/@babel/parser/lib/index.js:12772:17) {
+#17 1.802   code: 'BABEL_PARSE_ERROR',
+#17 1.802   reasonCode: 'UnexpectedToken',
+#17 1.802   loc: Position { line: 23, column: 25, index: 907 },
+#17 1.802   pos: 907,
+#17 1.802   syntaxPlugin: undefined
+#17 1.802 }
+#17 1.902 ❌ Production build failed: Command failed: npx babel src --out-dir dist --extensions ".ts,.tsx" --source-maps inline --copy-files
+#17 ERROR: process "/bin/sh -c node build-production.js" did not complete successfully: exit code: 1
+------
+ > [12/15] RUN node build-production.js:
+1.802     at Parser.parseFunctionStatement (/app/node_modules/@babel/parser/lib/index.js:13130:17)
+1.802     at Parser.parseStatementContent (/app/node_modules/@babel/parser/lib/index.js:12796:21)
+1.802     at Parser.parseStatementLike (/app/node_modules/@babel/parser/lib/index.js:12772:17) {
+1.802   code: 'BABEL_PARSE_ERROR',
+1.802   reasonCode: 'UnexpectedToken',
+1.802   loc: Position { line: 23, column: 25, index: 907 },
+1.802   pos: 907,
+1.802   syntaxPlugin: undefined
+1.802 }
+1.902 ❌ Production build failed: Command failed: npx babel src --out-dir dist --extensions ".ts,.tsx" --source-maps inline --copy-files
+------
+Dockerfile:72
+--------------------
+  70 |     
+  71 |     # Build TypeScript to JavaScript
+  72 | >>> RUN node build-production.js
+  73 |     
+  74 |     # Remove dev dependencies to reduce image size
+--------------------
+error: failed to solve: process "/bin/sh -c node build-production.js" did not complete successfully: exit code: 1
