@@ -14,5 +14,9 @@
   "comp_mcewloaf_0681154b7071cb4820ac3e31e1e4a989": {
     "webhookUrl": "https://2b93fc96-f24a-4adf-abd3-b43cdcd97108-00-2umfl00r0rmyx.riker.replit.dev/api/whatsapp-simple/webhook",
     "webhookToken": ""
+  },
+  "comp_meiilvll_2c5ce5f4ff84b6f5df5b27b16f171369": {
+    "webhookUrl": "https://6e769690-c85b-4be5-bbe8-d41abbf14789-00-3iwajk1gb3p5r.spock.replit.dev/api/whatsapp/webhook",
+    "webhookToken": ""
   }
 }
