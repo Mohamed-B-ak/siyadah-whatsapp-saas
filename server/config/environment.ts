@@ -109,9 +109,11 @@ export const getBrowserArgs = (platform: 'replit' | 'render' | 'local'): string[
   ];
 
   const replicArgs = [
-    '--single-process', // Only safe on Replit
-    '--no-zygote', // Only safe on Replit
+    // Removed --single-process and --no-zygote (causing browser crashes)
     '--disable-ipc-flooding-protection',
+    '--disable-background-networking',
+    '--disable-client-side-phishing-detection',
+    '--disable-sync-preferences',
   ];
 
   switch (platform) {
