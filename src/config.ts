@@ -68,25 +68,25 @@ export default {
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-gpu',
-      
+
       // Stable process management (removed --single-process and --no-zygote)
       '--disable-features=VizDisplayCompositor',
       '--disable-web-security',
-      
+
       // Memory and performance optimization for containers
       '--memory-pressure-off',
       '--max_old_space_size=2048',
       '--disable-background-timer-throttling',
       '--disable-backgrounding-occluded-windows',
       '--disable-renderer-backgrounding',
-      
+
       // Profile and session management
       '--user-data-dir=/tmp/chrome-user-data',
       '--disable-profile-directory-check',
       '--disable-process-singleton-dialog',
       '--no-first-run',
       '--disable-component-extensions-with-background-pages',
-      
+
       // Reduced browser overhead
       '--disable-sync',
       '--disable-translate',
@@ -96,17 +96,17 @@ export default {
       '--metrics-recording-only',
       '--mute-audio',
       '--safebrowsing-disable-auto-update',
-      
+
       // Network and certificate handling
       '--ignore-certificate-errors',
       '--ignore-ssl-errors',
       '--ignore-certificate-errors-spki-list',
-      
+
       // Additional stability flags for Replit
       '--disable-background-networking',
       '--disable-client-side-phishing-detection',
       '--disable-sync-preferences',
-      '--disable-ipc-flooding-protection'
+      '--disable-ipc-flooding-protection',
     ],
     /**
      * Example of configuring the linkPreview generator

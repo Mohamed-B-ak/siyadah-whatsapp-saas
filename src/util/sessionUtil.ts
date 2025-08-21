@@ -23,25 +23,25 @@ export const chromiumArgs = [
   '--disable-dev-shm-usage', // Prevent /dev/shm issues
   '--disable-gpu', // Disable GPU acceleration
   '--disable-web-security', // Disables web security
-  
+
   // Cache and storage optimization
   '--aggressive-cache-discard', // Aggressively discards cache
   '--disable-cache', // Disables cache
   '--disable-application-cache', // Disables application cache
   '--disable-offline-load-stale-cache', // Disables loading stale offline cache
   '--disk-cache-size=0', // Sets disk cache size to 0
-  
+
   // Process stability (removed --single-process --no-zygote)
   '--disable-features=VizDisplayCompositor',
   '--memory-pressure-off',
   '--max_old_space_size=2048',
-  
+
   // Background activities
   '--disable-background-networking', // Disables background networking activities
   '--disable-background-timer-throttling',
   '--disable-backgrounding-occluded-windows',
   '--disable-renderer-backgrounding',
-  
+
   // Browser features
   '--disable-default-apps', // Disables default apps
   '--disable-extensions', // Disables extensions
@@ -52,15 +52,15 @@ export const chromiumArgs = [
   '--mute-audio', // Mutes audio
   '--no-first-run', // Skips first run
   '--safebrowsing-disable-auto-update', // Disables Safe Browsing auto-update
-  
+
   // Certificate and security
   '--ignore-certificate-errors', // Ignores certificate errors
   '--ignore-ssl-errors', // Ignores SSL errors
   '--ignore-certificate-errors-spki-list', // Ignores certificate errors in SPKI list
-  
+
   // Container optimizations
   '--user-data-dir=/tmp/chrome-user-data',
-  '--disable-ipc-flooding-protection'
+  '--disable-ipc-flooding-protection',
 ];
 // eslint-disable-next-line prefer-const
 export let clientsArray: Whatsapp[] = [];
