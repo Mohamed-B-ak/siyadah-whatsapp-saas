@@ -1,5 +1,5 @@
 
 #!/bin/sh
 echo "🔍 Running pre-push checks..."
-npx --no-install lint-staged
+npm run lint
 echo "✅ Pre-push checks completed"
