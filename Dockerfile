@@ -1,57 +1,56 @@
-# 1) Pin exact Node patch version
-FROM node:22.16.0-slim
+# Build stage
+FROM node:20-bullseye AS build
 
-# 2) Install Google Chrome (signed-by keyring; cleaner layers)
-ENV DEBIAN_FRONTEND=noninteractive
+# Puppeteer/Chrome deps (use system Chromium to keep image simple)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget gnupg2 ca-certificates curl xvfb \
- && wget -qO- https://dl.google.com/linux/linux_signing_key.pub \
-    | gpg --dearmor -o /usr/share/keyrings/google-linux.gpg \
- && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
-    > /etc/apt/sources.list.d/google-chrome.list \
- && apt-get update && apt-get install -y --no-install-recommends \
-    google-chrome-stable \
- && rm -rf /var/lib/apt/lists/*
+    chromium \
+    fonts-liberation \
+    libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 \
+    libdrm2 libgbm1 libgtk-3-0 libnss3 libx11-xcb1 \
+    libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxrandr2 \
+    xdg-utils ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-# 3) Runtime env for Puppeteer/Chrome in containers
 ENV NODE_ENV=production
-# Skip husky inside containers (no git hooks needed during build)
-ENV HUSKY=0
-ENV DISPLAY=:99
-ENV CHROME_BIN=/usr/bin/google-chrome
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome
-# Optional: many hosts require these flags
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+WORKDIR /app
+COPY package*.json ./
+# Install prod deps (include prom-client) and dev deps needed to build (typescript)
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Runtime stage
+FROM node:20-bullseye
+
+# Install only runtime pieces (Chromium + libs)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    chromium \
+    fonts-liberation \
+    libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 \
+    libdrm2 libgbm1 libgtk-3-0 libnss3 libx11-xcb1 \
+    libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxrandr2 \
+    xdg-utils ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV NODE_ENV=production
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+# Helpful default flags for Chrome in containers
 ENV PUPPETEER_DEFAULT_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu"
 
-# 4) App setup
 WORKDIR /app
+# Copy node_modules from build stage (already pruned by NODE_ENV=production during npm ci)
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./package.json
 
-# Copy only manifests first so Docker can cache deps
-COPY package.json package-lock.json* ./
-
-# Install production deps WITHOUT running lifecycle scripts (skips husky)
-# Then rebuild native modules (if any)
-RUN if [ -f package-lock.json ]; then \
-      npm ci --omit=dev --ignore-scripts --legacy-peer-deps; \
-    else \
-      npm i  --omit=dev --ignore-scripts --legacy-peer-deps; \
-    fi \
- && npm rebuild
-
-# Now copy the rest of the source
-COPY . .
-
-# 5) Non-root user and writable dirs
-RUN groupadd -r appuser && useradd -r -g appuser -m -d /tmp appuser \
- && mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages \
-           /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache \
- && chmod 755 /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache \
- && chown -R appuser:appuser /app /tmp/chrome-user-data /tmp/chrome-data /tmp/chrome-cache
+# (optional) run as non-root
+RUN useradd -m -d /home/appuser appuser
 USER appuser
 
-EXPOSE 5000
-
-# 6) Start: run with tsx at runtime (no build)
-# Ensure "tsx" is in dependencies OR allow npx to fetch it at runtime.
-CMD ["npx", "tsx", "src/server.ts"]
+# Render provides $PORT. Make sure your server listens on 0.0.0.0:$PORT
+EXPOSE 10000
+CMD ["node", "dist/server.js"]
