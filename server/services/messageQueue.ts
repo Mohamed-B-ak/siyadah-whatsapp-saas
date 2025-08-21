@@ -1,20 +1,24 @@
 import { MongoClient, Collection, ObjectId } from 'mongodb';
-import { MessageTask, SessionMessageQueue, InsertMessageTask, InsertSessionMessageQueue } from '../../shared/schema';
+import {
+  MessageTask,
+  SessionMessageQueue,
+  InsertMessageTask,
+  InsertSessionMessageQueue,
+} from '../../shared/schema';
 
 export class MessageQueueService {
   private db: any;
   private messageQueuesCollection: Collection<SessionMessageQueue>;
   private processingIntervals: Map<string, NodeJS.Timeout> = new Map();
   private bulkProcessingLocks: Set<string> = new Set();
-  
+
   private readonly DELAY_SECONDS = 30;
   private readonly MAX_ATTEMPTS = 3;
 
   constructor(database: any) {
     this.db = database;
     this.messageQueuesCollection = database.collection('sessionMessageQueues');
-    
-    // Create indexes for performance
+
     this.createIndexes();
   }
 
@@ -24,7 +28,9 @@ export class MessageQueueService {
       await this.messageQueuesCollection.createIndex({ sessionName: 1 });
       await this.messageQueuesCollection.createIndex({ companyId: 1 });
       await this.messageQueuesCollection.createIndex({ isProcessing: 1 });
-      await this.messageQueuesCollection.createIndex({ 'queuedMessages.status': 1 });
+      await this.messageQueuesCollection.createIndex({
+        'queuedMessages.status': 1,
+      });
     } catch (error: any) {
       console.log('Index creation failed (may already exist):', error.message);
     }
@@ -47,35 +53,48 @@ export class MessageQueueService {
     priority: number = 1
   ): Promise<{ queued: boolean; messageId: string; estimatedSendTime?: Date }> {
     const now = new Date();
-    
+
     // CRITICAL FIX: Use atomic operation with retry logic to prevent race conditions
     let retryCount = 0;
     const maxRetries = 3;
-    
+
     while (retryCount < maxRetries) {
       try {
-        // Start atomic transaction  
+        // Start atomic transaction
         let result;
-        
+
         try {
           // Use direct atomic operations without transactions for now to avoid complexity
           // Read current queue state atomically
           const queue = await this.getSessionQueue(sessionId);
-          
+
           // Calculate scheduled time based on current queue state
-          let scheduledTime = new Date(now.getTime() + (this.DELAY_SECONDS * 1000));
-          
+          let scheduledTime = new Date(
+            now.getTime() + this.DELAY_SECONDS * 1000
+          );
+
           if (queue) {
             // Calculate when this message should be sent based on last message time
-            const nextAvailableTime = queue.lastMessageTime ? 
-              new Date(queue.lastMessageTime.getTime() + (this.DELAY_SECONDS * 1000)) :
-              new Date(now.getTime() + (this.DELAY_SECONDS * 1000));
-            
+            const nextAvailableTime = queue.lastMessageTime
+              ? new Date(
+                  queue.lastMessageTime.getTime() + this.DELAY_SECONDS * 1000
+                )
+              : new Date(now.getTime() + this.DELAY_SECONDS * 1000);
+
             // If there are already queued messages, schedule after the last one
-            const pendingMessages = queue.queuedMessages.filter(m => m.status === 'pending');
+            const pendingMessages = queue.queuedMessages.filter(
+              (m) => m.status === 'pending'
+            );
             if (pendingMessages.length > 0) {
-              const lastScheduledTime = Math.max(...pendingMessages.map(m => m.scheduledFor.getTime()));
-              scheduledTime = new Date(Math.max(nextAvailableTime.getTime(), lastScheduledTime + (this.DELAY_SECONDS * 1000)));
+              const lastScheduledTime = Math.max(
+                ...pendingMessages.map((m) => m.scheduledFor.getTime())
+              );
+              scheduledTime = new Date(
+                Math.max(
+                  nextAvailableTime.getTime(),
+                  lastScheduledTime + this.DELAY_SECONDS * 1000
+                )
+              );
             } else {
               scheduledTime = nextAvailableTime;
             }
@@ -110,25 +129,31 @@ export class MessageQueueService {
               createdAt: now,
               updatedAt: now,
             };
-            
+
             await this.messageQueuesCollection.insertOne(newQueue);
-            console.log(`📬 Created new queue for session ${sessionId}, message queued (atomic)`);
+            console.log(
+              `📬 Created new queue for session ${sessionId}, message queued (atomic)`
+            );
           } else {
             // Add to existing queue atomically using findOneAndUpdate to prevent race conditions
             await this.messageQueuesCollection.findOneAndUpdate(
               { sessionId },
               {
                 $push: { queuedMessages: messageTask },
-                $set: { updatedAt: now }
+                $set: { updatedAt: now },
               }
             );
-            console.log(`📬 Added message to existing queue for session ${sessionId}, queued (${queue.queuedMessages.length + 1} total) (atomic)`);
+            console.log(
+              `📬 Added message to existing queue for session ${sessionId}, queued (${
+                queue.queuedMessages.length + 1
+              } total) (atomic)`
+            );
           }
 
           result = {
             queued: true, // ALL messages are queued for 30-second delays
             messageId: messageTask.id,
-            estimatedSendTime: messageTask.scheduledFor
+            estimatedSendTime: messageTask.scheduledFor,
           };
         } catch (innerError: any) {
           console.error(`❌ Queue operation failed: ${innerError.message}`);
@@ -141,18 +166,21 @@ export class MessageQueueService {
         }
 
         return result;
-        
       } catch (error: any) {
         retryCount++;
-        console.warn(`⚠️ Atomic queue operation failed (attempt ${retryCount}/${maxRetries}): ${error.message}`);
-        
+        console.warn(
+          `⚠️ Atomic queue operation failed (attempt ${retryCount}/${maxRetries}): ${error.message}`
+        );
+
         if (retryCount >= maxRetries) {
-          console.error(`❌ Failed to add message to queue after ${maxRetries} attempts: ${error.message}`);
+          console.error(
+            `❌ Failed to add message to queue after ${maxRetries} attempts: ${error.message}`
+          );
           throw error;
         }
-        
+
         // Wait briefly before retry to avoid thundering herd
-        await new Promise(resolve => setTimeout(resolve, 100 * retryCount));
+        await new Promise((resolve) => setTimeout(resolve, 100 * retryCount));
       }
     }
 
@@ -162,19 +190,25 @@ export class MessageQueueService {
   private async calculateScheduledTime(sessionId: string): Promise<Date> {
     const queue = await this.getSessionQueue(sessionId);
     const now = new Date();
-    
+
     if (!queue || !queue.lastMessageTime) {
       return now;
     }
 
     // Calculate next available slot
-    const timeSinceLastMessage = now.getTime() - queue.lastMessageTime.getTime();
-    const delayNeeded = Math.max(0, (this.DELAY_SECONDS * 1000) - timeSinceLastMessage);
-    
+    const timeSinceLastMessage =
+      now.getTime() - queue.lastMessageTime.getTime();
+    const delayNeeded = Math.max(
+      0,
+      this.DELAY_SECONDS * 1000 - timeSinceLastMessage
+    );
+
     return new Date(now.getTime() + delayNeeded);
   }
 
-  private async getSessionQueue(sessionId: string): Promise<SessionMessageQueue | null> {
+  private async getSessionQueue(
+    sessionId: string
+  ): Promise<SessionMessageQueue | null> {
     return await this.messageQueuesCollection.findOne({ sessionId });
   }
 
@@ -198,7 +232,9 @@ export class MessageQueueService {
         );
 
         // Get next pending message
-        const nextMessage = queue.queuedMessages.find(m => m.status === 'pending');
+        const nextMessage = queue.queuedMessages.find(
+          (m) => m.status === 'pending'
+        );
         if (!nextMessage) {
           await this.messageQueuesCollection.updateOne(
             { sessionId },
@@ -213,9 +249,11 @@ export class MessageQueueService {
         if (now >= nextMessage.scheduledFor) {
           await this.processMessage(sessionId, nextMessage);
         }
-
       } catch (error: any) {
-        console.error(`Error processing queue for session ${sessionId}:`, error);
+        console.error(
+          `Error processing queue for session ${sessionId}:`,
+          error
+        );
         await this.messageQueuesCollection.updateOne(
           { sessionId },
           { $set: { isProcessing: false, updatedAt: new Date() } }
@@ -226,14 +264,14 @@ export class MessageQueueService {
     // Process every 5 seconds
     const interval = setInterval(processQueue, 5000);
     this.processingIntervals.set(sessionId, interval);
-    
+
     // Initial processing
     processQueue();
   }
 
   private async processMessage(sessionId: string, messageTask: MessageTask) {
     const now = new Date();
-    
+
     try {
       // Update message status to processing
       await this.messageQueuesCollection.updateOne(
@@ -242,8 +280,8 @@ export class MessageQueueService {
           $set: {
             'queuedMessages.$.status': 'processing',
             'queuedMessages.$.updatedAt': now,
-            'queuedMessages.$.attempts': messageTask.attempts + 1
-          }
+            'queuedMessages.$.attempts': messageTask.attempts + 1,
+          },
         }
       );
 
@@ -260,9 +298,9 @@ export class MessageQueueService {
               'queuedMessages.$.status': 'completed',
               'queuedMessages.$.updatedAt': now,
               lastMessageTime: now,
-              isProcessing: false
+              isProcessing: false,
             },
-            $inc: { totalProcessed: 1 }
+            $inc: { totalProcessed: 1 },
           }
         );
 
@@ -272,12 +310,12 @@ export class MessageQueueService {
           { $pull: { queuedMessages: { id: messageTask.id } } }
         );
 
-        console.log(`✅ Message sent successfully: ${sessionId} -> ${messageTask.phone}`);
-
+        console.log(
+          `✅ Message sent successfully: ${sessionId} -> ${messageTask.phone}`
+        );
       } else {
         throw new Error('Message sending failed');
       }
-
     } catch (error: any) {
       const attempts = messageTask.attempts + 1;
       const isFinalAttempt = attempts >= messageTask.maxAttempts;
@@ -290,9 +328,9 @@ export class MessageQueueService {
             'queuedMessages.$.updatedAt': now,
             'queuedMessages.$.attempts': attempts,
             'queuedMessages.$.errorMessage': error.message,
-            isProcessing: false
+            isProcessing: false,
           },
-          $inc: { totalFailed: isFinalAttempt ? 1 : 0 }
+          $inc: { totalFailed: isFinalAttempt ? 1 : 0 },
         }
       );
 
@@ -302,14 +340,22 @@ export class MessageQueueService {
           { sessionId },
           { $pull: { queuedMessages: { id: messageTask.id } } }
         );
-        console.error(`❌ Message failed permanently: ${sessionId} -> ${messageTask.phone}:`, error.message);
+        console.error(
+          `❌ Message failed permanently: ${sessionId} -> ${messageTask.phone}:`,
+          error.message
+        );
       } else {
-        console.log(`⚠️ Message failed, will retry: ${sessionId} -> ${messageTask.phone} (attempt ${attempts}/${messageTask.maxAttempts})`);
+        console.log(
+          `⚠️ Message failed, will retry: ${sessionId} -> ${messageTask.phone} (attempt ${attempts}/${messageTask.maxAttempts})`
+        );
       }
     }
   }
 
-  private async sendMessageViaWhatsApp(sessionId: string, messageTask: MessageTask): Promise<boolean> {
+  private async sendMessageViaWhatsApp(
+    sessionId: string,
+    messageTask: MessageTask
+  ): Promise<boolean> {
     // This will be integrated with the actual WhatsApp sending logic
     // For now, we'll return a placeholder
     return new Promise((resolve) => {
@@ -339,8 +385,12 @@ export class MessageQueueService {
     const queue = await this.getSessionQueue(sessionId);
     if (!queue) return null;
 
-    const pendingMessages = queue.queuedMessages.filter(m => m.status === 'pending');
-    const nextPending = pendingMessages.sort((a, b) => a.scheduledFor.getTime() - b.scheduledFor.getTime())[0];
+    const pendingMessages = queue.queuedMessages.filter(
+      (m) => m.status === 'pending'
+    );
+    const nextPending = pendingMessages.sort(
+      (a, b) => a.scheduledFor.getTime() - b.scheduledFor.getTime()
+    )[0];
 
     return {
       isProcessing: queue.isProcessing,
@@ -348,7 +398,7 @@ export class MessageQueueService {
       lastMessageTime: queue.lastMessageTime,
       estimatedNextSend: nextPending?.scheduledFor,
       totalProcessed: queue.totalProcessed,
-      totalFailed: queue.totalFailed
+      totalFailed: queue.totalFailed,
     };
   }
 
@@ -360,8 +410,8 @@ export class MessageQueueService {
 
   // Cleanup completed and failed messages periodically
   async cleanupOldMessages(olderThanHours: number = 24) {
-    const cutoffTime = new Date(Date.now() - (olderThanHours * 60 * 60 * 1000));
-    
+    const cutoffTime = new Date(Date.now() - olderThanHours * 60 * 60 * 1000);
+
     // Remove completed and failed messages older than cutoff time
     await this.messageQueuesCollection.updateMany(
       {},
@@ -369,9 +419,9 @@ export class MessageQueueService {
         $pull: {
           queuedMessages: {
             status: { $in: ['completed', 'failed'] },
-            updatedAt: { $lt: cutoffTime }
-          }
-        }
+            updatedAt: { $lt: cutoffTime },
+          },
+        },
       }
     );
   }
