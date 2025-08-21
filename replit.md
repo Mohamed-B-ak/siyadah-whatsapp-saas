@@ -2,6 +2,12 @@
 
 This is a comprehensive WhatsApp SaaS platform built on WPPConnect technology with Arabic language support and enterprise-grade features. The system provides a multi-tenant architecture that allows companies to manage WhatsApp API integrations, user accounts, and messaging services through a unified platform. The application offers both Arabic and English interfaces with RTL (Right-to-Left) support, real-time messaging capabilities, QR code authentication, webhook integrations, and advanced analytics.
 
+## Recent System Improvements (August 2025)
+
+**Browser Stability Enhancement:** Resolved critical browser configuration issues that were causing session creation failures. Removed problematic `--single-process` and `--no-zygote` flags, optimized memory allocation for Replit environment, and implemented container-friendly browser arguments. Sessions now create successfully without protocol errors.
+
+**Webhook Filtering Optimization:** Implemented incoming-message-only webhook filtering to maximize notification capacity. System now filters out outgoing messages and delivery confirmations, effectively doubling the available webhook capacity for incoming messages from ~25 to ~50 per hour.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

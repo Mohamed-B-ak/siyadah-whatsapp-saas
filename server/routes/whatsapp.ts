@@ -18,7 +18,7 @@ router.post('/sessions', authenticateCompany, async (req: any, res) => {
       companyId: company.id,
       sessionName: finalSessionName,
       status: 'initializing',
-      qrCode: null,
+      qrCode: undefined,
       webhook: webhook || null,
       config: {
         autoClose: 0,
@@ -80,9 +80,10 @@ router.post('/sessions/:sessionName/send', authenticateCompany, async (req: any,
     const messageData = {
       sessionId: sessionName,
       companyId: company.id,
-      from: 'system',
-      to: phone,
-      body: message,
+      userId: `admin_${company.id}`,
+      phone: phone,
+      message: message,
+      direction: 'outgoing' as const,
       type: 'text',
       status: 'sent'
     };

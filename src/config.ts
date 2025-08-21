@@ -63,44 +63,50 @@ export default {
     // Stop continuous QR regeneration
     refreshQR: false, // Prevent automatic QR refresh
     browserArgs: [
-      '--disable-web-security',
+      // Core security and sandbox settings for Replit
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
       '--disable-gpu',
-      '--single-process',
-      '--no-zygote',
+      
+      // Stable process management (removed --single-process and --no-zygote)
       '--disable-features=VizDisplayCompositor',
-      // Fix profile conflicts
-      '--force-new-browser-profile',
+      '--disable-web-security',
+      
+      // Memory and performance optimization for containers
+      '--memory-pressure-off',
+      '--max_old_space_size=2048',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding',
+      
+      // Profile and session management
+      '--user-data-dir=/tmp/chrome-user-data',
       '--disable-profile-directory-check',
       '--disable-process-singleton-dialog',
       '--no-first-run',
       '--disable-component-extensions-with-background-pages',
-      // Performance optimizations
-      '--memory-pressure-off',
-      '--max_old_space_size=4096',
-      '--disable-background-timer-throttling',
-      '--disable-backgrounding-occluded-windows',
-      '--disable-renderer-backgrounding',
-      '--disable-ipc-flooding-protection',
+      
       // Reduced browser overhead
       '--disable-sync',
       '--disable-translate',
       '--disable-default-apps',
       '--disable-extensions',
-      '--disable-sync',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--disable-translate',
       '--hide-scrollbars',
       '--metrics-recording-only',
       '--mute-audio',
-      '--no-first-run',
       '--safebrowsing-disable-auto-update',
+      
+      // Network and certificate handling
       '--ignore-certificate-errors',
       '--ignore-ssl-errors',
       '--ignore-certificate-errors-spki-list',
+      
+      // Additional stability flags for Replit
+      '--disable-background-networking',
+      '--disable-client-side-phishing-detection',
+      '--disable-sync-preferences',
+      '--disable-ipc-flooding-protection'
     ],
     /**
      * Example of configuring the linkPreview generator
