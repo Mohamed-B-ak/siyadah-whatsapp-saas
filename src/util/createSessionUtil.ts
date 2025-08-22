@@ -75,16 +75,20 @@ function initializeProtectionState(sessionId: string): SessionProtectionState {
   };
 }
 
-function shouldAllowWebhook(sessionId: string, status: string, logger: any): boolean {
+function shouldAllowWebhook(
+  sessionId: string,
+  status: string,
+  logger: any
+): boolean {
   const now = Date.now();
-  
+
   // Initialize if not exists
   if (!webhookRateLimits[sessionId]) {
     webhookRateLimits[sessionId] = initializeRateLimit(sessionId);
   }
-  
+
   const rateLimit = webhookRateLimits[sessionId];
-  
+
   // Reset hourly counters
   if (now >= rateLimit.hourlyResetTime) {
     rateLimit.webhookCount = 0;
@@ -92,55 +96,74 @@ function shouldAllowWebhook(sessionId: string, status: string, logger: any): boo
     rateLimit.duplicateCount = 0;
     logger.info(`[${sessionId}] 🔄 Webhook rate limit reset`);
   }
-  
+
   // Check cooldown period
   if (now < rateLimit.cooldownUntil) {
-    logger.info(`[${sessionId}] 🚫 Webhook in cooldown until ${new Date(rateLimit.cooldownUntil).toLocaleTimeString()}`);
+    logger.info(
+      `[${sessionId}] 🚫 Webhook in cooldown until ${new Date(
+        rateLimit.cooldownUntil
+      ).toLocaleTimeString()}`
+    );
     return false;
   }
-  
+
   // Check duplicate status
   if (rateLimit.lastStatus === status) {
     rateLimit.duplicateCount++;
     if (rateLimit.duplicateCount >= WEBHOOK_RATE_LIMIT.DUPLICATE_THRESHOLD) {
       rateLimit.cooldownUntil = now + WEBHOOK_RATE_LIMIT.COOLDOWN_DURATION;
-      logger.info(`[${sessionId}] 🚫 Duplicate status detected (${status}), entering cooldown`);
+      logger.info(
+        `[${sessionId}] 🚫 Duplicate status detected (${status}), entering cooldown`
+      );
       return false;
     }
   } else {
     rateLimit.duplicateCount = 0;
   }
-  
+
   // Check hourly limit
   if (rateLimit.webhookCount >= WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR) {
-    logger.info(`[${sessionId}] 🚫 Webhook hourly limit reached (${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`);
+    logger.info(
+      `[${sessionId}] 🚫 Webhook hourly limit reached (${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`
+    );
     return false;
   }
-  
+
   // Update tracking
   rateLimit.lastWebhookTime = now;
   rateLimit.webhookCount++;
   rateLimit.lastStatus = status;
-  
-  logger.info(`[${sessionId}] ✅ Webhook allowed (${rateLimit.webhookCount}/${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`);
+
+  logger.info(
+    `[${sessionId}] ✅ Webhook allowed (${rateLimit.webhookCount}/${WEBHOOK_RATE_LIMIT.MAX_WEBHOOKS_PER_HOUR})`
+  );
   return true;
 }
 
-function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger: any): boolean {
+function shouldAllowAutoProtection(
+  sessionId: string,
+  statusFind: string,
+  logger: any
+): boolean {
   const now = Date.now();
-  
+
   // Initialize if not exists
   if (!protectionStates[sessionId]) {
     protectionStates[sessionId] = initializeProtectionState(sessionId);
   }
-  
+
   const protectionState = protectionStates[sessionId];
-  
+
   // Check if in cooldown
   if (protectionState.isInCooldown) {
     const timeSinceLastProtection = now - protectionState.lastProtectionTime;
     if (timeSinceLastProtection < WEBHOOK_RATE_LIMIT.PROTECTION_COOLDOWN) {
-      logger.info(`[${sessionId}] 🛡️ Auto-protection in cooldown (${Math.round((WEBHOOK_RATE_LIMIT.PROTECTION_COOLDOWN - timeSinceLastProtection) / 1000)}s remaining)`);
+      logger.info(
+        `[${sessionId}] 🛡️ Auto-protection in cooldown (${Math.round(
+          (WEBHOOK_RATE_LIMIT.PROTECTION_COOLDOWN - timeSinceLastProtection) /
+            1000
+        )}s remaining)`
+      );
       return false;
     } else {
       // Reset cooldown
@@ -149,21 +172,23 @@ function shouldAllowAutoProtection(sessionId: string, statusFind: string, logger
       logger.info(`[${sessionId}] 🔄 Auto-protection cooldown ended`);
     }
   }
-  
+
   // Check if same status being protected repeatedly
   if (protectionState.originalStatus === statusFind) {
     protectionState.protectionCount++;
     if (protectionState.protectionCount >= 3) {
       protectionState.isInCooldown = true;
       protectionState.lastProtectionTime = now;
-      logger.info(`[${sessionId}] 🚫 Auto-protection loop detected, entering cooldown`);
+      logger.info(
+        `[${sessionId}] 🚫 Auto-protection loop detected, entering cooldown`
+      );
       return false;
     }
   } else {
     protectionState.protectionCount = 1;
     protectionState.originalStatus = statusFind;
   }
-  
+
   protectionState.lastProtectionTime = now;
   return true;
 }
@@ -231,12 +256,12 @@ export default class CreateSessionUtil {
             waitForLogin: true, // Wait for manual QR scan
             logQR: true, // Enable comprehensive QR logging
             disableWelcome: true, // Skip welcome screen for faster loading
-            
+
             // Advanced session configuration
             createPathFileToken: false, // Don't create file tokens
             browserRevisionFallback: false, // Use exact browser version
             addBrowserArgs: [], // No additional args to avoid conflicts
-            
+
             // QR Code specific settings
             qrMaxRetries: 5, // Allow multiple QR generation attempts
             qrRefreshS: 30, // Refresh QR every 30 seconds
@@ -256,7 +281,7 @@ export default class CreateSessionUtil {
             browserWS: undefined,
             puppeteerOptions: {
               headless: 'new', // Use new headless mode
-              executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium-browser',
+              executablePath: '/usr/bin/google-chrome-stable',
               args: [
                 // Essential security and stability flags
                 '--no-sandbox',
@@ -265,7 +290,7 @@ export default class CreateSessionUtil {
                 '--disable-gpu',
                 '--single-process',
                 '--no-zygote',
-                
+
                 // Memory and performance optimization for Replit
                 '--memory-pressure-off',
                 '--max_old_space_size=4096',
@@ -273,14 +298,14 @@ export default class CreateSessionUtil {
                 '--disable-backgrounding-occluded-windows',
                 '--disable-renderer-backgrounding',
                 '--disable-ipc-flooding-protection',
-                
+
                 // Profile and process management
                 '--disable-web-security',
                 '--force-new-browser-profile',
                 '--disable-profile-directory-check',
                 '--disable-process-singleton-dialog',
                 '--no-first-run',
-                
+
                 // Reduce browser overhead
                 '--disable-component-extensions-with-background-pages',
                 '--disable-sync',
@@ -288,7 +313,7 @@ export default class CreateSessionUtil {
                 '--disable-default-apps',
                 '--disable-extensions',
                 '--disable-features=VizDisplayCompositor,AudioServiceOutOfProcess',
-                
+
                 // WhatsApp Web specific optimizations
                 '--disable-blink-features=AutomationControlled',
                 '--exclude-switches=enable-automation',
@@ -297,7 +322,7 @@ export default class CreateSessionUtil {
                 '--disable-domain-reliability',
                 '--disable-features=TranslateUI',
                 '--disable-background-networking',
-                '--disable-breakpad'
+                '--disable-breakpad',
               ],
               timeout: 180000, // 3 minutes for stable initialization
               defaultViewport: { width: 1366, height: 768 }, // Standard viewport
@@ -315,15 +340,13 @@ export default class CreateSessionUtil {
               req.logger.info(
                 `[${session}] QR Code generated - Attempt ${attempt}`
               );
-              
+
               // Store QR data for immediate access
               if (base64Qr && base64Qr.length > 100) {
                 client.qrcode = base64Qr;
                 client.urlcode = urlCode;
                 this.exportQR(req, base64Qr, urlCode, client, res);
-                req.logger.info(
-                  `[${session}] QR Code ready for scanning`
-                );
+                req.logger.info(`[${session}] QR Code ready for scanning`);
               } else {
                 req.logger.warn(
                   `[${session}] Invalid QR Code data, retrying...`
@@ -340,41 +363,58 @@ export default class CreateSessionUtil {
                   client,
                   statusFind
                 );
-                
-                req.logger.info(`[${session}] Raw status received: ${statusFind}`);
-                
+
+                req.logger.info(
+                  `[${session}] Raw status received: ${statusFind}`
+                );
+
                 // RATE-LIMITED AUTO-CLOSE PROTECTION WITH LOOP PREVENTION
                 const blockedStatuses = [
-                  'autocloseCalled', 'TIMEOUT', 'browserClose', 'CLOSE', 'CLOSED',
-                  'timeout', 'close', 'disconnect', 'error', 'failed'
+                  'autocloseCalled',
+                  'TIMEOUT',
+                  'browserClose',
+                  'CLOSE',
+                  'CLOSED',
+                  'timeout',
+                  'close',
+                  'disconnect',
+                  'error',
+                  'failed',
                 ];
-                
-                const shouldBlock = blockedStatuses.some(blocked => 
+
+                const shouldBlock = blockedStatuses.some((blocked) =>
                   statusFind.toLowerCase().includes(blocked.toLowerCase())
                 );
-                
+
                 if (shouldBlock) {
                   // Check if auto-protection should be allowed (prevents loops)
-                  if (!shouldAllowAutoProtection(session, statusFind, req.logger)) {
+                  if (
+                    !shouldAllowAutoProtection(session, statusFind, req.logger)
+                  ) {
                     req.logger.info(
                       `[${session}] 🚫 AUTO-CLOSE PROTECTION BLOCKED: ${statusFind} - Rate limited or in cooldown`
                     );
                     // Still update client status but don't trigger webhooks
-                    client.status = statusFind === 'CLOSED' ? 'QRCODE' : statusFind;
+                    client.status =
+                      statusFind === 'CLOSED' ? 'QRCODE' : statusFind;
                     return;
                   }
-                  
+
                   req.logger.info(
                     `[${session}] 🛡️ AUTO-CLOSE PROTECTION: ${statusFind} - Session preserved for QR scanning`
                   );
-                  
+
                   // Override with QR ready state
                   client.status = 'QRCODE';
                   client.qrcode = client.qrcode || 'pending';
-                  
+
                   // Emit protected status
-                  eventEmitter.emit(`status-${client.session}`, client, 'QRCODE');
-                  
+                  eventEmitter.emit(
+                    `status-${client.session}`,
+                    client,
+                    'QRCODE'
+                  );
+
                   // Rate-limited webhook call
                   if (shouldAllowWebhook(session, 'QRCODE', req.logger)) {
                     callWebHook(client, req, 'status-find', {
@@ -382,7 +422,7 @@ export default class CreateSessionUtil {
                       session: client.session,
                       protected: true,
                       originalStatus: statusFind,
-                      rateLimited: true
+                      rateLimited: true,
                     });
                   } else {
                     req.logger.info(
@@ -394,48 +434,67 @@ export default class CreateSessionUtil {
 
                 // Handle proper status transitions
                 if (statusFind === 'CONNECTED' || statusFind === 'inChat') {
-                  req.logger.info(`[${session}] ✅ Session connected successfully: ${statusFind}`);
+                  req.logger.info(
+                    `[${session}] ✅ Session connected successfully: ${statusFind}`
+                  );
                   client.status = 'CONNECTED';
-                } else if (statusFind === 'qrReadSuccess' || statusFind === 'PAIRING') {
-                  req.logger.info(`[${session}] 📱 QR scanned, pairing: ${statusFind}`);
+                } else if (
+                  statusFind === 'qrReadSuccess' ||
+                  statusFind === 'PAIRING'
+                ) {
+                  req.logger.info(
+                    `[${session}] 📱 QR scanned, pairing: ${statusFind}`
+                  );
                   client.status = 'PAIRING';
-                } else if (statusFind === 'Session unpaired' || statusFind.includes('unpaired')) {
-                  req.logger.info(`[${session}] 📱 Session ready for QR scanning: ${statusFind}`);
+                } else if (
+                  statusFind === 'Session unpaired' ||
+                  statusFind.includes('unpaired')
+                ) {
+                  req.logger.info(
+                    `[${session}] 📱 Session ready for QR scanning: ${statusFind}`
+                  );
                   client.status = 'QRCODE';
                 } else if (statusFind === 'desconnectedMobile') {
-                  req.logger.info(`[${session}] 📱 Phone disconnected: ${statusFind}`);
+                  req.logger.info(
+                    `[${session}] 📱 Phone disconnected: ${statusFind}`
+                  );
                   client.status = 'DISCONNECTED';
                 } else if (statusFind === 'DESTROYED') {
-                  req.logger.info(`[${session}] ❌ Session destroyed: ${statusFind}`);
+                  req.logger.info(
+                    `[${session}] ❌ Session destroyed: ${statusFind}`
+                  );
                   client.status = 'CLOSED';
                   client.qrcode = null;
                   if (client.close) client.close();
                   clientsArray[session] = undefined;
                 } else {
-                  req.logger.info(`[${session}] 🔄 Status update: ${statusFind}`);
+                  req.logger.info(
+                    `[${session}] 🔄 Status update: ${statusFind}`
+                  );
                   // Keep session alive, don't mark as CLOSED
                   if (statusFind !== 'CLOSED') {
                     client.status = statusFind;
                   } else {
                     // Override CLOSED status to keep session alive
                     client.status = 'QRCODE';
-                    req.logger.info(`[${session}] OVERRIDING CLOSED STATUS - keeping as QRCODE`);
+                    req.logger.info(
+                      `[${session}] OVERRIDING CLOSED STATUS - keeping as QRCODE`
+                    );
                   }
                 }
-                
+
                 // Rate-limited webhook call for normal status updates
                 if (shouldAllowWebhook(session, client.status, req.logger)) {
                   callWebHook(client, req, 'status-find', {
                     status: client.status, // Use the processed status, not raw statusFind
                     session: client.session,
-                    rateLimited: true
+                    rateLimited: true,
                   });
                 } else {
                   req.logger.info(
                     `[${session}] 🚫 Webhook blocked for status update (${client.status}) - rate limit exceeded`
                   );
                 }
-                
               } catch (error) {
                 req.logger.error(`[${session}] Error in statusFind: ${error}`);
               }
@@ -470,7 +529,9 @@ export default class CreateSessionUtil {
       if (e instanceof Error && e.name == 'TimeoutError') {
         const client = this.getClient(session) as any;
         // Don't close session on timeout - keep it alive for QR scanning
-        req.logger.info(`[${session}] Timeout during initialization - keeping session alive for QR scanning`);
+        req.logger.info(
+          `[${session}] Timeout during initialization - keeping session alive for QR scanning`
+        );
         client.status = 'QRCODE'; // Keep session alive and ready for QR
         client.qrcode = 'pending'; // Mark as QR ready
       } else {
@@ -478,7 +539,9 @@ export default class CreateSessionUtil {
         const client = this.getClient(session) as any;
         if (client) {
           client.status = 'QRCODE';
-          req.logger.info(`[${session}] Session error handled - marked as QRCODE ready`);
+          req.logger.info(
+            `[${session}] Session error handled - marked as QRCODE ready`
+          );
         }
       }
     }
@@ -532,20 +595,24 @@ export default class CreateSessionUtil {
     res?: any
   ) {
     eventEmitter.emit(`qrcode-${client.session}`, qrCode, urlCode, client);
-    
+
     // Store the QR data immediately
-    const fullQrDataUrl = qrCode.startsWith('data:image/png;base64,') 
-      ? qrCode 
+    const fullQrDataUrl = qrCode.startsWith('data:image/png;base64,')
+      ? qrCode
       : `data:image/png;base64,${qrCode}`;
-      
+
     Object.assign(client, {
       status: 'QRCODE',
       qrcode: fullQrDataUrl,
       urlcode: urlCode,
     });
 
-    req.logger.info(`[${client.session}] QR Code stored - URL length: ${urlCode?.length || 0}`);
-    req.logger.info(`[${client.session}] QR Data length: ${fullQrDataUrl.length}`);
+    req.logger.info(
+      `[${client.session}] QR Code stored - URL length: ${urlCode?.length || 0}`
+    );
+    req.logger.info(
+      `[${client.session}] QR Data length: ${fullQrDataUrl.length}`
+    );
 
     // AUTOMATIC QR CODE DATABASE STORAGE
     (async () => {
@@ -554,32 +621,55 @@ export default class CreateSessionUtil {
         const path = require('path');
         const mongodbPath = path.resolve(__dirname, '../../server/mongodb');
         const { storage } = require(mongodbPath);
-        
-        req.logger.info(`[QR-CAPTURE] 🔍 Attempting to save QR code for session: ${client.session}`);
-        
+
+        req.logger.info(
+          `[QR-CAPTURE] 🔍 Attempting to save QR code for session: ${client.session}`
+        );
+
         if (storage && typeof storage.updateSessionByName === 'function') {
           // Use updateSessionByName method for WPPConnect session names
-          const updateResult = await storage.updateSessionByName(client.session, {
-            qrCode: fullQrDataUrl,
-            qrCodeGeneratedAt: new Date(),
-            status: 'qr_ready'
-          });
-          
+          const updateResult = await storage.updateSessionByName(
+            client.session,
+            {
+              qrCode: fullQrDataUrl,
+              qrCodeGeneratedAt: new Date(),
+              status: 'qr_ready',
+            }
+          );
+
           if (updateResult) {
-            req.logger.info(`[QR-CAPTURE] ✅ QR code automatically saved to database for session: ${client.session}`);
+            req.logger.info(
+              `[QR-CAPTURE] ✅ QR code automatically saved to database for session: ${client.session}`
+            );
           } else {
-            req.logger.warn(`[QR-CAPTURE] ⚠️ Session not found in database: ${client.session}`);
+            req.logger.warn(
+              `[QR-CAPTURE] ⚠️ Session not found in database: ${client.session}`
+            );
           }
-        } else if (storage && typeof storage.updateSessionQRCode === 'function') {
+        } else if (
+          storage &&
+          typeof storage.updateSessionQRCode === 'function'
+        ) {
           // Fallback to direct QR update method
           await storage.updateSessionQRCode(client.session, fullQrDataUrl);
-          req.logger.info(`[QR-CAPTURE] ✅ QR code saved via updateSessionQRCode for session: ${client.session}`);
+          req.logger.info(
+            `[QR-CAPTURE] ✅ QR code saved via updateSessionQRCode for session: ${client.session}`
+          );
         } else {
-          req.logger.warn(`[QR-CAPTURE] ❌ Storage update methods not available`);
-          req.logger.warn(`[QR-CAPTURE] Storage methods:`, Object.getOwnPropertyNames(storage));
+          req.logger.warn(
+            `[QR-CAPTURE] ❌ Storage update methods not available`
+          );
+          req.logger.warn(
+            `[QR-CAPTURE] Storage methods:`,
+            Object.getOwnPropertyNames(storage)
+          );
         }
       } catch (dbError) {
-        req.logger.warn(`[QR-CAPTURE] ❌ Failed to save QR code to database: ${(dbError as Error).message}`);
+        req.logger.warn(
+          `[QR-CAPTURE] ❌ Failed to save QR code to database: ${
+            (dbError as Error).message
+          }`
+        );
         req.logger.warn(`[QR-CAPTURE] Error details:`, dbError);
       }
     })();
@@ -594,7 +684,7 @@ export default class CreateSessionUtil {
       urlcode: urlCode,
       session: client.session,
     });
-    
+
     if (res && !res._headerSent)
       res.status(200).json({
         status: 'qrcode',
