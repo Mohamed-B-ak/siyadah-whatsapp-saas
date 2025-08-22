@@ -1,6 +1,6 @@
 FROM node:22-slim
 
-# Install Chrome dependencies
+# Chrome runtime deps
 RUN apt-get update && apt-get install -y \
   wget gnupg ca-certificates curl unzip \
   fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 \
@@ -9,37 +9,28 @@ RUN apt-get update && apt-get install -y \
   libvulkan1 --no-install-recommends && \
   rm -rf /var/lib/apt/lists/*
 
-# Install Chrome (modern keyring method)
-RUN install -m 0755 -d /usr/share/keyrings && \
-  wget -qO /usr/share/keyrings/google-linux-signing-keyring.gpg https://dl.google.com/linux/linux_signing_key.pub && \
-  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+# Install Google Chrome (proper keyring + dearmor)
+RUN apt-get update && apt-get install -y gnupg ca-certificates && \
+  install -m 0755 -d /usr/share/keyrings && \
+  wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg && \
+  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
   apt-get update && \
   apt-get install -y google-chrome-stable && \
   rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
-
-# Copy project files
 COPY . .
-
-# Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Create non-root user and assign permissions
+# Non-root user
 RUN groupadd -r appuser && useradd -m -r -g appuser appuser && \
   mkdir -p /app/logs /app/tokens /app/uploads /app/userDataDir /app/WhatsAppImages && \
   chown -R appuser:appuser /app
-
-# Switch to non-root user
 USER appuser
 
-# Puppeteer environment variables
+# Puppeteer env
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-# Expose port
 EXPOSE 5000
-
-# Run your app
 CMD ["npx", "tsx", "src/server.ts"]
