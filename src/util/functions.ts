@@ -46,7 +46,7 @@ const messageRateLimits: { [sessionId: string]: MessageRateLimit } = {};
 
 const MESSAGE_RATE_LIMIT = {
   MAX_MESSAGES_PER_HOUR: 50, // Higher limit for messages vs status
-  MAX_PER_EVENT_TYPE: 20, // Limit per event type
+  MAX_PER_EVENT_TYPE: 200, // Limit per event type
   RESET_INTERVAL: 60 * 60 * 1000, // 1 hour
 };
 
