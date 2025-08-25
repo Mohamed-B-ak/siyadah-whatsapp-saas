@@ -204,15 +204,6 @@ export async function webhookTest(req: Request, res: Response) {
   // Define message-related events that should be forwarded
   const messageEvents = [
     'onmessage',      // Incoming messages
-    'onack',          // Message delivery confirmations  
-    'onmessagereceived', // Message received confirmations
-    'onmessagesent',  // Message sent confirmations
-    'oncontact',      // Contact events
-    'onpresence',     // User presence updates
-    'onbatterychange', // Device battery status
-    'onchats',        // Chat list updates
-    'onlivemode',     // Live mode events
-    'onunreadmessages' // Unread message notifications
   ];
   
   // Only forward message-related events, filter out QR codes and system events
